@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include "List.h"
+#include "PerformanceTester.h"
 
 using namespace std;
 
@@ -463,8 +464,7 @@ void handleListOperations<string>(DoublyLinkedList<string>& list, const string& 
     } while (choice != 15);
 }
 
-int main()
-{
+int main() {
     srand(time(0));
 
     DoublyLinkedList<int> intList;
@@ -486,6 +486,16 @@ int main()
         case 2:
             cout << "\n--- String List Operations ---\n";
             handleListOperations(stringList, "String");
+            break;
+
+        case 3:
+            cout << "\n--- Performance Measurements ---\n";
+            PerformanceTester::performMeasurements();
+            break;
+
+        case 4:
+            cout << "\n--- Individual Operation Tests ---\n";
+            PerformanceTester::measureIndividualOperations();
             break;
 
         case 0:
