@@ -6,8 +6,6 @@
 void PerformanceTester::performMeasurements() {
     vector<int> sizes = { 10, 100, 1000, 5000, 10000 };
 
-    cout << "=== Performance Measurements ===\n" << endl;
-
     for (int size : sizes) {
         cout << "--- Testing with list size: " << size << " ---" << endl;
 
