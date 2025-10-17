@@ -1,7 +1,4 @@
 #include "List.h"
-#include <iostream>
-
-using namespace std;
 
 // Конструктор по умолчанию
 template <typename T>
@@ -73,7 +70,7 @@ void DoublyLinkedList<T>::push_back(const T& value) {
 template <typename T>
 void DoublyLinkedList<T>::pop_front() {
     if (is_empty()) {
-        throw "Cannot pop from empty list";
+        return; // Пустой список - ничего не делаем
     }
 
     ListNode<T>* temp = head;
@@ -92,7 +89,7 @@ void DoublyLinkedList<T>::pop_front() {
 template <typename T>
 void DoublyLinkedList<T>::pop_back() {
     if (is_empty()) {
-        throw "Cannot pop from empty list";
+        return; // Пустой список - ничего не делаем
     }
 
     ListNode<T>* temp = tail;
@@ -111,7 +108,7 @@ void DoublyLinkedList<T>::pop_back() {
 template <typename T>
 void DoublyLinkedList<T>::insert_after(ListNode<T>* node, const T& value) {
     if (node == nullptr) {
-        throw "Node cannot be null";
+        return; // Невалидный узел - ничего не делаем
     }
 
     if (node == tail) {
@@ -131,7 +128,7 @@ void DoublyLinkedList<T>::insert_after(ListNode<T>* node, const T& value) {
 template <typename T>
 void DoublyLinkedList<T>::insert_before(ListNode<T>* node, const T& value) {
     if (node == nullptr) {
-        throw "Node cannot be null";
+        return; // Невалидный узел - ничего не делаем
     }
 
     if (node == head) {
@@ -151,7 +148,7 @@ void DoublyLinkedList<T>::insert_before(ListNode<T>* node, const T& value) {
 template <typename T>
 void DoublyLinkedList<T>::remove(ListNode<T>* node) {
     if (node == nullptr) {
-        throw "Node cannot be null";
+        return; // Невалидный узел - ничего не делаем
     }
 
     if (node == head) {
@@ -239,25 +236,13 @@ ListNode<T>* DoublyLinkedList<T>::get_tail() const {
 // Печать в прямом порядке
 template <typename T>
 void DoublyLinkedList<T>::print_forward() const {
-    ListNode<T>* current = head;
-    cout << "List (forward): ";
-    while (current != nullptr) {
-        cout << current->data << " ";
-        current = current->next;
-    }
-    cout << endl;
+    // Пустая реализация - вывод будет в main.cpp
 }
 
 // Печать в обратном порядке
 template <typename T>
 void DoublyLinkedList<T>::print_backward() const {
-    ListNode<T>* current = tail;
-    cout << "List (backward): ";
-    while (current != nullptr) {
-        cout << current->data << " ";
-        current = current->prev;
-    }
-    cout << endl;
+    // Пустая реализация - вывод будет в main.cpp
 }
 
 // Явная инстанциация для нужных типов
