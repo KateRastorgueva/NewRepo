@@ -21,6 +21,12 @@
     <ClCompile Include="PerformanceTester.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ListUI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="List.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ListItem.h">
@@ -30,6 +36,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PerformanceTester.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ListUI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
