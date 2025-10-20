@@ -1,4 +1,4 @@
-#include <iostream>
+п»ї#include <iostream>
 #include <string>
 #include <cstdlib>
 #include <ctime>
@@ -7,44 +7,149 @@
 
 using namespace std;
 
-// Функции для вывода списков
+// Р’СЃРїРѕРјРѕРіР°С‚РµР»СЊРЅС‹Рµ С„СѓРЅРєС†РёРё РґР»СЏ РІС‹РІРѕРґР°
 void print_forward(const DoublyLinkedList<string>& list) {
-    if (list.is_empty()) {
-        cout << "List is empty!" << endl;
-        return;
+    std::cout << "List (forward): ";
+    if (!list.print_forward()) {
+        std::cout << "List is empty!" << std::endl;
     }
-
-    ListNode<string>* current = list.get_head();
-    cout << "List (forward): ";
-    while (current != nullptr) {
-        cout << current->data << " ";
-        current = current->next;
-    }
-    cout << endl;
 }
 
 void print_backward(const DoublyLinkedList<string>& list) {
+    std::cout << "List (backward): ";
+    if (!list.print_backward()) {
+        std::cout << "List is empty!" << std::endl;
+    }
+}
+
+static void printListEmptyMessage() {
+    cout << "List is empty!\n";
+}
+
+static void printElementOperation(const string& value, const string& operation, const string& position = "") {
+    if (position.empty()) {
+        cout << "Element '" << value << "' " << operation << ".\n";
+    }
+    else {
+        cout << "Element '" << value << "' " << operation << " " << position << ".\n";
+    }
+}
+
+static void printElementFound(const string& value, bool found) {
+    if (found) {
+        cout << "Element '" << value << "' found in the list.\n";
+    }
+    else {
+        cout << "Element '" << value << "' not found!\n";
+    }
+}
+
+static void printCurrentListState(const DoublyLinkedList<string>& list) {
+    cout << "Current list: ";
+    print_forward(list);
+}
+
+static int getNumericInput(const string& prompt) {
+    string input;
+    cout << prompt;
+    getline(cin, input);
+    try {
+        return stoi(input);
+    }
+    catch (...) {
+        cout << "Invalid input! Please enter a number.\n";
+        return -1;
+    }
+}
+
+// Р¤СѓРЅРєС†РёСЏ РґР»СЏ РїРѕР»СѓС‡РµРЅРёСЏ РІРІРѕРґР° (РІСЃРµРіРґР° СЃС‚СЂРѕРєР°)
+string getInput(const string& prompt) {
+    string input;
+    cout << prompt;
+    getline(cin, input);
+    return input;
+}
+
+// РќРѕРІС‹Рµ С„СѓРЅРєС†РёРё РґР»СЏ СѓСЃС‚СЂР°РЅРµРЅРёСЏ РґСѓР±Р»РёСЂРѕРІР°РЅРёСЏ
+static void handleAddOperation(DoublyLinkedList<string>& list, const string& position) {
+    string value = getInput("Enter value to add to " + position + ": ");
+    if (position == "front") {
+        list.push_front(value);
+    }
+    else {
+        list.push_back(value);
+    }
+    printElementOperation(value, "added to", position);
+}
+
+static void handleRemoveEndOperation(DoublyLinkedList<string>& list, const string& position) {
+    if (!list.is_empty()) {
+        string removed = (position == "front") ? list.get_head()->data : list.get_tail()->data;
+        if (position == "front") {
+            list.pop_front();
+        }
+        else {
+            list.pop_back();
+        }
+        printElementOperation(removed, "removed from", position);
+    }
+    else {
+        printListEmptyMessage();
+    }
+}
+
+static void handleInsertOperation(DoublyLinkedList<string>& list, const string& positionType) {
     if (list.is_empty()) {
-        cout << "List is empty!" << endl;
+        printListEmptyMessage();
         return;
     }
 
-    ListNode<string>* current = list.get_tail();
-    cout << "List (backward): ";
-    while (current != nullptr) {
-        cout << current->data << " ";
-        current = current->prev;
+    string target = getInput("Enter target value to insert " + positionType + ": ");
+    string value = getInput("Enter value to insert: ");
+
+    auto node = list.linear_search(target);
+    if (node) {
+        if (positionType == "after") {
+            list.insert_after(node, value);
+        }
+        else {
+            list.insert_before(node, value);
+        }
+        printElementOperation(value, "inserted " + positionType, target);
     }
-    cout << endl;
 }
 
+static void handleRemoveByValue(DoublyLinkedList<string>& list) {
+    if (list.is_empty()) {
+        printListEmptyMessage();
+        return;
+    }
+
+    string value = getInput("Enter value to remove: ");
+    auto node = list.linear_search(value);
+    if (node) {
+        list.remove(node);
+        printElementOperation(value, "removed");
+    }
+}
+
+static void handleSearchOperation(DoublyLinkedList<string>& list) {
+    if (list.is_empty()) {
+        printListEmptyMessage();
+        return;
+    }
+
+    string value = getInput("Enter value to search: ");
+    auto node = list.linear_search(value);
+    printElementFound(value, node != nullptr);
+}
+
+// РњРµРЅСЋ
 static void displayMainMenu() {
     cout << "\n=== Doubly Linked List Manager ===\n";
     cout << "1. List Operations\n";
     cout << "2. Performance Measurements\n";
-    cout << "3. Individual Operation Tests\n";
     cout << "0. Exit\n";
-    cout << "Enter your choice: ";
 }
 
 static void displayListMenu() {
@@ -64,25 +169,15 @@ static void displayListMenu() {
     cout << "13. Display list size\n";
     cout << "14. Check if list is empty\n";
     cout << "15. Back to main menu\n";
-    cout << "Enter your choice: ";
 }
 
-// Функция для получения ввода (всегда строка)
-string getInput(const string& prompt) {
-    string input;
-    cout << prompt;
-    getline(cin, input);
-    return input;
-}
-
-// Функция для работы со списком строк
+// Р¤СѓРЅРєС†РёСЏ РґР»СЏ СЂР°Р±РѕС‚С‹ СЃРѕ СЃРїРёСЃРєРѕРј СЃС‚СЂРѕРє
 void handleListOperations() {
     DoublyLinkedList<string> list;
     int choice = 0;
 
-    // Генерация начального списка со строками (включая числа как строки)
+    // Р“РµРЅРµСЂР°С†РёСЏ РЅР°С‡Р°Р»СЊРЅРѕРіРѕ СЃРїРёСЃРєР°
     cout << "Generating initial list with sample values...\n";
-
     string sampleData[] = { "56", "hello", "41", "world", "19", "test", "100", "data" };
     for (int i = 0; i < 6; i++) {
         list.push_back(sampleData[i]);
@@ -94,125 +189,41 @@ void handleListOperations() {
 
     do {
         displayListMenu();
-
-        string choiceStr = getInput("Enter your choice: ");
-        try {
-            choice = stoi(choiceStr);
-        }
-        catch (...) {
-            cout << "Invalid input! Please enter a number.\n";
-            continue;
-        }
+        choice = getNumericInput("Enter your choice: ");
+        if (choice == -1) continue;
 
         switch (choice) {
-        case 1: {
-            string value = getInput("Enter value to add to front: ");
-            list.push_front(value);
-            cout << "Element '" << value << "' added to front.\n";
+        case 1:
+            handleAddOperation(list, "front");
             break;
-        }
 
-        case 2: {
-            string value = getInput("Enter value to add to back: ");
-            list.push_back(value);
-            cout << "Element '" << value << "' added to back.\n";
+        case 2:
+            handleAddOperation(list, "back");
             break;
-        }
 
         case 3:
-            if (!list.is_empty()) {
-                string removed = list.get_head()->data;
-                list.pop_front();
-                cout << "Element '" << removed << "' removed from front.\n";
-            }
-            else {
-                cout << "List is empty!\n";
-            }
+            handleRemoveEndOperation(list, "front");
             break;
 
         case 4:
-            if (!list.is_empty()) {
-                string removed = list.get_tail()->data;
-                list.pop_back();
-                cout << "Element '" << removed << "' removed from back.\n";
-            }
-            else {
-                cout << "List is empty!\n";
-            }
+            handleRemoveEndOperation(list, "back");
             break;
 
-        case 5: {
-            if (list.is_empty()) {
-                cout << "List is empty!\n";
-                break;
-            }
-            string target = getInput("Enter target value to insert after: ");
-            string value = getInput("Enter value to insert: ");
-
-            auto node = list.linear_search(target);
-            if (node) {
-                list.insert_after(node, value);
-                cout << "Element '" << value << "' inserted after '" << target << "'.\n";
-            }
-            else {
-                cout << "Target element '" << target << "' not found!\n";
-            }
+        case 5:
+            handleInsertOperation(list, "after");
             break;
-        }
 
-        case 6: {
-            if (list.is_empty()) {
-                cout << "List is empty!\n";
-                break;
-            }
-            string target = getInput("Enter target value to insert before: ");
-            string value = getInput("Enter value to insert: ");
-
-            auto node = list.linear_search(target);
-            if (node) {
-                list.insert_before(node, value);
-                cout << "Element '" << value << "' inserted before '" << target << "'.\n";
-            }
-            else {
-                cout << "Target element '" << target << "' not found!\n";
-            }
+        case 6:
+            handleInsertOperation(list, "before");
             break;
-        }
 
-        case 7: {
-            if (list.is_empty()) {
-                cout << "List is empty!\n";
-                break;
-            }
-            string value = getInput("Enter value to remove: ");
-
-            auto node = list.linear_search(value);
-            if (node) {
-                list.remove(node);
-                cout << "Element '" << value << "' removed.\n";
-            }
-            else {
-                cout << "Element '" << value << "' not found!\n";
-            }
+        case 7:
+            handleRemoveByValue(list);
             break;
-        }
 
-        case 8: {
-            if (list.is_empty()) {
-                cout << "List is empty!\n";
-                break;
-            }
-            string value = getInput("Enter value to search: ");
-
-            auto node = list.linear_search(value);
-            if (node) {
-                cout << "Element '" << value << "' found in the list.\n";
-            }
-            else {
-                cout << "Element '" << value << "' not found!\n";
-            }
+        case 8:
+            handleSearchOperation(list);
             break;
-        }
 
         case 9:
             if (!list.is_empty()) {
@@ -220,7 +231,7 @@ void handleListOperations() {
                 cout << "List sorted successfully (lexicographical order).\n";
             }
             else {
-                cout << "List is empty!\n";
+                printListEmptyMessage();
             }
             break;
 
@@ -253,13 +264,83 @@ void handleListOperations() {
             cout << "Invalid choice! Please try again.\n";
         }
 
-        // Показываем текущее состояние списка после операций
+        // РџРѕРєР°Р·С‹РІР°РµРј С‚РµРєСѓС‰РµРµ СЃРѕСЃС‚РѕСЏРЅРёРµ СЃРїРёСЃРєР° РїРѕСЃР»Рµ РѕРїРµСЂР°С†РёР№
         if (choice >= 1 && choice <= 10 && !list.is_empty()) {
-            cout << "Current list: ";
-            print_forward(list);
+            printCurrentListState(list);
         }
 
     } while (choice != 15);
+}
+
+// handlePerformanceMeasurements РѕСЃС‚Р°РµС‚СЃСЏ Р±РµР· РёР·РјРµРЅРµРЅРёР№
+void handlePerformanceMeasurements() {
+    vector<int> sizes = { 10, 100, 1000, 5000, 10000 };
+
+    for (int size : sizes) {
+        cout << "--- Testing with list size: " << size << " ---" << endl;
+
+        int measurements = 5;
+        long long totalPushFront = 0, totalPushBack = 0, totalPopFront = 0, totalPopBack = 0;
+
+        for (int i = 0; i < measurements; i++) {
+            DoublyLinkedList<int> list;
+
+            // Р—Р°РїРѕР»РЅСЏРµРј СЃРїРёСЃРѕРє
+            for (int j = 0; j < size; j++) {
+                list.push_back(rand() % 1000);
+            }
+
+            // РР·РјРµСЂСЏРµРј РѕРїРµСЂР°С†РёРё
+            auto start = chrono::high_resolution_clock::now();
+            list.push_front(999);
+            auto end = chrono::high_resolution_clock::now();
+            totalPushFront += chrono::duration_cast<chrono::nanoseconds>(end - start).count();
+
+            start = chrono::high_resolution_clock::now();
+            list.push_back(999);
+            end = chrono::high_resolution_clock::now();
+            totalPushBack += chrono::duration_cast<chrono::nanoseconds>(end - start).count();
+
+            start = chrono::high_resolution_clock::now();
+            if (!list.is_empty()) list.pop_front();
+            end = chrono::high_resolution_clock::now();
+            totalPopFront += chrono::duration_cast<chrono::nanoseconds>(end - start).count();
+
+            start = chrono::high_resolution_clock::now();
+            if (!list.is_empty()) list.pop_back();
+            end = chrono::high_resolution_clock::now();
+            totalPopBack += chrono::duration_cast<chrono::nanoseconds>(end - start).count();
+        }
+
+        cout << "PushFront (avg): " << totalPushFront / measurements << " ns" << endl;
+        cout << "PushBack (avg): " << totalPushBack / measurements << " ns" << endl;
+        cout << "PopFront (avg): " << totalPopFront / measurements << " ns" << endl;
+        cout << "PopBack (avg): " << totalPopBack / measurements << " ns" << endl;
+
+        // РР·РјРµСЂСЏРµРј РїРѕРёСЃРє Рё СЃРѕСЂС‚РёСЂРѕРІРєСѓ
+        long long totalSearch = 0, totalSort = 0;
+        for (int i = 0; i < measurements; i++) {
+            DoublyLinkedList<int> list;
+            for (int j = 0; j < size; j++) {
+                list.push_back(rand() % 1000);
+            }
+
+            int target = rand() % 1000;
+            auto start = chrono::high_resolution_clock::now();
+            list.linear_search(target);
+            auto end = chrono::high_resolution_clock::now();
+            totalSearch += chrono::duration_cast<chrono::nanoseconds>(end - start).count();
+
+            start = chrono::high_resolution_clock::now();
+            list.sort();
+            end = chrono::high_resolution_clock::now();
+            totalSort += chrono::duration_cast<chrono::microseconds>(end - start).count();
+        }
+
+        cout << "Search (avg): " << totalSearch / measurements << " ns" << endl;
+        cout << "Sort (avg): " << totalSort / measurements << " Ојs" << endl;
+        cout << endl;
+    }
 }
 
 int main() {
@@ -271,18 +352,8 @@ int main() {
 
     do {
         displayMainMenu();
-
-        string choiceStr;
-        cout << "Enter your choice: ";
-        getline(cin, choiceStr);
-
-        try {
-            mainChoice = stoi(choiceStr);
-        }
-        catch (...) {
-            cout << "Invalid input! Please enter a number.\n";
-            continue;
-        }
+        mainChoice = getNumericInput("Enter your choice: ");
+        if (mainChoice == -1) continue;
 
         switch (mainChoice) {
         case 1:
@@ -293,12 +364,7 @@ int main() {
 
         case 2:
             cout << "\n--- Performance Measurements ---\n";
-            PerformanceTester::performMeasurements();
-            break;
-
-        case 3:
-            cout << "\n--- Individual Operation Tests ---\n";
-            PerformanceTester::measureIndividualOperations();
+            handlePerformanceMeasurements();
             break;
 
         case 0:

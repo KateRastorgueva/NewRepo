@@ -1,4 +1,5 @@
 #include "List.h"
+#include <iostream>
 
 //  онструктор по умолчанию
 template <typename T>
@@ -232,19 +233,40 @@ template <typename T>
 ListNode<T>* DoublyLinkedList<T>::get_tail() const {
     return tail;
 }
-
-// ѕечать в пр€мом пор€дке
 template <typename T>
-void DoublyLinkedList<T>::print_forward() const {
-    // ѕуста€ реализаци€ - вывод будет в main.cpp
+bool DoublyLinkedList<T>::print_forward() const {
+    if (is_empty()) {
+        return false;  // —писок пуст
+    }
+
+    ListNode<T>* current = head;
+    while (current != nullptr) {
+        std::cout << current->data << " ";
+        current = current->next;
+    }
+    std::cout << std::endl;
+    return true; 
 }
 
 // ѕечать в обратном пор€дке
 template <typename T>
-void DoublyLinkedList<T>::print_backward() const {
-    // ѕуста€ реализаци€ - вывод будет в main.cpp
+bool DoublyLinkedList<T>::print_backward() const {
+    if (is_empty()) {
+        return false;
+    }
+
+    ListNode<T>* current = tail;
+    while (current != nullptr) {
+        std::cout << current->data << " ";
+        current = current->prev;
+    }
+    std::cout << std::endl;
+    return true; 
 }
 
+// явна€ инстанциаци€
+template class DoublyLinkedList<int>;
+template class DoublyLinkedList<std::string>;
 // явна€ инстанциаци€ дл€ нужных типов
 template class DoublyLinkedList<int>;
 template class DoublyLinkedList<std::string>;

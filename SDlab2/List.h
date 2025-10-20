@@ -66,8 +66,9 @@ public:
     ListNode<T>* get_tail() const;
 
     //! \brief Печать в прямом порядке.
-    void print_forward() const;
+    bool print_forward() const;
 
     //! \brief Печать в обратном порядке.
-    void print_backward() const;
+    bool print_backward() const;
+
 };

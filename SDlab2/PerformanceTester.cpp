@@ -7,7 +7,6 @@ void PerformanceTester::performMeasurements() {
     vector<int> sizes = { 10, 100, 1000, 5000, 10000 };
 
     for (int size : sizes) {
-        cout << "--- Testing with list size: " << size << " ---" << endl;
 
         int measurements = 5;
         long long totalPushFront = 0, totalPushBack = 0, totalPopFront = 0, totalPopBack = 0;
@@ -45,10 +44,6 @@ void PerformanceTester::performMeasurements() {
             totalPopBack += duration_cast<nanoseconds>(end - start).count();
         }
 
-        cout << "PushFront (avg): " << totalPushFront / measurements << " ns" << endl;
-        cout << "PushBack (avg): " << totalPushBack / measurements << " ns" << endl;
-        cout << "PopFront (avg): " << totalPopFront / measurements << " ns" << endl;
-        cout << "PopBack (avg): " << totalPopBack / measurements << " ns" << endl;
 
         // Измеряем поиск и сортировку
         long long totalSearch = 0, totalSort = 0;
@@ -70,27 +65,18 @@ void PerformanceTester::performMeasurements() {
             totalSort += duration_cast<microseconds>(end - start).count();
         }
 
-        cout << "Search (avg): " << totalSearch / measurements << " ns" << endl;
-        cout << "Sort (avg): " << totalSort / measurements << " μs" << endl;
-        cout << endl;
     }
 }
 
 void PerformanceTester::measureIndividualOperations() {
-    cout << "=== Individual Operation Measurements ===\n" << endl;
-
     vector<int> sizes = { 100, 1000, 10000 };
     for (int size : sizes) {
-        cout << "List size: " << size << endl;
-
         measurePushFront(size);
         measurePushBack(size);
         measurePopFront(size);
         measurePopBack(size);
         measureSearch(size);
         measureSort(size);
-
-        cout << endl;
     }
 }
 
@@ -105,8 +91,6 @@ void PerformanceTester::measurePushFront(int listSize) {
     list.push_front(999);
     auto end = high_resolution_clock::now();
     auto duration = duration_cast<nanoseconds>(end - start);
-
-    cout << "  PushFront: " << duration.count() << " ns" << endl;
 }
 
 void PerformanceTester::measurePushBack(int listSize) {
@@ -119,8 +103,6 @@ void PerformanceTester::measurePushBack(int listSize) {
     list.push_back(999);
     auto end = high_resolution_clock::now();
     auto duration = duration_cast<nanoseconds>(end - start);
-
-    cout << "  PushBack: " << duration.count() << " ns" << endl;
 }
 
 void PerformanceTester::measurePopFront(int listSize) {
@@ -133,8 +115,6 @@ void PerformanceTester::measurePopFront(int listSize) {
     if (!list.is_empty()) list.pop_front();
     auto end = high_resolution_clock::now();
     auto duration = duration_cast<nanoseconds>(end - start);
-
-    cout << "  PopFront: " << duration.count() << " ns" << endl;
 }
 
 void PerformanceTester::measurePopBack(int listSize) {
@@ -147,8 +127,6 @@ void PerformanceTester::measurePopBack(int listSize) {
     if (!list.is_empty()) list.pop_back();
     auto end = high_resolution_clock::now();
     auto duration = duration_cast<nanoseconds>(end - start);
-
-    cout << "  PopBack: " << duration.count() << " ns" << endl;
 }
 
 void PerformanceTester::measureSearch(int listSize) {
@@ -162,8 +140,6 @@ void PerformanceTester::measureSearch(int listSize) {
     list.linear_search(target);
     auto end = high_resolution_clock::now();
     auto duration = duration_cast<nanoseconds>(end - start);
-
-    cout << "  Search: " << duration.count() << " ns" << endl;
 }
 
 void PerformanceTester::measureSort(int listSize) {
@@ -176,6 +152,4 @@ void PerformanceTester::measureSort(int listSize) {
     list.sort();
     auto end = high_resolution_clock::now();
     auto duration = duration_cast<microseconds>(end - start);
-
-    cout << "  Sort: " << duration.count() << " μs" << endl;
 }
