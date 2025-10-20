@@ -30,6 +30,7 @@ static void printListEmptyMessage()
 {
     cout << "List is empty!\n";
 }
+
 static void printElementOperation(const string& value, const string& operation, const string& position = "")
 {
     if (position.empty())
@@ -85,7 +86,7 @@ string getInput(const string& prompt)
     return input;
 }
 
-// Новые функции для устранения дублирования
+// Добавляем недостающие функции
 static void handleAddOperation(DoublyLinkedList<string>& list, const string& position)
 {
     string value = getInput("Enter value to add to " + position + ": ");
@@ -121,22 +122,30 @@ static void handleRemoveEndOperation(DoublyLinkedList<string>& list, const strin
     }
 }
 
-static void handleInsertOperation(DoublyLinkedList<string>& list, const string& positionType)
+// Вспомогательная функция для поиска элемента с обработкой ошибок
+static ListNode<string>* findElementWithValidation(DoublyLinkedList<string>& list, const string& prompt)
 {
     if (list.is_empty())
     {
         printListEmptyMessage();
-        return;
+        return nullptr;
     }
 
-    string target = getInput("Enter target value to insert " + positionType + ": ");
-    auto target_node = list.linear_search(target);
+    string value = getInput(prompt);
+    auto node = list.linear_search(value);
 
-    if (!target_node)
+    if (!node)
     {
-        cout << "Target element '" << target << "' not found!\n";
-        return;
+        cout << "Element '" << value << "' not found!\n";
     }
+
+    return node;
+}
+
+static void handleInsertOperation(DoublyLinkedList<string>& list, const string& positionType)
+{
+    auto target_node = findElementWithValidation(list, "Enter target value to insert " + positionType + ": ");
+    if (!target_node) return;
 
     string value = getInput("Enter value to insert: ");
 
@@ -148,30 +157,19 @@ static void handleInsertOperation(DoublyLinkedList<string>& list, const string& 
     {
         list.insert_before(target_node, value);
     }
-    printElementOperation(value, "inserted " + positionType, target);
+    printElementOperation(value, "inserted " + positionType, target_node->data);
 }
 
 static void handleRemoveByValue(DoublyLinkedList<string>& list)
 {
-    if (list.is_empty())
-    {
-        printListEmptyMessage();
-        return;
-    }
+    auto node = findElementWithValidation(list, "Enter value to remove: ");
+    if (!node) return;
 
-    string value = getInput("Enter value to remove: ");
-    auto node = list.linear_search(value);
-
-    if (node)
-    {
-        list.remove(node);
-        printElementOperation(value, "removed");
-    }
-    else
-    {
-        cout << "Element '" << value << "' not found!\n";
-    }
+    string value = node->data;
+    list.remove(node);
+    printElementOperation(value, "removed");
 }
+
 static void handleSearchOperation(DoublyLinkedList<string>& list)
 {
     if (list.is_empty())
@@ -338,6 +336,7 @@ void handlePerformanceMeasurements()
         cout << endl;
     }
 }
+
 int main()
 {
     srand(time(0));

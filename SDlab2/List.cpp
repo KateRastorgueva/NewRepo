@@ -344,7 +344,6 @@ bool DoublyLinkedList<T>::print_backward() const
 {
     return print_list(false);
 }
-
-// явна€ инстанциаци€
+// дл€ корректной работы шаблонного класса при раздельной компил€ции реализации 
 template class DoublyLinkedList<int>;
 template class DoublyLinkedList<std::string>;
