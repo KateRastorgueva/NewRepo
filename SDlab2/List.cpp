@@ -27,7 +27,7 @@ DoublyLinkedList<T>& DoublyLinkedList<T>::operator=(const DoublyLinkedList& othe
         clear();
         ListNode<T>* current = other.head;
         while (current != nullptr) {
-            push_back(current->data);
+            push_back(current->data); 
             current = current->next;
         }
     }
