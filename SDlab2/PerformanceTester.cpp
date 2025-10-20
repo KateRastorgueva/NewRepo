@@ -1,59 +1,93 @@
-﻿// PerformanceTester.cpp
-#include "PerformanceTester.h"
+﻿#include "PerformanceTester.h"
 #include <cstdlib>
 #include <ctime>
 
-void PerformanceTester::performMeasurements() {
+// Вспомогательная функция для создания заполненного списка
+static DoublyLinkedList<int> create_filled_list(int size)
+{
+    DoublyLinkedList<int> list;
+    for (int i = 0; i < size; i++)
+    {
+        list.push_back(rand() % 1000);
+    }
+    return list;
+}
+
+// Перечисление для типов операций
+enum class OperationType
+{
+    PushFront,
+    PushBack,
+    PopFront,
+    PopBack
+};
+
+// Функция для выполнения и измерения операции
+static long long measure_list_operation(DoublyLinkedList<int>& list, OperationType opType)
+{
+    auto start = high_resolution_clock::now();
+
+    switch (opType)
+    {
+    case OperationType::PushFront:
+        list.push_front(999);
+        break;
+    case OperationType::PushBack:
+        list.push_back(999);
+        break;
+    case OperationType::PopFront:
+        if (!list.is_empty()) list.pop_front();
+        break;
+    case OperationType::PopBack:
+        if (!list.is_empty()) list.pop_back();
+        break;
+    }
+
+    auto end = high_resolution_clock::now();
+    return duration_cast<nanoseconds>(end - start).count();
+}
+
+// Единая шаблонная функция для измерения операций
+template<typename Duration = nanoseconds, typename Operation>
+static void measure_operation(int listSize, Operation op)
+{
+    auto list = create_filled_list(listSize);
+
+    auto start = high_resolution_clock::now();
+    op(list);
+    auto end = high_resolution_clock::now();
+
+    auto duration = duration_cast<Duration>(end - start);
+    // duration можно использовать если нужно, но в оригинале он не используется
+}
+
+void PerformanceTester::performMeasurements()
+{
     vector<int> sizes = { 10, 100, 1000, 5000, 10000 };
 
-    for (int size : sizes) {
-
+    for (int size : sizes)
+    {
         int measurements = 5;
         long long totalPushFront = 0, totalPushBack = 0, totalPopFront = 0, totalPopBack = 0;
 
-        for (int i = 0; i < measurements; i++) {
-            DoublyLinkedList<int> list;
+        for (int i = 0; i < measurements; i++)
+        {
+            auto list = create_filled_list(size);
 
-            // Заполняем список
-            for (int j = 0; j < size; j++) {
-                list.push_back(rand() % 1000);
-            }
-
-            // Измеряем PushFront
-            auto start = high_resolution_clock::now();
-            list.push_front(999);
-            auto end = high_resolution_clock::now();
-            totalPushFront += duration_cast<nanoseconds>(end - start).count();
-
-            // Измеряем PushBack
-            start = high_resolution_clock::now();
-            list.push_back(999);
-            end = high_resolution_clock::now();
-            totalPushBack += duration_cast<nanoseconds>(end - start).count();
-
-            // Измеряем PopFront
-            start = high_resolution_clock::now();
-            if (!list.is_empty()) list.pop_front();
-            end = high_resolution_clock::now();
-            totalPopFront += duration_cast<nanoseconds>(end - start).count();
-
-            // Измеряем PopBack
-            start = high_resolution_clock::now();
-            if (!list.is_empty()) list.pop_back();
-            end = high_resolution_clock::now();
-            totalPopBack += duration_cast<nanoseconds>(end - start).count();
+            // Измеряем все операции через switch case
+            totalPushFront += measure_list_operation(list, OperationType::PushFront);
+            totalPushBack += measure_list_operation(list, OperationType::PushBack);
+            totalPopFront += measure_list_operation(list, OperationType::PopFront);
+            totalPopBack += measure_list_operation(list, OperationType::PopBack);
         }
-
 
         // Измеряем поиск и сортировку
         long long totalSearch = 0, totalSort = 0;
-        for (int i = 0; i < measurements; i++) {
-            DoublyLinkedList<int> list;
-            for (int j = 0; j < size; j++) {
-                list.push_back(rand() % 1000);
-            }
-
+        for (int i = 0; i < measurements; i++)
+        {
+            auto list = create_filled_list(size);
             int target = rand() % 1000;
+
             auto start = high_resolution_clock::now();
             list.linear_search(target);
             auto end = high_resolution_clock::now();
@@ -64,13 +98,14 @@ void PerformanceTester::performMeasurements() {
             end = high_resolution_clock::now();
             totalSort += duration_cast<microseconds>(end - start).count();
         }
-
     }
 }
 
-void PerformanceTester::measureIndividualOperations() {
+void PerformanceTester::measureIndividualOperations()
+{
     vector<int> sizes = { 100, 1000, 10000 };
-    for (int size : sizes) {
+    for (int size : sizes)
+    {
         measurePushFront(size);
         measurePushBack(size);
         measurePopFront(size);
@@ -80,76 +115,51 @@ void PerformanceTester::measureIndividualOperations() {
     }
 }
 
-// Реализации отдельных функций измерений
-void PerformanceTester::measurePushFront(int listSize) {
-    DoublyLinkedList<int> list;
-    for (int i = 0; i < listSize; i++) {
-        list.push_back(rand() % 1000);
-    }
-
-    auto start = high_resolution_clock::now();
-    list.push_front(999);
-    auto end = high_resolution_clock::now();
-    auto duration = duration_cast<nanoseconds>(end - start);
+void PerformanceTester::measurePushFront(int listSize)
+{
+    measure_operation(listSize, [](DoublyLinkedList<int>& list)
+        {
+            list.push_front(999);
+        });
 }
 
-void PerformanceTester::measurePushBack(int listSize) {
-    DoublyLinkedList<int> list;
-    for (int i = 0; i < listSize; i++) {
-        list.push_back(rand() % 1000);
-    }
-
-    auto start = high_resolution_clock::now();
-    list.push_back(999);
-    auto end = high_resolution_clock::now();
-    auto duration = duration_cast<nanoseconds>(end - start);
+void PerformanceTester::measurePushBack(int listSize)
+{
+    measure_operation(listSize, [](DoublyLinkedList<int>& list)
+        {
+            list.push_back(999);
+        });
 }
 
-void PerformanceTester::measurePopFront(int listSize) {
-    DoublyLinkedList<int> list;
-    for (int i = 0; i < listSize; i++) {
-        list.push_back(rand() % 1000);
-    }
-
-    auto start = high_resolution_clock::now();
-    if (!list.is_empty()) list.pop_front();
-    auto end = high_resolution_clock::now();
-    auto duration = duration_cast<nanoseconds>(end - start);
+void PerformanceTester::measurePopFront(int listSize)
+{
+    measure_operation(listSize, [](DoublyLinkedList<int>& list)
+        {
+            if (!list.is_empty()) list.pop_front();
+        });
 }
 
-void PerformanceTester::measurePopBack(int listSize) {
-    DoublyLinkedList<int> list;
-    for (int i = 0; i < listSize; i++) {
-        list.push_back(rand() % 1000);
-    }
-
-    auto start = high_resolution_clock::now();
-    if (!list.is_empty()) list.pop_back();
-    auto end = high_resolution_clock::now();
-    auto duration = duration_cast<nanoseconds>(end - start);
+void PerformanceTester::measurePopBack(int listSize)
+{
+    measure_operation(listSize, [](DoublyLinkedList<int>& list)
+        {
+            if (!list.is_empty()) list.pop_back();
+        });
 }
 
-void PerformanceTester::measureSearch(int listSize) {
-    DoublyLinkedList<int> list;
-    for (int i = 0; i < listSize; i++) {
-        list.push_back(rand() % 1000);
-    }
-
-    int target = rand() % 1000;
-    auto start = high_resolution_clock::now();
-    list.linear_search(target);
-    auto end = high_resolution_clock::now();
-    auto duration = duration_cast<nanoseconds>(end - start);
+void PerformanceTester::measureSearch(int listSize)
+{
+    measure_operation(listSize, [](DoublyLinkedList<int>& list)
+        {
+            int target = rand() % 1000;
+            list.linear_search(target);
+        });
 }
 
-void PerformanceTester::measureSort(int listSize) {
-    DoublyLinkedList<int> list;
-    for (int i = 0; i < listSize; i++) {
-        list.push_back(rand() % 1000);
-    }
-
-    auto start = high_resolution_clock::now();
-    list.sort();
-    auto end = high_resolution_clock::now();
-    auto duration = duration_cast<microseconds>(end - start);
+void PerformanceTester::measureSort(int listSize)
+{
+    measure_operation<microseconds>(listSize, [](DoublyLinkedList<int>& list)
+        {
+            list.sort();
+        });
 }

@@ -8,62 +8,78 @@
 using namespace std;
 
 // Вспомогательные функции для вывода
-void print_forward(const DoublyLinkedList<string>& list) {
+void print_forward(const DoublyLinkedList<string>& list)
+{
     std::cout << "List (forward): ";
-    if (!list.print_forward()) {
+    if (!list.print_forward())
+    {
         std::cout << "List is empty!" << std::endl;
     }
 }
 
-void print_backward(const DoublyLinkedList<string>& list) {
+void print_backward(const DoublyLinkedList<string>& list)
+{
     std::cout << "List (backward): ";
-    if (!list.print_backward()) {
+    if (!list.print_backward())
+    {
         std::cout << "List is empty!" << std::endl;
     }
 }
 
-static void printListEmptyMessage() {
+static void printListEmptyMessage()
+{
     cout << "List is empty!\n";
 }
 
-static void printElementOperation(const string& value, const string& operation, const string& position = "") {
-    if (position.empty()) {
+static void printElementOperation(const string& value, const string& operation, const string& position = "")
+{
+    if (position.empty())
+    {
         cout << "Element '" << value << "' " << operation << ".\n";
     }
-    else {
+    else
+    {
         cout << "Element '" << value << "' " << operation << " " << position << ".\n";
     }
 }
 
-static void printElementFound(const string& value, bool found) {
-    if (found) {
+static void printElementFound(const string& value, bool found)
+{
+    if (found)
+    {
         cout << "Element '" << value << "' found in the list.\n";
     }
-    else {
+    else
+    {
         cout << "Element '" << value << "' not found!\n";
     }
 }
 
-static void printCurrentListState(const DoublyLinkedList<string>& list) {
+static void printCurrentListState(const DoublyLinkedList<string>& list)
+{
     cout << "Current list: ";
     print_forward(list);
 }
 
-static int getNumericInput(const string& prompt) {
+static int getNumericInput(const string& prompt)
+{
     string input;
     cout << prompt;
     getline(cin, input);
-    try {
+    try
+    {
         return stoi(input);
     }
-    catch (...) {
+    catch (...)
+    {
         cout << "Invalid input! Please enter a number.\n";
         return -1;
     }
 }
 
 // Функция для получения ввода (всегда строка)
-string getInput(const string& prompt) {
+string getInput(const string& prompt)
+{
     string input;
     cout << prompt;
     getline(cin, input);
@@ -71,35 +87,45 @@ string getInput(const string& prompt) {
 }
 
 // Новые функции для устранения дублирования
-static void handleAddOperation(DoublyLinkedList<string>& list, const string& position) {
+static void handleAddOperation(DoublyLinkedList<string>& list, const string& position)
+{
     string value = getInput("Enter value to add to " + position + ": ");
-    if (position == "front") {
+    if (position == "front")
+    {
         list.push_front(value);
     }
-    else {
+    else
+    {
         list.push_back(value);
     }
     printElementOperation(value, "added to", position);
 }
 
-static void handleRemoveEndOperation(DoublyLinkedList<string>& list, const string& position) {
-    if (!list.is_empty()) {
+static void handleRemoveEndOperation(DoublyLinkedList<string>& list, const string& position)
+{
+    if (!list.is_empty())
+    {
         string removed = (position == "front") ? list.get_head()->data : list.get_tail()->data;
-        if (position == "front") {
+        if (position == "front")
+        {
             list.pop_front();
         }
-        else {
+        else
+        {
             list.pop_back();
         }
         printElementOperation(removed, "removed from", position);
     }
-    else {
+    else
+    {
         printListEmptyMessage();
     }
 }
 
-static void handleInsertOperation(DoublyLinkedList<string>& list, const string& positionType) {
-    if (list.is_empty()) {
+static void handleInsertOperation(DoublyLinkedList<string>& list, const string& positionType)
+{
+    if (list.is_empty())
+    {
         printListEmptyMessage();
         return;
     }
@@ -108,33 +134,41 @@ static void handleInsertOperation(DoublyLinkedList<string>& list, const string& 
     string value = getInput("Enter value to insert: ");
 
     auto node = list.linear_search(target);
-    if (node) {
-        if (positionType == "after") {
+    if (node)
+    {
+        if (positionType == "after")
+        {
             list.insert_after(node, value);
         }
-        else {
+        else
+        {
             list.insert_before(node, value);
         }
         printElementOperation(value, "inserted " + positionType, target);
     }
 }
 
-static void handleRemoveByValue(DoublyLinkedList<string>& list) {
-    if (list.is_empty()) {
+static void handleRemoveByValue(DoublyLinkedList<string>& list)
+{
+    if (list.is_empty())
+    {
         printListEmptyMessage();
         return;
     }
 
     string value = getInput("Enter value to remove: ");
     auto node = list.linear_search(value);
-    if (node) {
+    if (node)
+    {
         list.remove(node);
         printElementOperation(value, "removed");
     }
 }
 
-static void handleSearchOperation(DoublyLinkedList<string>& list) {
-    if (list.is_empty()) {
+static void handleSearchOperation(DoublyLinkedList<string>& list)
+{
+    if (list.is_empty())
+    {
         printListEmptyMessage();
         return;
     }
@@ -145,14 +179,16 @@ static void handleSearchOperation(DoublyLinkedList<string>& list) {
 }
 
 // Меню
-static void displayMainMenu() {
+static void displayMainMenu()
+{
     cout << "\n=== Doubly Linked List Manager ===\n";
     cout << "1. List Operations\n";
     cout << "2. Performance Measurements\n";
     cout << "0. Exit\n";
 }
 
-static void displayListMenu() {
+static void displayListMenu()
+{
     cout << "\n=== List Operations ===\n";
     cout << "1. Add element to front\n";
     cout << "2. Add element to back\n";
@@ -172,14 +208,16 @@ static void displayListMenu() {
 }
 
 // Функция для работы со списком строк
-void handleListOperations() {
+void handleListOperations()
+{
     DoublyLinkedList<string> list;
     int choice = 0;
 
     // Генерация начального списка
     cout << "Generating initial list with sample values...\n";
     string sampleData[] = { "56", "hello", "41", "world", "19", "test", "100", "data" };
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < 6; i++)
+    {
         list.push_back(sampleData[i]);
     }
 
@@ -187,12 +225,14 @@ void handleListOperations() {
     print_forward(list);
     cout << "Note: All values are stored as strings, including numbers!\n";
 
-    do {
+    do
+    {
         displayListMenu();
         choice = getNumericInput("Enter your choice: ");
         if (choice == -1) continue;
 
-        switch (choice) {
+        switch (choice)
+        {
         case 1:
             handleAddOperation(list, "front");
             break;
@@ -226,11 +266,13 @@ void handleListOperations() {
             break;
 
         case 9:
-            if (!list.is_empty()) {
+            if (!list.is_empty())
+            {
                 list.sort();
                 cout << "List sorted successfully (lexicographical order).\n";
             }
-            else {
+            else
+            {
                 printListEmptyMessage();
             }
             break;
@@ -265,28 +307,32 @@ void handleListOperations() {
         }
 
         // Показываем текущее состояние списка после операций
-        if (choice >= 1 && choice <= 10 && !list.is_empty()) {
+        if (choice >= 1 && choice <= 10 && !list.is_empty())
+        {
             printCurrentListState(list);
         }
 
     } while (choice != 15);
 }
 
-// handlePerformanceMeasurements остается без изменений
-void handlePerformanceMeasurements() {
+void handlePerformanceMeasurements()
+{
     vector<int> sizes = { 10, 100, 1000, 5000, 10000 };
 
-    for (int size : sizes) {
+    for (int size : sizes)
+    {
         cout << "--- Testing with list size: " << size << " ---" << endl;
 
         int measurements = 5;
         long long totalPushFront = 0, totalPushBack = 0, totalPopFront = 0, totalPopBack = 0;
 
-        for (int i = 0; i < measurements; i++) {
+        for (int i = 0; i < measurements; i++)
+        {
             DoublyLinkedList<int> list;
 
             // Заполняем список
-            for (int j = 0; j < size; j++) {
+            for (int j = 0; j < size; j++)
+            {
                 list.push_back(rand() % 1000);
             }
 
@@ -312,16 +358,18 @@ void handlePerformanceMeasurements() {
             totalPopBack += chrono::duration_cast<chrono::nanoseconds>(end - start).count();
         }
 
-        cout << "PushFront (avg): " << totalPushFront / measurements << " ns" << endl;
-        cout << "PushBack (avg): " << totalPushBack / measurements << " ns" << endl;
-        cout << "PopFront (avg): " << totalPopFront / measurements << " ns" << endl;
-        cout << "PopBack (avg): " << totalPopBack / measurements << " ns" << endl;
+        cout << "PushFront (avg): " << totalPushFront / measurements << " micros" << endl;
+        cout << "PushBack (avg): " << totalPushBack / measurements << " micros" << endl;
+        cout << "PopFront (avg): " << totalPopFront / measurements << " micros" << endl;
+        cout << "PopBack (avg): " << totalPopBack / measurements << " micros" << endl;
 
         // Измеряем поиск и сортировку
         long long totalSearch = 0, totalSort = 0;
-        for (int i = 0; i < measurements; i++) {
+        for (int i = 0; i < measurements; i++)
+        {
             DoublyLinkedList<int> list;
-            for (int j = 0; j < size; j++) {
+            for (int j = 0; j < size; j++)
+            {
                 list.push_back(rand() % 1000);
             }
 
@@ -337,25 +385,28 @@ void handlePerformanceMeasurements() {
             totalSort += chrono::duration_cast<chrono::microseconds>(end - start).count();
         }
 
-        cout << "Search (avg): " << totalSearch / measurements << " ns" << endl;
-        cout << "Sort (avg): " << totalSort / measurements << " μs" << endl;
+        cout << "Search (avg): " << totalSearch / measurements << " micros" << endl;
+        cout << "Sort (avg): " << totalSort / measurements << " micros" << endl;
         cout << endl;
     }
 }
 
-int main() {
+int main()
+{
     srand(time(0));
     int mainChoice = 0;
 
     cout << "=== Doubly Linked List Manager ===\n";
     cout << "All data is stored as strings. You can mix numbers and text!\n";
 
-    do {
+    do
+    {
         displayMainMenu();
         mainChoice = getNumericInput("Enter your choice: ");
         if (mainChoice == -1) continue;
 
-        switch (mainChoice) {
+        switch (mainChoice)
+        {
         case 1:
             cout << "\n--- List Operations ---\n";
             cout << "Working with strings. Examples: '56', 'hello', '41', 'test'\n";

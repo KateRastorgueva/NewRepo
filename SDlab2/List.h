@@ -10,6 +10,15 @@ private:
     ListNode<T>* tail;
     int size;
 
+    // Приватные вспомогательные методы
+    void copy_from(const DoublyLinkedList& other);
+    void add_node_to_empty_list(ListNode<T>* new_node);
+    void add_node_to_front(ListNode<T>* new_node);
+    void add_node_to_back(ListNode<T>* new_node);
+    void remove_single_element();
+    void insert_between(ListNode<T>* prev_node, ListNode<T>* next_node, const T& value);
+    bool print_list(bool forward) const;
+
 public:
     //! \brief Конструктор по умолчанию.
     DoublyLinkedList();
@@ -70,5 +79,4 @@ public:
 
     //! \brief Печать в обратном порядке.
     bool print_backward() const;
-
 };
