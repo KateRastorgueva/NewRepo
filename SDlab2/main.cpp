@@ -30,7 +30,6 @@ static void printListEmptyMessage()
 {
     cout << "List is empty!\n";
 }
-
 static void printElementOperation(const string& value, const string& operation, const string& position = "")
 {
     if (position.empty())
@@ -317,80 +316,20 @@ void handleListOperations()
 
 void handlePerformanceMeasurements()
 {
-    vector<int> sizes = { 10, 100, 1000, 5000, 10000 };
+    auto results = PerformanceTester::performMeasurements();
 
-    for (int size : sizes)
+    for (const auto& result : results)
     {
-        cout << "--- Testing with list size: " << size << " ---" << endl;
-
-        int measurements = 5;
-        long long totalPushFront = 0, totalPushBack = 0, totalPopFront = 0, totalPopBack = 0;
-
-        for (int i = 0; i < measurements; i++)
-        {
-            DoublyLinkedList<int> list;
-
-            // Заполняем список
-            for (int j = 0; j < size; j++)
-            {
-                list.push_back(rand() % 1000);
-            }
-
-            // Измеряем операции
-            auto start = chrono::high_resolution_clock::now();
-            list.push_front(999);
-            auto end = chrono::high_resolution_clock::now();
-            totalPushFront += chrono::duration_cast<chrono::nanoseconds>(end - start).count();
-
-            start = chrono::high_resolution_clock::now();
-            list.push_back(999);
-            end = chrono::high_resolution_clock::now();
-            totalPushBack += chrono::duration_cast<chrono::nanoseconds>(end - start).count();
-
-            start = chrono::high_resolution_clock::now();
-            if (!list.is_empty()) list.pop_front();
-            end = chrono::high_resolution_clock::now();
-            totalPopFront += chrono::duration_cast<chrono::nanoseconds>(end - start).count();
-
-            start = chrono::high_resolution_clock::now();
-            if (!list.is_empty()) list.pop_back();
-            end = chrono::high_resolution_clock::now();
-            totalPopBack += chrono::duration_cast<chrono::nanoseconds>(end - start).count();
-        }
-
-        cout << "PushFront (avg): " << totalPushFront / measurements << " micros" << endl;
-        cout << "PushBack (avg): " << totalPushBack / measurements << " micros" << endl;
-        cout << "PopFront (avg): " << totalPopFront / measurements << " micros" << endl;
-        cout << "PopBack (avg): " << totalPopBack / measurements << " micros" << endl;
-
-        // Измеряем поиск и сортировку
-        long long totalSearch = 0, totalSort = 0;
-        for (int i = 0; i < measurements; i++)
-        {
-            DoublyLinkedList<int> list;
-            for (int j = 0; j < size; j++)
-            {
-                list.push_back(rand() % 1000);
-            }
-
-            int target = rand() % 1000;
-            auto start = chrono::high_resolution_clock::now();
-            list.linear_search(target);
-            auto end = chrono::high_resolution_clock::now();
-            totalSearch += chrono::duration_cast<chrono::nanoseconds>(end - start).count();
-
-            start = chrono::high_resolution_clock::now();
-            list.sort();
-            end = chrono::high_resolution_clock::now();
-            totalSort += chrono::duration_cast<chrono::microseconds>(end - start).count();
-        }
-
-        cout << "Search (avg): " << totalSearch / measurements << " micros" << endl;
-        cout << "Sort (avg): " << totalSort / measurements << " micros" << endl;
+        cout << "--- Testing with list size: " << result.size << " ---" << endl;
+        cout << "PushFront (avg): " << result.pushFrontTime << " ns" << endl;
+        cout << "PushBack (avg): " << result.pushBackTime << " ns" << endl;
+        cout << "PopFront (avg): " << result.popFrontTime << " ns" << endl;
+        cout << "PopBack (avg): " << result.popBackTime << " ns" << endl;
+        cout << "Search (avg): " << result.searchTime << " ns" << endl;
+        cout << "Sort (avg): " << result.sortTime << " microseconds" << endl;
         cout << endl;
     }
 }
-
 int main()
 {
     srand(time(0));

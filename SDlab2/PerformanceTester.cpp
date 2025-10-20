@@ -2,8 +2,7 @@
 #include <cstdlib>
 #include <ctime>
 
-// Вспомогательная функция для создания заполненного списка
-static DoublyLinkedList<int> create_filled_list(int size)
+DoublyLinkedList<int> PerformanceTester::create_filled_list(int size)
 {
     DoublyLinkedList<int> list;
     for (int i = 0; i < size; i++)
@@ -13,20 +12,10 @@ static DoublyLinkedList<int> create_filled_list(int size)
     return list;
 }
 
-// Перечисление для типов операций
-enum class OperationType
-{
-    PushFront,
-    PushBack,
-    PopFront,
-    PopBack
-};
-
-// Функция для выполнения и измерения операции
-static long long measure_list_operation(DoublyLinkedList<int>& list, OperationType opType)
+long long PerformanceTester::measure_list_operation(DoublyLinkedList<int>& list, OperationType opType)
 {
     auto start = high_resolution_clock::now();
-
+    
     switch (opType)
     {
     case OperationType::PushFront:
@@ -42,31 +31,21 @@ static long long measure_list_operation(DoublyLinkedList<int>& list, OperationTy
         if (!list.is_empty()) list.pop_back();
         break;
     }
-
+    
     auto end = high_resolution_clock::now();
     return duration_cast<nanoseconds>(end - start).count();
 }
 
-// Единая шаблонная функция для измерения операций
-template<typename Duration = nanoseconds, typename Operation>
-static void measure_operation(int listSize, Operation op)
-{
-    auto list = create_filled_list(listSize);
-
-    auto start = high_resolution_clock::now();
-    op(list);
-    auto end = high_resolution_clock::now();
-
-    auto duration = duration_cast<Duration>(end - start);
-    // duration можно использовать если нужно, но в оригинале он не используется
-}
-
-void PerformanceTester::performMeasurements()
+vector<MeasurementResults> PerformanceTester::performMeasurements()
 {
     vector<int> sizes = { 10, 100, 1000, 5000, 10000 };
+    vector<MeasurementResults> results;
 
     for (int size : sizes)
     {
+        MeasurementResults result;
+        result.size = size;
+        
         int measurements = 5;
         long long totalPushFront = 0, totalPushBack = 0, totalPopFront = 0, totalPopBack = 0;
 
@@ -74,14 +53,17 @@ void PerformanceTester::performMeasurements()
         {
             auto list = create_filled_list(size);
 
-            // Измеряем все операции через switch case
             totalPushFront += measure_list_operation(list, OperationType::PushFront);
             totalPushBack += measure_list_operation(list, OperationType::PushBack);
             totalPopFront += measure_list_operation(list, OperationType::PopFront);
             totalPopBack += measure_list_operation(list, OperationType::PopBack);
         }
 
-        // Измеряем поиск и сортировку
+        result.pushFrontTime = totalPushFront / measurements;
+        result.pushBackTime = totalPushBack / measurements;
+        result.popFrontTime = totalPopFront / measurements;
+        result.popBackTime = totalPopBack / measurements;
+
         long long totalSearch = 0, totalSort = 0;
         for (int i = 0; i < measurements; i++)
         {
@@ -98,7 +80,14 @@ void PerformanceTester::performMeasurements()
             end = high_resolution_clock::now();
             totalSort += duration_cast<microseconds>(end - start).count();
         }
+
+        result.searchTime = totalSearch / measurements;
+        result.sortTime = totalSort / measurements;
+
+        results.push_back(result);
     }
+
+    return results;
 }
 
 void PerformanceTester::measureIndividualOperations()
