@@ -130,21 +130,25 @@ static void handleInsertOperation(DoublyLinkedList<string>& list, const string& 
     }
 
     string target = getInput("Enter target value to insert " + positionType + ": ");
+    auto target_node = list.linear_search(target);
+
+    if (!target_node)
+    {
+        cout << "Target element '" << target << "' not found!\n";
+        return;
+    }
+
     string value = getInput("Enter value to insert: ");
 
-    auto node = list.linear_search(target);
-    if (node)
+    if (positionType == "after")
     {
-        if (positionType == "after")
-        {
-            list.insert_after(node, value);
-        }
-        else
-        {
-            list.insert_before(node, value);
-        }
-        printElementOperation(value, "inserted " + positionType, target);
+        list.insert_after(target_node, value);
     }
+    else
+    {
+        list.insert_before(target_node, value);
+    }
+    printElementOperation(value, "inserted " + positionType, target);
 }
 
 static void handleRemoveByValue(DoublyLinkedList<string>& list)
@@ -157,13 +161,17 @@ static void handleRemoveByValue(DoublyLinkedList<string>& list)
 
     string value = getInput("Enter value to remove: ");
     auto node = list.linear_search(value);
+
     if (node)
     {
         list.remove(node);
         printElementOperation(value, "removed");
     }
+    else
+    {
+        cout << "Element '" << value << "' not found!\n";
+    }
 }
-
 static void handleSearchOperation(DoublyLinkedList<string>& list)
 {
     if (list.is_empty())

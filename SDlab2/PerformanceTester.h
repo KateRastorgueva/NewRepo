@@ -25,8 +25,8 @@ private:
     static DoublyLinkedList<int> create_filled_list(int size);
     enum class OperationType { PushFront, PushBack, PopFront, PopBack };
     static long long measure_list_operation(DoublyLinkedList<int>& list, OperationType opType);
-    template<typename Duration = nanoseconds, typename Operation>
-    static void measure_operation(int listSize, Operation op);
+    static void measure_simple_operation(int listSize, void(*op)(DoublyLinkedList<int>&));
+    static void measure_sort_operation(int listSize);
 
     static void measurePushFront(int listSize);
     static void measurePushBack(int listSize);

@@ -15,7 +15,7 @@ DoublyLinkedList<int> PerformanceTester::create_filled_list(int size)
 long long PerformanceTester::measure_list_operation(DoublyLinkedList<int>& list, OperationType opType)
 {
     auto start = high_resolution_clock::now();
-    
+
     switch (opType)
     {
     case OperationType::PushFront:
@@ -31,9 +31,33 @@ long long PerformanceTester::measure_list_operation(DoublyLinkedList<int>& list,
         if (!list.is_empty()) list.pop_back();
         break;
     }
-    
+
     auto end = high_resolution_clock::now();
     return duration_cast<nanoseconds>(end - start).count();
+}
+
+// Простая функция для операций с nanoseconds
+void PerformanceTester::measure_simple_operation(int listSize, void(*op)(DoublyLinkedList<int>&))
+{
+    auto list = create_filled_list(listSize);
+
+    auto start = high_resolution_clock::now();
+    op(list);
+    auto end = high_resolution_clock::now();
+
+    auto duration = duration_cast<nanoseconds>(end - start);
+}
+
+// Специальная функция для сортировки (microseconds)
+void PerformanceTester::measure_sort_operation(int listSize)
+{
+    auto list = create_filled_list(listSize);
+
+    auto start = high_resolution_clock::now();
+    list.sort();
+    auto end = high_resolution_clock::now();
+
+    auto duration = duration_cast<microseconds>(end - start);
 }
 
 vector<MeasurementResults> PerformanceTester::performMeasurements()
@@ -45,7 +69,7 @@ vector<MeasurementResults> PerformanceTester::performMeasurements()
     {
         MeasurementResults result;
         result.size = size;
-        
+
         int measurements = 5;
         long long totalPushFront = 0, totalPushBack = 0, totalPopFront = 0, totalPopBack = 0;
 
@@ -106,7 +130,7 @@ void PerformanceTester::measureIndividualOperations()
 
 void PerformanceTester::measurePushFront(int listSize)
 {
-    measure_operation(listSize, [](DoublyLinkedList<int>& list)
+    measure_simple_operation(listSize, [](DoublyLinkedList<int>& list)
         {
             list.push_front(999);
         });
@@ -114,7 +138,7 @@ void PerformanceTester::measurePushFront(int listSize)
 
 void PerformanceTester::measurePushBack(int listSize)
 {
-    measure_operation(listSize, [](DoublyLinkedList<int>& list)
+    measure_simple_operation(listSize, [](DoublyLinkedList<int>& list)
         {
             list.push_back(999);
         });
@@ -122,7 +146,7 @@ void PerformanceTester::measurePushBack(int listSize)
 
 void PerformanceTester::measurePopFront(int listSize)
 {
-    measure_operation(listSize, [](DoublyLinkedList<int>& list)
+    measure_simple_operation(listSize, [](DoublyLinkedList<int>& list)
         {
             if (!list.is_empty()) list.pop_front();
         });
@@ -130,7 +154,7 @@ void PerformanceTester::measurePopFront(int listSize)
 
 void PerformanceTester::measurePopBack(int listSize)
 {
-    measure_operation(listSize, [](DoublyLinkedList<int>& list)
+    measure_simple_operation(listSize, [](DoublyLinkedList<int>& list)
         {
             if (!list.is_empty()) list.pop_back();
         });
@@ -138,7 +162,7 @@ void PerformanceTester::measurePopBack(int listSize)
 
 void PerformanceTester::measureSearch(int listSize)
 {
-    measure_operation(listSize, [](DoublyLinkedList<int>& list)
+    measure_simple_operation(listSize, [](DoublyLinkedList<int>& list)
         {
             int target = rand() % 1000;
             list.linear_search(target);
@@ -147,8 +171,5 @@ void PerformanceTester::measureSearch(int listSize)
 
 void PerformanceTester::measureSort(int listSize)
 {
-    measure_operation<microseconds>(listSize, [](DoublyLinkedList<int>& list)
-        {
-            list.sort();
-        });
+    measure_sort_operation(listSize);
 }
