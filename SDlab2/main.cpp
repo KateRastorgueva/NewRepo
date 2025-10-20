@@ -4,6 +4,7 @@
 #include <ctime>
 #include "List.h"
 #include "PerformanceTester.h"
+#include <cctype>;
 
 using namespace std;
 
@@ -60,23 +61,28 @@ static void printCurrentListState(const DoublyLinkedList<string>& list)
     cout << "Current list: ";
     print_forward(list);
 }
-
+// переименовать, PerformanceTester.cpp сделать проще (просто вводим 10, 100 и измеряем), исправить валидацию
 static int getNumericInput(const string& prompt)
 {
     string input;
     cout << prompt;
     getline(cin, input);
-    try
-    {
+
+    for (char c : input) {
+        if (c < '0' || c > '9') {
+            cout << "Invalid input! Please enter digits only.\n";
+            return -1;
+        }
+    }
+
+    try {
         return stoi(input);
     }
-    catch (...)
-    {
-        cout << "Invalid input! Please enter a number.\n";
+    catch (exception& e) {
+        cout << "Invalid input! Please enter digits only.\n";
         return -1;
     }
 }
-
 // Функция для получения ввода (всегда строка)
 string getInput(const string& prompt)
 {
@@ -322,17 +328,18 @@ void handleListOperations()
 
 void handlePerformanceMeasurements()
 {
-    auto results = PerformanceTester::performMeasurements();
+    int resultsCount;
+    auto results = PerformanceTester::performMeasurements(resultsCount);
 
-    for (const auto& result : results)
+    for (int i = 0; i < resultsCount; i++)
     {
-        cout << "--- Testing with list size: " << result.size << " ---" << endl;
-        cout << "PushFront (avg): " << result.pushFrontTime << " ns" << endl;
-        cout << "PushBack (avg): " << result.pushBackTime << " ns" << endl;
-        cout << "PopFront (avg): " << result.popFrontTime << " ns" << endl;
-        cout << "PopBack (avg): " << result.popBackTime << " ns" << endl;
-        cout << "Search (avg): " << result.searchTime << " ns" << endl;
-        cout << "Sort (avg): " << result.sortTime << " microseconds" << endl;
+        cout << "--- Testing with list size: " << results[i].size << " ---" << endl;
+        cout << "PushFront (avg): " << results[i].pushFrontTime << " ns" << endl;
+        cout << "PushBack (avg): " << results[i].pushBackTime << " ns" << endl;
+        cout << "PopFront (avg): " << results[i].popFrontTime << " ns" << endl;
+        cout << "PopBack (avg): " << results[i].popBackTime << " ns" << endl;
+        cout << "Search (avg): " << results[i].searchTime << " ns" << endl;
+        cout << "Sort (avg): " << results[i].sortTime << " microseconds" << endl;
         cout << endl;
     }
 }

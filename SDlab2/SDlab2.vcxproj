@@ -132,7 +132,9 @@
     <ClCompile Include="PerformanceTester.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="List.h" />
+    <ClInclude Include="List.h">
+      <DeploymentContent>false</DeploymentContent>
+    </ClInclude>
     <ClInclude Include="ListItem.h" />
     <ClInclude Include="PerformanceTester.h" />
   </ItemGroup>
