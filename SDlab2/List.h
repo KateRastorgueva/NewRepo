@@ -17,7 +17,6 @@ private:
     void AddNodeToBack(ListNode<T>* newNode);
     void RemoveSingleElement();
     void InsertBetween(ListNode<T>* prevNode, ListNode<T>* nextNode, const T& value);
-    bool PrintList(bool forward) const;
 
 public:
     // Конструкторы и деструктор
@@ -45,8 +44,4 @@ public:
     int GetSize() const;
     ListNode<T>* GetHead() const;
     ListNode<T>* GetTail() const;
-
-    // Вывод
-    bool PrintForward() const;
-    bool PrintBackward() const;
 };

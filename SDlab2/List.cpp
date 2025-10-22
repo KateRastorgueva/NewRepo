@@ -1,6 +1,6 @@
 #include "List.h"
 #include <iostream>
-
+using namespace std;
 // Конструктор по умолчанию
 template <typename T>
 DoublyLinkedList<T>::DoublyLinkedList() : _head(nullptr), _tail(nullptr), _size(0)
@@ -21,8 +21,8 @@ void DoublyLinkedList<T>::CopyFrom(const DoublyLinkedList& other)
     ListNode<T>* current = other._head;
     while (current != nullptr)
     {
-        PushBack(current->data);
-        current = current->next;
+        PushBack(current->Data);
+        current = current->Next;
     }
 }
 
@@ -55,16 +55,16 @@ void DoublyLinkedList<T>::AddNodeToEmptyList(ListNode<T>* newNode)
 template <typename T>
 void DoublyLinkedList<T>::AddNodeToFront(ListNode<T>* newNode)
 {
-    newNode->next = _head;
-    _head->prev = newNode;
+    newNode->Next = _head;
+    _head->Prev = newNode;
     _head = newNode;
 }
 
 template <typename T>
 void DoublyLinkedList<T>::AddNodeToBack(ListNode<T>* newNode)
 {
-    _tail->next = newNode;
-    newNode->prev = _tail;
+    _tail->Next = newNode;
+    newNode->Prev = _tail;
     _tail = newNode;
 }
 
@@ -125,8 +125,8 @@ void DoublyLinkedList<T>::PopFront()
     }
     else
     {
-        _head = _head->next;
-        _head->prev = nullptr;
+        _head = _head->Next;
+        _head->Prev = nullptr;
     }
     delete temp;
     _size--;
@@ -148,8 +148,8 @@ void DoublyLinkedList<T>::PopBack()
     }
     else
     {
-        _tail = _tail->prev;
-        _tail->next = nullptr;
+        _tail = _tail->Prev;
+        _tail->Next = nullptr;
     }
     delete temp;
     _size--;
@@ -160,10 +160,10 @@ template <typename T>
 void DoublyLinkedList<T>::InsertBetween(ListNode<T>* prevNode, ListNode<T>* nextNode, const T& value)
 {
     ListNode<T>* newNode = new ListNode<T>(value);
-    newNode->prev = prevNode;
-    newNode->next = nextNode;
-    prevNode->next = newNode;
-    nextNode->prev = newNode;
+    newNode->Prev = prevNode;
+    newNode->Next = nextNode;
+    prevNode->Next = newNode;
+    nextNode->Prev = newNode;
     _size++;
 }
 
@@ -182,7 +182,7 @@ void DoublyLinkedList<T>::InsertAfter(ListNode<T>* node, const T& value)
     }
     else
     {
-        InsertBetween(node, node->next, value);
+        InsertBetween(node, node->Next, value);
     }
 }
 
@@ -201,7 +201,7 @@ void DoublyLinkedList<T>::InsertBefore(ListNode<T>* node, const T& value)
     }
     else
     {
-        InsertBetween(node->prev, node, value);
+        InsertBetween(node->Prev, node, value);
     }
 }
 
@@ -224,8 +224,8 @@ void DoublyLinkedList<T>::Remove(ListNode<T>* node)
     }
     else
     {
-        node->prev->next = node->next;
-        node->next->prev = node->prev;
+        node->Prev->Next = node->Next;
+        node->Next->Prev = node->Prev;
         delete node;
         _size--;
     }
@@ -248,11 +248,11 @@ ListNode<T>* DoublyLinkedList<T>::LinearSearch(const T& value)
     ListNode<T>* current = _head;
     while (current != nullptr)
     {
-        if (current->data == value)
+        if (current->Data == value)
         {
             return current;
         }
-        current = current->next;
+        current = current->Next;
     }
     return nullptr;
 }
@@ -269,17 +269,17 @@ void DoublyLinkedList<T>::Sort()
         swapped = false;
         ListNode<T>* current = _head;
 
-        while (current != nullptr && current->next != nullptr)
+        while (current != nullptr && current->Next != nullptr)
         {
-            if (current->data > current->next->data)
+            if (current->Data > current->Next->Data)
             {
                 // Обмен данными
-                T temp = current->data;
-                current->data = current->next->data;
-                current->next->data = temp;
+                T temp = current->Data;
+                current->Data = current->Next->Data;
+                current->Next->Data = temp;
                 swapped = true;
             }
-            current = current->next;
+            current = current->Next;
         }
     } while (swapped);
 }
@@ -312,39 +312,7 @@ ListNode<T>* DoublyLinkedList<T>::GetTail() const
     return _tail;
 }
 
-// Вспомогательная функция для печати списка
-template <typename T>
-bool DoublyLinkedList<T>::PrintList(bool forward) const
-{
-    if (IsEmpty())
-    {
-        return false;
-    }
-
-    ListNode<T>* current = forward ? _head : _tail;
-    while (current != nullptr)
-    {
-        std::cout << current->data << " ";
-        current = forward ? current->next : current->prev;
-    }
-    std::cout << std::endl;
-    return true;
-}
-
-// Печать в прямом порядке
-template <typename T>
-bool DoublyLinkedList<T>::PrintForward() const
-{
-    return PrintList(true);
-}
-
-// Печать в обратном порядке
-template <typename T>
-bool DoublyLinkedList<T>::PrintBackward() const
-{
-    return PrintList(false);
-}
 
 // для корректной работы шаблонного класса при раздельной компиляции реализации 
 template class DoublyLinkedList<int>;
-template class DoublyLinkedList<std::string>;
+template class DoublyLinkedList<string>;

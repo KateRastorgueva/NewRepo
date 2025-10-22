@@ -3,9 +3,9 @@
 template <typename T>
 class ListNode {
 public:
-    T data;
-    ListNode<T>* next;
-    ListNode<T>* prev;
+    T Data;
+    ListNode<T>* Next;
+    ListNode<T>* Prev;
 
-    ListNode(const T& value) : data(value), next(nullptr), prev(nullptr) {}
+    ListNode(const T& value) : Data(value), Next(nullptr), Prev(nullptr) {}
 };

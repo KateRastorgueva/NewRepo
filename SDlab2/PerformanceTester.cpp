@@ -15,9 +15,9 @@ DoublyLinkedList<int> PerformanceTester::CreateFilledList(int size) {
 }
 
 static long MeasureOperationTime(const std::function<void()>& operation, bool useMicroseconds = false) {
-    auto begin = steady_clock::now();
+    std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
     operation();
-    auto end = steady_clock::now();
+    std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 
     if (useMicroseconds) {
         return duration_cast<microseconds>(end - begin).count();
@@ -42,25 +42,14 @@ MeasurementResults* PerformanceTester::PerformMeasurements(int& resultsCount) {
         long totalSearch = 0, totalSort = 0;
 
         for (int j = 0; j < measurements; j++) {
-            auto list = CreateFilledList(size);
+            DoublyLinkedList<int> list = CreateFilledList(size);
 
-            // Push Front
             totalPushFront += MeasureOperationTime([&list]() { list.PushFront(999); });
-
-            // Push Back
             totalPushBack += MeasureOperationTime([&list]() { list.PushBack(999); });
-
-            // Pop Front
             totalPopFront += MeasureOperationTime([&list]() { if (!list.IsEmpty()) list.PopFront(); });
-
-            // Pop Back
             totalPopBack += MeasureOperationTime([&list]() { if (!list.IsEmpty()) list.PopBack(); });
-
-            // Search
             int target = rand() % 1000;
             totalSearch += MeasureOperationTime([&list, target]() { list.LinearSearch(target); });
-
-            // Sort
             totalSort += MeasureOperationTime([&list]() { list.Sort(); }, true);
         }
 
