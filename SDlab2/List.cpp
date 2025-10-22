@@ -3,7 +3,7 @@
 
 // Конструктор по умолчанию
 template <typename T>
-DoublyLinkedList<T>::DoublyLinkedList() : head(nullptr), tail(nullptr), size(0)
+DoublyLinkedList<T>::DoublyLinkedList() : _head(nullptr), _tail(nullptr), _size(0)
 {
 }
 
@@ -11,26 +11,26 @@ DoublyLinkedList<T>::DoublyLinkedList() : head(nullptr), tail(nullptr), size(0)
 template <typename T>
 DoublyLinkedList<T>::~DoublyLinkedList()
 {
-    clear();
+    Clear();
 }
 
 // Вспомогательная функция для копирования списка
 template <typename T>
-void DoublyLinkedList<T>::copy_from(const DoublyLinkedList& other)
+void DoublyLinkedList<T>::CopyFrom(const DoublyLinkedList& other)
 {
-    ListNode<T>* current = other.head;
+    ListNode<T>* current = other._head;
     while (current != nullptr)
     {
-        push_back(current->data);
+        PushBack(current->data);
         current = current->next;
     }
 }
 
 // Конструктор копирования
 template <typename T>
-DoublyLinkedList<T>::DoublyLinkedList(const DoublyLinkedList& other) : head(nullptr), tail(nullptr), size(0)
+DoublyLinkedList<T>::DoublyLinkedList(const DoublyLinkedList& other) : _head(nullptr), _tail(nullptr), _size(0)
 {
-    copy_from(other);
+    CopyFrom(other);
 }
 
 // Оператор присваивания
@@ -39,213 +39,213 @@ DoublyLinkedList<T>& DoublyLinkedList<T>::operator=(const DoublyLinkedList& othe
 {
     if (this != &other)
     {
-        clear();
-        copy_from(other);
+        Clear();
+        CopyFrom(other);
     }
     return *this;
 }
 
 // Вспомогательная функция для добавления узла
 template <typename T>
-void DoublyLinkedList<T>::add_node_to_empty_list(ListNode<T>* new_node)
+void DoublyLinkedList<T>::AddNodeToEmptyList(ListNode<T>* newNode)
 {
-    head = tail = new_node;
+    _head = _tail = newNode;
 }
 
 template <typename T>
-void DoublyLinkedList<T>::add_node_to_front(ListNode<T>* new_node)
+void DoublyLinkedList<T>::AddNodeToFront(ListNode<T>* newNode)
 {
-    new_node->next = head;
-    head->prev = new_node;
-    head = new_node;
+    newNode->next = _head;
+    _head->prev = newNode;
+    _head = newNode;
 }
 
 template <typename T>
-void DoublyLinkedList<T>::add_node_to_back(ListNode<T>* new_node)
+void DoublyLinkedList<T>::AddNodeToBack(ListNode<T>* newNode)
 {
-    tail->next = new_node;
-    new_node->prev = tail;
-    tail = new_node;
+    _tail->next = newNode;
+    newNode->prev = _tail;
+    _tail = newNode;
 }
 
 // Добавление в начало
 template <typename T>
-void DoublyLinkedList<T>::push_front(const T& value)
+void DoublyLinkedList<T>::PushFront(const T& value)
 {
-    ListNode<T>* new_node = new ListNode<T>(value);
+    ListNode<T>* newNode = new ListNode<T>(value);
 
-    if (is_empty())
+    if (IsEmpty())
     {
-        add_node_to_empty_list(new_node);
+        AddNodeToEmptyList(newNode);
     }
     else
     {
-        add_node_to_front(new_node);
+        AddNodeToFront(newNode);
     }
-    size++;
+    _size++;
 }
 
 // Добавление в конец
 template <typename T>
-void DoublyLinkedList<T>::push_back(const T& value)
+void DoublyLinkedList<T>::PushBack(const T& value)
 {
-    ListNode<T>* new_node = new ListNode<T>(value);
+    ListNode<T>* newNode = new ListNode<T>(value);
 
-    if (is_empty())
+    if (IsEmpty())
     {
-        add_node_to_empty_list(new_node);
+        AddNodeToEmptyList(newNode);
     }
     else
     {
-        add_node_to_back(new_node);
+        AddNodeToBack(newNode);
     }
-    size++;
+    _size++;
 }
 
 // Вспомогательная функция для удаления единственного элемента
 template <typename T>
-void DoublyLinkedList<T>::remove_single_element()
+void DoublyLinkedList<T>::RemoveSingleElement()
 {
-    head = tail = nullptr;
+    _head = _tail = nullptr;
 }
 
 // Удаление из начала
 template <typename T>
-void DoublyLinkedList<T>::pop_front()
+void DoublyLinkedList<T>::PopFront()
 {
-    if (is_empty())
+    if (IsEmpty())
     {
         return;
     }
 
-    ListNode<T>* temp = head;
-    if (head == tail)
+    ListNode<T>* temp = _head;
+    if (_head == _tail)
     {
-        remove_single_element();
+        RemoveSingleElement();
     }
     else
     {
-        head = head->next;
-        head->prev = nullptr;
+        _head = _head->next;
+        _head->prev = nullptr;
     }
     delete temp;
-    size--;
+    _size--;
 }
 
 // Удаление из конца
 template <typename T>
-void DoublyLinkedList<T>::pop_back()
+void DoublyLinkedList<T>::PopBack()
 {
-    if (is_empty())
+    if (IsEmpty())
     {
         return;
     }
 
-    ListNode<T>* temp = tail;
-    if (head == tail)
+    ListNode<T>* temp = _tail;
+    if (_head == _tail)
     {
-        remove_single_element();
+        RemoveSingleElement();
     }
     else
     {
-        tail = tail->prev;
-        tail->next = nullptr;
+        _tail = _tail->prev;
+        _tail->next = nullptr;
     }
     delete temp;
-    size--;
+    _size--;
 }
 
 // Вспомогательная функция для вставки между узлами
 template <typename T>
-void DoublyLinkedList<T>::insert_between(ListNode<T>* prev_node, ListNode<T>* next_node, const T& value)
+void DoublyLinkedList<T>::InsertBetween(ListNode<T>* prevNode, ListNode<T>* nextNode, const T& value)
 {
-    ListNode<T>* new_node = new ListNode<T>(value);
-    new_node->prev = prev_node;
-    new_node->next = next_node;
-    prev_node->next = new_node;
-    next_node->prev = new_node;
-    size++;
+    ListNode<T>* newNode = new ListNode<T>(value);
+    newNode->prev = prevNode;
+    newNode->next = nextNode;
+    prevNode->next = newNode;
+    nextNode->prev = newNode;
+    _size++;
 }
 
 // Вставка после определенного элемента
 template <typename T>
-void DoublyLinkedList<T>::insert_after(ListNode<T>* node, const T& value)
+void DoublyLinkedList<T>::InsertAfter(ListNode<T>* node, const T& value)
 {
     if (node == nullptr)
     {
         return;
     }
 
-    if (node == tail)
+    if (node == _tail)
     {
-        push_back(value);
+        PushBack(value);
     }
     else
     {
-        insert_between(node, node->next, value);
+        InsertBetween(node, node->next, value);
     }
 }
 
 // Вставка перед определенного элемента
 template <typename T>
-void DoublyLinkedList<T>::insert_before(ListNode<T>* node, const T& value)
+void DoublyLinkedList<T>::InsertBefore(ListNode<T>* node, const T& value)
 {
     if (node == nullptr)
     {
         return;
     }
 
-    if (node == head)
+    if (node == _head)
     {
-        push_front(value);
+        PushFront(value);
     }
     else
     {
-        insert_between(node->prev, node, value);
+        InsertBetween(node->prev, node, value);
     }
 }
 
 // Удаление элемента
 template <typename T>
-void DoublyLinkedList<T>::remove(ListNode<T>* node)
+void DoublyLinkedList<T>::Remove(ListNode<T>* node)
 {
     if (node == nullptr)
     {
         return;
     }
 
-    if (node == head)
+    if (node == _head)
     {
-        pop_front();
+        PopFront();
     }
-    else if (node == tail)
+    else if (node == _tail)
     {
-        pop_back();
+        PopBack();
     }
     else
     {
         node->prev->next = node->next;
         node->next->prev = node->prev;
         delete node;
-        size--;
+        _size--;
     }
 }
 
 // Очистка списка
 template <typename T>
-void DoublyLinkedList<T>::clear()
+void DoublyLinkedList<T>::Clear()
 {
-    while (!is_empty())
+    while (!IsEmpty())
     {
-        pop_front();
+        PopFront();
     }
 }
 
 // Линейный поиск
 template <typename T>
-ListNode<T>* DoublyLinkedList<T>::linear_search(const T& value)
+ListNode<T>* DoublyLinkedList<T>::LinearSearch(const T& value)
 {
-    ListNode<T>* current = head;
+    ListNode<T>* current = _head;
     while (current != nullptr)
     {
         if (current->data == value)
@@ -259,15 +259,15 @@ ListNode<T>* DoublyLinkedList<T>::linear_search(const T& value)
 
 // Сортировка (пузырьковая)
 template <typename T>
-void DoublyLinkedList<T>::sort()
+void DoublyLinkedList<T>::Sort()
 {
-    if (size <= 1) return;
+    if (_size <= 1) return;
 
     bool swapped;
     do
     {
         swapped = false;
-        ListNode<T>* current = head;
+        ListNode<T>* current = _head;
 
         while (current != nullptr && current->next != nullptr)
         {
@@ -286,42 +286,42 @@ void DoublyLinkedList<T>::sort()
 
 // Проверка на пустоту
 template <typename T>
-bool DoublyLinkedList<T>::is_empty() const
+bool DoublyLinkedList<T>::IsEmpty() const
 {
-    return head == nullptr;
+    return _head == nullptr;
 }
 
 // Получение размера
 template <typename T>
-int DoublyLinkedList<T>::get_size() const
+int DoublyLinkedList<T>::GetSize() const
 {
-    return size;
+    return _size;
 }
 
 // Получение головы
 template <typename T>
-ListNode<T>* DoublyLinkedList<T>::get_head() const
+ListNode<T>* DoublyLinkedList<T>::GetHead() const
 {
-    return head;
+    return _head;
 }
 
 // Получение хвоста
 template <typename T>
-ListNode<T>* DoublyLinkedList<T>::get_tail() const
+ListNode<T>* DoublyLinkedList<T>::GetTail() const
 {
-    return tail;
+    return _tail;
 }
 
 // Вспомогательная функция для печати списка
 template <typename T>
-bool DoublyLinkedList<T>::print_list(bool forward) const
+bool DoublyLinkedList<T>::PrintList(bool forward) const
 {
-    if (is_empty())
+    if (IsEmpty())
     {
         return false;
     }
 
-    ListNode<T>* current = forward ? head : tail;
+    ListNode<T>* current = forward ? _head : _tail;
     while (current != nullptr)
     {
         std::cout << current->data << " ";
@@ -333,17 +333,18 @@ bool DoublyLinkedList<T>::print_list(bool forward) const
 
 // Печать в прямом порядке
 template <typename T>
-bool DoublyLinkedList<T>::print_forward() const
+bool DoublyLinkedList<T>::PrintForward() const
 {
-    return print_list(true);
+    return PrintList(true);
 }
 
 // Печать в обратном порядке
 template <typename T>
-bool DoublyLinkedList<T>::print_backward() const
+bool DoublyLinkedList<T>::PrintBackward() const
 {
-    return print_list(false);
+    return PrintList(false);
 }
+
 // для корректной работы шаблонного класса при раздельной компиляции реализации 
 template class DoublyLinkedList<int>;
 template class DoublyLinkedList<std::string>;

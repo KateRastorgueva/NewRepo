@@ -1,82 +1,52 @@
 #pragma once
-#include "ListItem.h"
+#include "ListNode.h"
 #include <iostream>
 #include <string>
 
 template <typename T>
 class DoublyLinkedList {
 private:
-    ListNode<T>* head;
-    ListNode<T>* tail;
-    int size;
+    ListNode<T>* _head;
+    ListNode<T>* _tail;
+    int _size;
 
     // Приватные вспомогательные методы
-    void copy_from(const DoublyLinkedList& other);
-    void add_node_to_empty_list(ListNode<T>* new_node);
-    void add_node_to_front(ListNode<T>* new_node);
-    void add_node_to_back(ListNode<T>* new_node);
-    void remove_single_element();
-    void insert_between(ListNode<T>* prev_node, ListNode<T>* next_node, const T& value);
-    bool print_list(bool forward) const;
+    void CopyFrom(const DoublyLinkedList& other);
+    void AddNodeToEmptyList(ListNode<T>* newNode);
+    void AddNodeToFront(ListNode<T>* newNode);
+    void AddNodeToBack(ListNode<T>* newNode);
+    void RemoveSingleElement();
+    void InsertBetween(ListNode<T>* prevNode, ListNode<T>* nextNode, const T& value);
+    bool PrintList(bool forward) const;
 
 public:
-    //! \brief Конструктор по умолчанию.
+    // Конструкторы и деструктор
     DoublyLinkedList();
-
-    //! \brief Деструктор.
     ~DoublyLinkedList();
-
-    //! \brief Конструктор копирования.
     DoublyLinkedList(const DoublyLinkedList& other);
-
-    //! \brief Оператор присваивания.
     DoublyLinkedList& operator=(const DoublyLinkedList& other);
 
-    //! \brief Добавление в начало.
-    void push_front(const T& value);
+    // Основные операции
+    void PushFront(const T& value);
+    void PushBack(const T& value);
+    void PopFront();
+    void PopBack();
+    void InsertAfter(ListNode<T>* node, const T& value);
+    void InsertBefore(ListNode<T>* node, const T& value);
+    void Remove(ListNode<T>* node);
+    void Clear();
 
-    //! \brief Добавление в конец.
-    void push_back(const T& value);
+    // Поиск и сортировка
+    ListNode<T>* LinearSearch(const T& value);
+    void Sort();
 
-    //! \brief Удаление из начала.
-    void pop_front();
+    // Геттеры и проверки
+    bool IsEmpty() const;
+    int GetSize() const;
+    ListNode<T>* GetHead() const;
+    ListNode<T>* GetTail() const;
 
-    //! \brief Удаление из конца.
-    void pop_back();
-
-    //! \brief Вставка после определенного элемента.
-    void insert_after(ListNode<T>* node, const T& value);
-
-    //! \brief Вставка перед определенным элементом.
-    void insert_before(ListNode<T>* node, const T& value);
-
-    //! \brief Удаление элемента.
-    void remove(ListNode<T>* node);
-
-    //! \brief Очистка списка.
-    void clear();
-
-    //! \brief Линейный поиск.
-    ListNode<T>* linear_search(const T& value);
-
-    //! \brief Сортировка (пузырьковая).
-    void sort();
-
-    //! \brief Проверка на пустоту.
-    bool is_empty() const;
-
-    //! \brief Получение размера.
-    int get_size() const;
-
-    //! \brief Получение головы.
-    ListNode<T>* get_head() const;
-
-    //! \brief Получение хвоста.
-    ListNode<T>* get_tail() const;
-
-    //! \brief Печать в прямом порядке.
-    bool print_forward() const;
-
-    //! \brief Печать в обратном порядке.
-    bool print_backward() const;
+    // Вывод
+    bool PrintForward() const;
+    bool PrintBackward() const;
 };

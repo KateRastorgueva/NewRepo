@@ -6,21 +6,20 @@
 using namespace std;
 using namespace std::chrono;
 
-
 struct MeasurementResults {
-    int size;
-    long pushFrontTime;
-    long pushBackTime;
-    long popFrontTime;
-    long popBackTime;
-    long searchTime;
-    long sortTime;
+    int Size;
+    long PushFrontTime;
+    long PushBackTime;
+    long PopFrontTime;
+    long PopBackTime;
+    long SearchTime;
+    long SortTime;
 };
 
 class PerformanceTester {
 private:
-    static DoublyLinkedList<int> create_filled_list(int size);
+    static DoublyLinkedList<int> CreateFilledList(int size);
 
 public:
-    static MeasurementResults* performMeasurements(int& resultsCount);
+    static MeasurementResults* PerformMeasurements(int& resultsCount);
 };

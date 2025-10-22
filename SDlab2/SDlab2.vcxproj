@@ -135,7 +135,7 @@
     <ClInclude Include="List.h">
       <DeploymentContent>false</DeploymentContent>
     </ClInclude>
-    <ClInclude Include="ListItem.h" />
+    <ClInclude Include="ListNode.h" />
     <ClInclude Include="PerformanceTester.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
