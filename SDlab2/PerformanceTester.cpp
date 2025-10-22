@@ -37,7 +37,7 @@ MeasurementResults* PerformanceTester::PerformMeasurements(int& resultsCount) {
     for (int i = 0; i < sizesCount; i++) {
         int size = sizes[i];
         results[i].Size = size;
-        const int measurements = 3;
+        const int measurements = 20;
         long totalPushFront = 0, totalPushBack = 0, totalPopFront = 0, totalPopBack = 0;
         long totalSearch = 0, totalSort = 0;
 
