@@ -13,8 +13,8 @@ DoublyLinkedList<int> PerformanceTester::CreateFilledList(int size) {
     }
     return list;
 }
-
-static long MeasureOperationTime(const std::function<void()>& operation, bool useMicroseconds = false) {
+template<typename Func>
+static long MeasureOperationTime(Func operation, bool useMicroseconds = false) {
     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
     operation();
     std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
@@ -38,8 +38,7 @@ MeasurementResults* PerformanceTester::PerformMeasurements(int& resultsCount) {
         int size = sizes[i];
         results[i].Size = size;
         const int measurements = 20;
-        long totalPushFront = 0, totalPushBack = 0, totalPopFront = 0, totalPopBack = 0;
-        long totalSearch = 0, totalSort = 0;
+        long totalPushFront = 0, totalPushBack = 0, totalPopFront = 0, totalPopBack = 0, totalSearch = 0, totalSort = 0;
 
         for (int j = 0; j < measurements; j++) {
             DoublyLinkedList<int> list = CreateFilledList(size);
@@ -63,3 +62,83 @@ MeasurementResults* PerformanceTester::PerformMeasurements(int& resultsCount) {
 
     return results;
 }
+/*#include "PerformanceTester.h"
+#include <cstdlib>
+#include <ctime>
+#include <chrono>
+
+using namespace std::chrono;
+
+DoublyLinkedList<int> PerformanceTester::CreateFilledList(int size) {
+    DoublyLinkedList<int> list;
+    for (int i = 0; i < size; i++) {
+        list.PushBack(rand() % 1000);
+    }
+    return list;
+}
+
+MeasurementResults* PerformanceTester::PerformMeasurements(int& resultsCount) {
+    const int sizesCount = 5;
+    int sizes[sizesCount] = { 10, 100, 1000, 5000, 10000 };
+    resultsCount = sizesCount;
+
+    static MeasurementResults results[sizesCount];
+
+    for (int i = 0; i < sizesCount; i++) {
+        int size = sizes[i];
+        results[i].Size = size;
+        const int measurements = 20;
+        long totalPushFront = 0, totalPushBack = 0, totalPopFront = 0, totalPopBack = 0;
+        long totalSearch = 0, totalSort = 0;
+
+        for (int j = 0; j < measurements; j++) {
+            DoublyLinkedList<int> list = CreateFilledList(size);
+
+            // PushFront 
+            steady_clock::time_point begin1 = steady_clock::now();
+            list.PushFront(999);
+            steady_clock::time_point end1 = steady_clock::now();
+            totalPushFront += duration_cast<nanoseconds>(end1 - begin1).count();
+
+            // PushBack 
+            steady_clock::time_point begin2 = steady_clock::now();
+            list.PushBack(999);
+            steady_clock::time_point end2 = steady_clock::now();
+            totalPushBack += duration_cast<nanoseconds>(end2 - begin2).count();
+
+            // PopFront
+            steady_clock::time_point begin3 = steady_clock::now();
+            if (!list.IsEmpty()) list.PopFront();
+            steady_clock::time_point end3 = steady_clock::now();
+            totalPopFront += duration_cast<nanoseconds>(end3 - begin3).count();
+
+            // PopBack 
+            steady_clock::time_point begin4 = steady_clock::now();
+            if (!list.IsEmpty()) list.PopBack();
+            steady_clock::time_point end4 = steady_clock::now();
+            totalPopBack += duration_cast<nanoseconds>(end4 - begin4).count();
+
+            // Search 
+            int target = rand() % 1000;
+            steady_clock::time_point begin5 = steady_clock::now();
+            list.LinearSearch(target);
+            steady_clock::time_point end5 = steady_clock::now();
+            totalSearch += duration_cast<nanoseconds>(end5 - begin5).count();
+
+            // Sort 
+            steady_clock::time_point begin6 = steady_clock::now();
+            list.Sort();
+            steady_clock::time_point end6 = steady_clock::now();
+            totalSort += duration_cast<microseconds>(end6 - begin6).count();
+        }
+
+        results[i].PushFrontTime = totalPushFront / measurements;
+        results[i].PushBackTime = totalPushBack / measurements;
+        results[i].PopFrontTime = totalPopFront / measurements;
+        results[i].PopBackTime = totalPopBack / measurements;
+        results[i].SearchTime = totalSearch / measurements;
+        results[i].SortTime = totalSort / measurements;
+    }
+
+    return results;
+}*/
