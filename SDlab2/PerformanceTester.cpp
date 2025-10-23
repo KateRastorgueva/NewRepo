@@ -29,7 +29,7 @@ static long MeasureOperationTime(Func operation, bool useMicroseconds = false) {
 
 MeasurementResults* PerformanceTester::PerformMeasurements(int& resultsCount) {
     const int sizesCount = 5;
-    int sizes[sizesCount] = { 10, 100, 1000, 5000, 10000 };
+    int sizes[sizesCount] = { 1000, 5000, 10000, 25000 };
     resultsCount = sizesCount;
 
     static MeasurementResults results[sizesCount];
@@ -37,7 +37,7 @@ MeasurementResults* PerformanceTester::PerformMeasurements(int& resultsCount) {
     for (int i = 0; i < sizesCount; i++) {
         int size = sizes[i];
         results[i].Size = size;
-        const int measurements = 20;
+        const int measurements = 10;
         long totalPushFront = 0, totalPushBack = 0, totalPopFront = 0, totalPopBack = 0, totalSearch = 0, totalSort = 0;
 
         for (int j = 0; j < measurements; j++) {
