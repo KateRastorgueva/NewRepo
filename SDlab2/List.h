@@ -44,4 +44,5 @@ public:
     int GetSize() const;
     ListNode<T>* GetHead() const;
     ListNode<T>* GetTail() const;
+
 };

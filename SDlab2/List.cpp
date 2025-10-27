@@ -56,7 +56,7 @@ template <typename T>
 void DoublyLinkedList<T>::AddNodeToFront(ListNode<T>* newNode)
 {
     newNode->Next = _head;
-    _head->Prev = newNode;
+    _head->Previous = newNode;
     _head = newNode;
 }
 
@@ -64,7 +64,7 @@ template <typename T>
 void DoublyLinkedList<T>::AddNodeToBack(ListNode<T>* newNode)
 {
     _tail->Next = newNode;
-    newNode->Prev = _tail;
+    newNode->Previous = _tail;
     _tail = newNode;
 }
 
@@ -126,7 +126,7 @@ void DoublyLinkedList<T>::PopFront()
     else
     {
         _head = _head->Next;
-        _head->Prev = nullptr;
+        _head->Previous = nullptr;
     }
     delete temp;
     _size--;
@@ -148,7 +148,7 @@ void DoublyLinkedList<T>::PopBack()
     }
     else
     {
-        _tail = _tail->Prev;
+        _tail = _tail->Previous;
         _tail->Next = nullptr;
     }
     delete temp;
@@ -160,10 +160,10 @@ template <typename T>
 void DoublyLinkedList<T>::InsertBetween(ListNode<T>* prevNode, ListNode<T>* nextNode, const T& value)
 {
     ListNode<T>* newNode = new ListNode<T>(value);
-    newNode->Prev = prevNode;
+    newNode->Previous = prevNode;
     newNode->Next = nextNode;
     prevNode->Next = newNode;
-    nextNode->Prev = newNode;
+    nextNode->Previous = newNode;
     _size++;
 }
 
@@ -201,7 +201,7 @@ void DoublyLinkedList<T>::InsertBefore(ListNode<T>* node, const T& value)
     }
     else
     {
-        InsertBetween(node->Prev, node, value);
+        InsertBetween(node->Previous, node, value);
     }
 }
 
@@ -224,8 +224,8 @@ void DoublyLinkedList<T>::Remove(ListNode<T>* node)
     }
     else
     {
-        node->Prev->Next = node->Next;
-        node->Next->Prev = node->Prev;
+        node->Previous->Next = node->Next;
+        node->Next->Previous = node->Previous;
         delete node;
         _size--;
     }
@@ -311,8 +311,7 @@ ListNode<T>* DoublyLinkedList<T>::GetTail() const
 {
     return _tail;
 }
-
-
 // дл€ корректной работы шаблонного класса при раздельной компил€ции реализации 
 template class DoublyLinkedList<int>;
 template class DoublyLinkedList<string>;
+

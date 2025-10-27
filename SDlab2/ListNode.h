@@ -5,7 +5,7 @@ class ListNode {
 public:
     T Data;
     ListNode<T>* Next;
-    ListNode<T>* Prev;
+    ListNode<T>* Previous;
 
-    ListNode(const T& value) : Data(value), Next(nullptr), Prev(nullptr) {}
+    ListNode(const T& value) : Data(value), Next(nullptr), Previous(nullptr) {}
 };

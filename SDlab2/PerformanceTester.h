@@ -1,10 +1,5 @@
 #pragma once
 #include "List.h"
-#include <chrono>
-#include <vector>
-
-using namespace std;
-using namespace std::chrono;
 
 struct MeasurementResults {
     int Size;
