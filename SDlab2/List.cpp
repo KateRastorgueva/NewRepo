@@ -314,4 +314,3 @@ ListNode<T>* DoublyLinkedList<T>::GetTail() const
 // дл€ корректной работы шаблонного класса при раздельной компил€ции реализации 
 template class DoublyLinkedList<int>;
 template class DoublyLinkedList<string>;
-
