@@ -96,3 +96,44 @@ bool IsQueueTwoStacksEmpty(QueueTwoStacks* queue)
     }
     return IsEmpty(queue->_inputStack) && IsEmpty(queue->_outputStack);
 }
+bool ResizeQueueTwoStacks(QueueTwoStacks* queue, int newCapacity)
+{
+    if (queue == nullptr || newCapacity <= 0)
+    {
+        return false;
+    }
+
+    // Создаем временные стеки нового размера
+    Stack* newInputStack = CreateStack(newCapacity);
+    Stack* newOutputStack = CreateStack(newCapacity);
+
+    if (newInputStack == nullptr || newOutputStack == nullptr)
+    {
+        if (newInputStack != nullptr) DeleteStack(newInputStack);
+        if (newOutputStack != nullptr) DeleteStack(newOutputStack);
+        return false;
+    }
+
+    // Копируем элементы из inputStack
+    while (!IsEmpty(queue->_inputStack))
+    {
+        int value = Pop(queue->_inputStack);
+        Push(newInputStack, value);
+    }
+
+    // Копируем элементы из outputStack
+    while (!IsEmpty(queue->_outputStack))
+    {
+        int value = Pop(queue->_outputStack);
+        Push(newOutputStack, value);
+    }
+
+    // Заменяем старые стеки
+    DeleteStack(queue->_inputStack);
+    DeleteStack(queue->_outputStack);
+
+    queue->_inputStack = newInputStack;
+    queue->_outputStack = newOutputStack;
+
+    return true;
+}

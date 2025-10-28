@@ -89,3 +89,30 @@ void DeleteCircularBuffer(CircularBuffer* circularBuffer)
 
     delete circularBuffer;
 }
+bool ResizeCircularBuffer(CircularBuffer* circularBuffer, int newCapacity)
+{
+    if (circularBuffer == nullptr || newCapacity <= 0 || newCapacity < circularBuffer->_count)
+    {
+        return false;
+    }
+
+    int* newBuffer = new int[newCapacity];
+    if (newBuffer == nullptr)
+    {
+        return false;
+    }
+
+    // Копируем элементы в новый буфер
+    for (int i = 0; i < circularBuffer->_count; i++)
+    {
+        newBuffer[i] = circularBuffer->_buffer[(circularBuffer->_tail + i) % circularBuffer->_capacity];
+    }
+
+    delete[] circularBuffer->_buffer;
+    circularBuffer->_buffer = newBuffer;
+    circularBuffer->_capacity = newCapacity;
+    circularBuffer->_head = circularBuffer->_count;
+    circularBuffer->_tail = 0;
+
+    return true;
+}

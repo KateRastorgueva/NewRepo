@@ -393,14 +393,14 @@ void PrintQueueTwoStacksInfo(QueueTwoStacks* queue, const string& name) {
     cout << endl << endl;
 }
 
-// Функции для отображения меню
 void ShowStackMenu() {
     cout << "0 - Назад в главное меню" << endl;
     cout << "1 - Создать стек" << endl;
     cout << "2 - Добавить элемент (Push)" << endl;
     cout << "3 - Извлечь элемент (Pop)" << endl;
     cout << "4 - Посмотреть верхний элемент (Peek)" << endl;
-    cout << "5 - Удалить стек" << endl;
+    cout << "5 - Изменить размер стека" << endl;
+    cout << "6 - Удалить стек" << endl;
 }
 
 void ShowQueueMenu() {
@@ -408,7 +408,8 @@ void ShowQueueMenu() {
     cout << "1 - Создать очередь" << endl;
     cout << "2 - Добавить элемент (Enqueue)" << endl;
     cout << "3 - Извлечь элемент (Dequeue)" << endl;
-    cout << "4 - Удалить очередь" << endl;
+    cout << "4 - Изменить размер очереди" << endl;
+    cout << "5 - Удалить очередь" << endl;
 }
 
 void ShowQueueTwoStacksMenu() {
@@ -416,9 +417,9 @@ void ShowQueueTwoStacksMenu() {
     cout << "1 - Создать очередь" << endl;
     cout << "2 - Добавить элемент (Enqueue)" << endl;
     cout << "3 - Извлечь элемент (Dequeue)" << endl;
-    cout << "4 - Удалить очередь" << endl;
+    cout << "4 - Изменить размер очереди" << endl;
+    cout << "5 - Удалить очередь" << endl;
 }
-
 // Функции для обработки выбора в меню
 void HandleStackMenuChoice(int choice, Stack*& stack) {
     switch (choice) {
@@ -441,6 +442,18 @@ void HandleStackMenuChoice(int choice, Stack*& stack) {
         break;
     }
     case 5: {
+        if (CheckStructureExists(stack, "Стек")) {
+            int newCapacity = GetValidatedInput("Введите новый размер стека: ");
+            if (ResizeStack(stack, newCapacity)) {
+                cout << "Размер стека изменен на " << newCapacity << endl;
+            }
+            else {
+                cout << "Ошибка изменения размера стека!" << endl;
+            }
+        }
+        break;
+    }
+    case 6: {
         DeleteStructureStack(stack);
         break;
     }
@@ -464,6 +477,18 @@ void HandleQueueMenuChoice(int choice, Queue*& queue) {
         break;
     }
     case 4: {
+        if (CheckStructureExists(queue, "Очередь")) {
+            int newCapacity = GetValidatedInput("Введите новый размер очереди: ");
+            if (ResizeQueue(queue, newCapacity)) {
+                cout << "Размер очереди изменен на " << newCapacity << endl;
+            }
+            else {
+                cout << "Ошибка изменения размера очереди!" << endl;
+            }
+        }
+        break;
+    }
+    case 5: {
         DeleteStructureQueue(queue);
         break;
     }
@@ -487,6 +512,18 @@ void HandleQueueTwoStacksMenuChoice(int choice, QueueTwoStacks*& queue) {
         break;
     }
     case 4: {
+        if (CheckStructureExists(queue, "Очередь")) {
+            int newCapacity = GetValidatedInput("Введите новый размер очереди: ");
+            if (ResizeQueueTwoStacks(queue, newCapacity)) {
+                cout << "Размер очереди изменен на " << newCapacity << endl;
+            }
+            else {
+                cout << "Ошибка изменения размера очереди!" << endl;
+            }
+        }
+        break;
+    }
+    case 5: {
         DeleteStructureQueueTwoStacks(queue);
         break;
     }
@@ -513,7 +550,7 @@ int main() {
         cout << "3 - Работа с очередью (два стека)" << endl;
         cout << "4 - Показать все структуры" << endl;
 
-        mainChoice = GetValidatedInputInRange("Выберите действие: ", 0, 4);
+        mainChoice = GetValidatedInputInRange("Выберите действие: ", 0, 5);
 
         switch (mainChoice) {
         case 0: {
@@ -527,7 +564,7 @@ int main() {
                 PrintStackInfo(myStack, "Текущий стек");
                 ShowStackMenu();
 
-                subChoice = GetValidatedInputInRange("Выберите действие: ", 0, 5);
+                subChoice = GetValidatedInputInRange("Выберите действие: ", 0, 6);
                 HandleStackMenuChoice(subChoice, myStack);
 
             } while (subChoice != 0);
@@ -540,7 +577,7 @@ int main() {
                 PrintQueueInfo(myQueue, "Текущая очередь");
                 ShowQueueMenu();
 
-                subChoice = GetValidatedInputInRange("Выберите действие: ", 0, 4);
+                subChoice = GetValidatedInputInRange("Выберите действие: ", 0, 5);
                 HandleQueueMenuChoice(subChoice, myQueue);
 
             } while (subChoice != 0);
@@ -553,7 +590,7 @@ int main() {
                 PrintQueueTwoStacksInfo(myQueueTwoStacks, "Текущая очередь на двух стеках");
                 ShowQueueTwoStacksMenu();
 
-                subChoice = GetValidatedInputInRange("Выберите действие: ", 0, 4);
+                subChoice = GetValidatedInputInRange("Выберите действие: ", 0, 5);
                 HandleQueueTwoStacksMenuChoice(subChoice, myQueueTwoStacks);
 
             } while (subChoice != 0);

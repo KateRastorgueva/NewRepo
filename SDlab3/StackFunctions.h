@@ -21,3 +21,5 @@ int Peek(Stack* stack);
 
 // Функция удаления стека (очистка памяти)
 void DeleteStack(Stack* stack);
+
+bool ResizeStack(Stack* stack, int newCapacity);

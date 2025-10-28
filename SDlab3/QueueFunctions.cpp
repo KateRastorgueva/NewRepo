@@ -74,3 +74,12 @@ bool IsQueueFull(Queue* queue)
     }
     return GetFreeSpaceCircular(queue->_circularBuffer) == 0;
 }
+
+bool ResizeQueue(Queue* queue, int newCapacity)
+{
+    if (queue == nullptr)
+    {
+        return false;
+    }
+    return ResizeCircularBuffer(queue->_circularBuffer, newCapacity);
+}

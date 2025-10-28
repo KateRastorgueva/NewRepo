@@ -102,3 +102,34 @@ void DeleteStack(Stack* stack)
     }
     delete stack;
 }
+
+bool ResizeStack(Stack* stack, int newCapacity)
+{
+    if (stack == nullptr || newCapacity <= 0)
+    {
+        return false;
+    }
+
+    if (newCapacity <= stack->_top)
+    {
+        return false; // Новый размер меньше текущего количества элементов
+    }
+
+    int* newBuffer = new int[newCapacity];
+    if (newBuffer == nullptr)
+    {
+        return false;
+    }
+
+    // Копируем существующие элементы
+    for (int i = 0; i <= stack->_top; i++)
+    {
+        newBuffer[i] = stack->_buffer[i];
+    }
+
+    delete[] stack->_buffer;
+    stack->_buffer = newBuffer;
+    stack->_capacity = newCapacity;
+
+    return true;
+}
