@@ -72,5 +72,5 @@ bool IsQueueFull(Queue* queue)
     {
         return true;
     }
-    return GetFreeSpace(queue->_circularBuffer) == 0;
+    return GetFreeSpaceCircular(queue->_circularBuffer) == 0;
 }

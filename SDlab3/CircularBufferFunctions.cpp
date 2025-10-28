@@ -28,7 +28,7 @@ CircularBuffer* CreateCircularBuffer(int capacity)
     return circularBuffer;
 }
 
-int GetFreeSpace(CircularBuffer* circularBuffer)
+int GetFreeSpaceCircular(CircularBuffer* circularBuffer)
 {
     if (circularBuffer == nullptr)
     {

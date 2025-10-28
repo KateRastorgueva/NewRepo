@@ -1,5 +1,8 @@
 #include <iostream>
 #include <windows.h>
+#include <string>
+#include <cctype>
+#include <sstream>
 #include "StackFunctions.h"
 #include "QueueFunctions.h"
 #include "QueueTwoStacksFunctions.h"
@@ -14,19 +17,53 @@ void SetRussianEncoding() {
     SetConsoleOutputCP(1251);
 }
 
-// Вспомогательные функции для валидации ввода
 int GetValidatedInput(const string& prompt) {
-    int value;
-    cout << prompt;
+    string input;
 
-    while (!(cin >> value)) {
-        cout << "Ошибка! Введите целое число: ";
-        cin.clear();
-        cin.ignore(1000, '\n');
+    while (true) {
+        cout << prompt;
+        getline(cin, input);
+
+        if (input.empty()) {
+            cout << "Ошибка! Введите целое число: ";
+            continue;
+        }
+        bool isValid = true;
+        bool hasNonZero = false;
+
+        for (size_t i = 0; i < input.length(); i++) {
+            char c = input[i];
+
+            if (!isdigit(static_cast<unsigned char>(c))) {
+                isValid = false;
+                break;
+            }
+            if (c != '0') {
+                hasNonZero = true;
+            }
+        }
+
+        if (!hasNonZero && input.length() > 1) {
+            cout << "Ошибка! Введите корректное число: "; 
+            continue;
+        }
+
+        if (!isValid) {
+            cout << "Ошибка! Введите целое число: ";
+            continue;
+        }
+
+        try {
+            long value = stol(input);
+            return static_cast<int>(value);
+        }
+        catch (const out_of_range&) {
+            cout << "Число слишком большое! Введите меньшее число: ";
+        }
+        catch (const exception&) {
+            cout << "Ошибка! Введите целое число: ";
+        }
     }
-
-    cin.ignore(1000, '\n');
-    return value;
 }
 
 int GetValidatedInputInRange(const string& prompt, int min, int max) {
