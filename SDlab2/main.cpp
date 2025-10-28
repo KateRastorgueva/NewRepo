@@ -77,56 +77,62 @@ static void InvalidInput()
     cout << "Invalid choice! Please try again.\n";
 }
 
-static int GetNumericInput(const string& prompt, int minValue = INT_MIN, int maxValue = INT_MAX)
+static int GetNumericInput(const string& prompt, int minValue = INT_MIN, int maxValue = INT_MAX, bool singleDigitOnly = true)
 {
     string input;
-    cout << prompt;
-    getline(cin, input);
 
-    if (input.empty())
-    {
-        cout << "Empty input! Please enter a number.\n";
-        return -1;
-    }
+    while (true) {
+        cout << prompt;
+        getline(cin, input);
 
-    // Проверяем, что ввод состоит только из цифр и возможного минуса в начале
-    for (size_t i = 0; i < input.length(); i++)
-    {
-        char c = input[i];
-        // Проверяем, что символ находится в допустимом диапазоне для isdigit
-        if (static_cast<unsigned char>(c) > 127)
-        {
-            cout << "Invalid input! Please enter digits only.\n";
-            return -1;
+        if (input.empty()) {
+            cout << "Empty input! Please enter a number.\n";
+            continue;
         }
 
-        if (!isdigit(static_cast<unsigned char>(c)) && !(i == 0 && c == '-'))
-        {
-            cout << "Invalid input! Please enter digits only.\n";
-            return -1;
+        // Для меню проверяем, что ввод состоит ровно из одной цифры
+        if (singleDigitOnly && input.length() > 1) {
+            cout << "Invalid input! Please enter a single digit.\n";
+            continue;
         }
-    }
 
-    try
-    {
-        long value = stol(input);
-        if (value < minValue || value > maxValue)
-        {
-            cout << "Number out of range! Please enter between "
-                << minValue << " and " << maxValue << ".\n";
-            return -1;
+        // Проверяем, что ввод состоит только из цифр и возможного минуса в начале
+        bool isValid = true;
+        for (size_t i = 0; i < input.length(); i++) {
+            char c = input[i];
+            // Проверяем, что символ находится в допустимом диапазоне для isdigit
+            if (static_cast<unsigned char>(c) > 127) {
+                cout << "Invalid input! Please enter digits only.\n";
+                isValid = false;
+                break;
+            }
+
+            if (!isdigit(static_cast<unsigned char>(c)) && !(i == 0 && c == '-')) {
+                cout << "Invalid input! Please enter digits only.\n";
+                isValid = false;
+                break;
+            }
         }
-        return static_cast<int>(value);
-    }
-    catch (const out_of_range& e)
-    {
-        cout << "Number too large! Please enter a smaller number.\n";
-        return -1;
-    }
-    catch (const exception& e)
-    {
-        cout << "Invalid input! Please enter a valid number.\n";
-        return -1;
+
+        if (!isValid) {
+            continue;
+        }
+
+        try {
+            long value = stol(input);
+            if (value < minValue || value > maxValue) {
+                cout << "Number out of range! Please enter between "
+                    << minValue << " and " << maxValue << ".\n";
+                continue;
+            }
+            return static_cast<int>(value);
+        }
+        catch (const out_of_range&) {
+            cout << "Number too large! Please enter a smaller number.\n";
+        }
+        catch (const exception&) {
+            cout << "Invalid input! Please enter a valid number.\n";
+        }
     }
 }
 
@@ -290,7 +296,7 @@ void HandleListOperations()
     do
     {
         DisplayListMenu();
-        choice = GetNumericInput("Enter your choice: ");
+        choice = GetNumericInput("Enter your choice: ", 1, 16, true);
         if (choice == -1)
         {
             continue;
@@ -450,39 +456,30 @@ int main()
     do
     {
         DisplayMainMenu();
-        mainChoice = GetNumericInput("Enter your choice: ");
-        if (mainChoice == -1)
-        {
-            continue;
-        }
+        mainChoice = GetNumericInput("Enter your choice: ", 0, 2, true);
 
         switch (mainChoice)
         {
-            case 1:
-            {
-                cout << "\n--- List Operations ---\n";
-                cout << "Working with strings. Examples: '56', 'hello', '41', 'test'\n";
-                HandleListOperations();
-                break;
-            }
+        case 1:
+        {
+            cout << "\n--- List Operations ---\n";
+            cout << "Working with strings. Examples: '56', 'hello', '41', 'test'\n";
+            HandleListOperations();
+            break;
+        }
 
-            case 2:
-            {
-                cout << "\n--- Performance Measurements ---\n";
-                HandlePerformanceMeasurements();
-                break;
-            }
+        case 2:
+        {
+            cout << "\n--- Performance Measurements ---\n";
+            HandlePerformanceMeasurements();
+            break;
+        }
 
-            case 0:
-            {
-                cout << "Thank you for using Doubly Linked List Manager. Goodbye!\n";
-                break;
-            }
-
-            default:
-            {
-                InvalidInput();
-            }
+        case 0:
+        {
+            cout << "Thank you for using Doubly Linked List Manager. Goodbye!\n";
+            break;
+        }
         }
 
     } while (mainChoice != 0);
