@@ -1,5 +1,6 @@
 #pragma once
 #include "List.h"
+#include <string>
 
 struct MeasurementResults {
     int Size;
@@ -13,7 +14,7 @@ struct MeasurementResults {
 
 class PerformanceTester {
 private:
-    static DoublyLinkedList<int> CreateFilledList(int size);
+    static DoublyLinkedList CreateFilledList(int size);
 
 public:
     static MeasurementResults* PerformMeasurements(int& resultsCount);

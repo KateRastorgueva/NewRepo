@@ -14,7 +14,7 @@ static void PrintListEmptyMessage()
     cout << "List is empty!\n";
 }
 
-void PrintList(const DoublyLinkedList<string>& list, bool forward)
+void PrintList(const DoublyLinkedList& list, bool forward)
 {
     if (list.IsEmpty())
     {
@@ -22,7 +22,7 @@ void PrintList(const DoublyLinkedList<string>& list, bool forward)
         return;
     }
 
-    ListNode<string>* current = forward ? list.GetHead() : list.GetTail();
+    ListNode* current = forward ? list.GetHead() : list.GetTail();
     while (current != nullptr)
     {
         cout << current->Data << " ";
@@ -31,13 +31,13 @@ void PrintList(const DoublyLinkedList<string>& list, bool forward)
     cout << endl;
 }
 
-void PrintForward(const DoublyLinkedList<string>& list)
+void PrintForward(const DoublyLinkedList& list)
 {
     cout << "List (forward): ";
     PrintList(list, true);
 }
 
-void PrintBackward(const DoublyLinkedList<string>& list)
+void PrintBackward(const DoublyLinkedList& list)
 {
     cout << "List (backward): ";
     PrintList(list, false);
@@ -76,9 +76,37 @@ static void InvalidInput()
 {
     cout << "Invalid choice! Please try again.\n";
 }
-
-static int GetNumericInput(const string& prompt, int minValue = INT_MIN, int maxValue = INT_MAX, bool singleDigitOnly = true)
-{
+static bool IsAsciiDigit(char c) {
+    return c >= '0' && c <= '9';
+}
+static void PrintRangeError(int minValue, int maxValue) {
+    cout << "Please enter a number between " << minValue << " and " << maxValue << ".\n";
+}
+static bool ContainsOnlyDigits(const string& str, bool allowNegative = false) {
+    for (int i = 0; i < str.length(); i++) {
+        char element = str[i];
+        if (!IsAsciiDigit(element)) {
+            if (!(allowNegative && i == 0 && element == '-')) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+static bool HasLeadingZeros(const string& str) {
+    if (str.length() > 1) {
+        if (str[0] == '0')
+        {
+            return true;
+        }                   
+        if (str[0] == '-' && str[1] == '0') 
+        {
+            return true;
+        } 
+    }
+    return false;
+}
+static int GetNumericInput(const string& prompt, int minValue = -2147483648, int maxValue = 2147483647) {
     string input;
 
     while (true) {
@@ -90,48 +118,22 @@ static int GetNumericInput(const string& prompt, int minValue = INT_MIN, int max
             continue;
         }
 
-        // Для меню проверяем, что ввод состоит ровно из одной цифры
-        if (singleDigitOnly && input.length() > 1) {
-            cout << "Invalid input! Please enter a single digit.\n";
-            continue;
-        }
-
-        // Проверяем, что ввод состоит только из цифр и возможного минуса в начале
-        bool isValid = true;
-        for (size_t i = 0; i < input.length(); i++) {
-            char c = input[i];
-            // Проверяем, что символ находится в допустимом диапазоне для isdigit
-            if (static_cast<unsigned char>(c) > 127) {
-                cout << "Invalid input! Please enter digits only.\n";
-                isValid = false;
-                break;
-            }
-
-            if (!isdigit(static_cast<unsigned char>(c)) && !(i == 0 && c == '-')) {
-                cout << "Invalid input! Please enter digits only.\n";
-                isValid = false;
-                break;
-            }
-        }
-
-        if (!isValid) {
+        bool allowNegative = (minValue < 0);
+        if (!ContainsOnlyDigits(input, allowNegative) || HasLeadingZeros(input)) {
+            InvalidInput();
             continue;
         }
 
         try {
             long value = stol(input);
             if (value < minValue || value > maxValue) {
-                cout << "Number out of range! Please enter between "
-                    << minValue << " and " << maxValue << ".\n";
+                PrintRangeError(minValue, maxValue);
                 continue;
             }
-            return static_cast<int>(value);
-        }
-        catch (const out_of_range&) {
-            cout << "Number too large! Please enter a smaller number.\n";
+            return value;
         }
         catch (const exception&) {
-            cout << "Invalid input! Please enter a valid number.\n";
+            InvalidInput();
         }
     }
 }
@@ -144,7 +146,7 @@ string GetInput(const string& prompt)
     return input;
 }
 
-static void HandleAddOperation(DoublyLinkedList<string>& list, const string& position)
+static void HandleAddOperation(DoublyLinkedList& list, const string& position)
 {
     string value = GetInput("Enter value to add to " + position + ": ");
     if (position == "front")
@@ -158,7 +160,7 @@ static void HandleAddOperation(DoublyLinkedList<string>& list, const string& pos
     PrintElementOperation(value, "added to", position);
 }
 
-static void HandleRemoveEndOperation(DoublyLinkedList<string>& list, const string& position)
+static void HandleRemoveEndOperation(DoublyLinkedList& list, const string& position)
 {
     if (!list.IsEmpty())
     {
@@ -179,7 +181,7 @@ static void HandleRemoveEndOperation(DoublyLinkedList<string>& list, const strin
     }
 }
 
-static ListNode<string>* FindElementWithValidation(DoublyLinkedList<string>& list, const string& prompt)
+static ListNode* FindElementWithValidation(DoublyLinkedList& list, const string& prompt)
 {
     if (list.IsEmpty())
     {
@@ -188,7 +190,7 @@ static ListNode<string>* FindElementWithValidation(DoublyLinkedList<string>& lis
     }
 
     string value = GetInput(prompt);
-    ListNode<string>* node = list.LinearSearch(value);
+    ListNode* node = list.LinearSearch(value);
 
     if (!node)
     {
@@ -198,9 +200,9 @@ static ListNode<string>* FindElementWithValidation(DoublyLinkedList<string>& lis
     return node;
 }
 
-static void HandleInsertOperation(DoublyLinkedList<string>& list, const string& positionType)
+static void HandleInsertOperation(DoublyLinkedList& list, const string& positionType)
 {
-    ListNode<string>* targetNode = FindElementWithValidation(list, "Enter target value to insert " + positionType + ": ");
+    ListNode* targetNode = FindElementWithValidation(list, "Enter target value to insert " + positionType + ": ");
     if (!targetNode)
     {
         return;
@@ -219,9 +221,9 @@ static void HandleInsertOperation(DoublyLinkedList<string>& list, const string& 
     PrintElementOperation(value, "inserted " + positionType, targetNode->Data);
 }
 
-static void HandleRemoveByValue(DoublyLinkedList<string>& list)
+static void HandleRemoveByValue(DoublyLinkedList& list)
 {
-    ListNode<string>* node = FindElementWithValidation(list, "Enter value to remove: ");
+    ListNode* node = FindElementWithValidation(list, "Enter value to remove: ");
     if (!node)
     {
         return;
@@ -232,7 +234,7 @@ static void HandleRemoveByValue(DoublyLinkedList<string>& list)
     PrintElementOperation(value, "removed");
 }
 
-static void HandleSearchOperation(DoublyLinkedList<string>& list)
+static void HandleSearchOperation(DoublyLinkedList& list)
 {
     if (list.IsEmpty())
     {
@@ -241,7 +243,7 @@ static void HandleSearchOperation(DoublyLinkedList<string>& list)
     }
 
     string value = GetInput("Enter value to search: ");
-    ListNode<string>* node = list.LinearSearch(value);
+    ListNode* node = list.LinearSearch(value);
     PrintElementFound(value, node != nullptr);
 }
 
@@ -273,15 +275,17 @@ static void DisplayListMenu()
     cout << "15. Display current list state\n";
     cout << "16. Back to main menu\n";
 }
-static void PrintCurrentListState(const DoublyLinkedList<string>& list)
+
+static void PrintCurrentListState(const DoublyLinkedList& list)
 {
     cout << "Current list state:\n";
     cout << "Size: " << list.GetSize() << "\n";
     PrintForward(list);
 }
+
 void HandleListOperations()
 {
-    DoublyLinkedList<string> list;
+    DoublyLinkedList list;
     int choice = 0;
 
     cout << "Generating initial list with sample values...\n";
@@ -296,7 +300,7 @@ void HandleListOperations()
     do
     {
         DisplayListMenu();
-        choice = GetNumericInput("Enter your choice: ", 1, 16, true);
+        choice = GetNumericInput("Enter your choice: ", 1, 16);
         if (choice == -1)
         {
             continue;
@@ -304,125 +308,125 @@ void HandleListOperations()
 
         switch (choice)
         {
-            case 1:
+        case 1:
+        {
+            HandleAddOperation(list, "front");
+            PrintCurrentListState(list);
+            break;
+        }
+
+        case 2:
+        {
+            HandleAddOperation(list, "back");
+            PrintCurrentListState(list);
+            break;
+        }
+
+        case 3:
+        {
+            HandleRemoveEndOperation(list, "front");
+            PrintCurrentListState(list);
+            break;
+        }
+
+        case 4:
+        {
+            HandleRemoveEndOperation(list, "back");
+            PrintCurrentListState(list);
+            break;
+        }
+
+        case 5:
+        {
+            HandleInsertOperation(list, "after");
+            PrintCurrentListState(list);
+            break;
+        }
+
+        case 6:
+        {
+            HandleInsertOperation(list, "before");
+            PrintCurrentListState(list);
+            break;
+        }
+
+        case 7:
+        {
+            HandleRemoveByValue(list);
+            PrintCurrentListState(list);
+            break;
+        }
+
+        case 8:
+        {
+            HandleSearchOperation(list);
+            PrintCurrentListState(list);
+            break;
+        }
+
+        case 9:
+        {
+            if (!list.IsEmpty())
             {
-                HandleAddOperation(list, "front");
+                list.Sort();
+                cout << "List sorted successfully (lexicographical order).\n";
                 PrintCurrentListState(list);
-                break;
             }
-
-            case 2:
+            else
             {
-                HandleAddOperation(list, "back");
-                PrintCurrentListState(list);
-                break;
+                PrintListEmptyMessage();
             }
+            break;
+        }
 
-            case 3:
-            {
-                HandleRemoveEndOperation(list, "front");
-                PrintCurrentListState(list);
-                break;
-            }
+        case 10:
+        {
+            list.Clear();
+            cout << "List cleared.\n";
+            PrintCurrentListState(list);
+            break;
+        }
 
-            case 4:
-            {
-                HandleRemoveEndOperation(list, "back");
-                PrintCurrentListState(list);
-                break;
-            }
+        case 11:
+        {
+            PrintForward(list);
+            break;
+        }
 
-            case 5:
-            {
-                HandleInsertOperation(list, "after");
-                PrintCurrentListState(list);
-                break;
-            }
+        case 12:
+        {
+            PrintBackward(list);
+            break;
+        }
 
-            case 6:
-            {
-                HandleInsertOperation(list, "before");
-                PrintCurrentListState(list);
-                break;
-            }
+        case 13:
+        {
+            cout << "List size: " << list.GetSize() << "\n";
+            break;
+        }
 
-            case 7:
-            {
-                HandleRemoveByValue(list);
-                PrintCurrentListState(list);
-                break;
-            }
+        case 14:
+        {
+            cout << "List is " << (list.IsEmpty() ? "empty" : "not empty") << "\n";
+            break;
+        }
 
-            case 8:
-            {
-                HandleSearchOperation(list);
-                PrintCurrentListState(list);
-                break;
-            }
+        case 15:
+        {
+            PrintCurrentListState(list);
+            break;
+        }
 
-            case 9:
-            {
-                if (!list.IsEmpty())
-                {
-                    list.Sort();
-                    cout << "List sorted successfully (lexicographical order).\n";
-                    PrintCurrentListState(list);
-                }
-                else
-                {
-                    PrintListEmptyMessage();
-                }
-                break;
-            }
+        case 16:
+        {
+            cout << "Returning to main menu...\n";
+            return;
+        }
 
-            case 10:
-            {
-                list.Clear();
-                cout << "List cleared.\n";
-                PrintCurrentListState(list);
-                break;
-            }
-
-            case 11:
-            {
-                PrintForward(list);
-                break;
-            }
-
-            case 12:
-            {
-                PrintBackward(list);
-                break;
-            }
-
-            case 13:
-            {
-                cout << "List size: " << list.GetSize() << "\n";
-                break;
-            }
-
-            case 14:
-            {
-                cout << "List is " << (list.IsEmpty() ? "empty" : "not empty") << "\n";
-                break;
-            }
-
-            case 15:
-            {
-                PrintCurrentListState(list);
-                break;
-            }
-
-            case 16:
-            {
-                cout << "Returning to main menu...\n";
-                return;
-            }
-
-            default:
-            {
-                InvalidInput();
-            }
+        default:
+        {
+            InvalidInput();
+        }
         }
     } while (choice != 16);
 }
@@ -456,7 +460,7 @@ int main()
     do
     {
         DisplayMainMenu();
-        mainChoice = GetNumericInput("Enter your choice: ", 0, 2, true);
+        mainChoice = GetNumericInput("Enter your choice: ", 0, 2);
 
         switch (mainChoice)
         {

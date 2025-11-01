@@ -1,11 +1,11 @@
 #pragma once
+#include <string>
 
-template <typename T>
 class ListNode {
 public:
-    T Data;
-    ListNode<T>* Next;
-    ListNode<T>* Previous;
+    std::string Data;
+    ListNode* Next;
+    ListNode* Previous;
 
-    ListNode(const T& value) : Data(value), Next(nullptr), Previous(nullptr) {}
+    ListNode(const std::string& value) : Data(value), Next(nullptr), Previous(nullptr) {}
 };
