@@ -420,6 +420,15 @@ void ShowQueueTwoStacksMenu() {
     cout << "4 - Èçìåíèòü ðàçìåð î÷åðåäè" << endl;
     cout << "5 - Óäàëèòü î÷åðåäü" << endl;
 }
+void ShowMainMenu()
+{
+    cout << "\n=== ÃËÀÂÍÎÅ ÌÅÍÞ ===" << endl;
+    cout << "0 - Âûõîä èç ïðîãðàììû" << endl;
+    cout << "1 - Ðàáîòà ñî ñòåêîì" << endl;
+    cout << "2 - Ðàáîòà ñ î÷åðåäüþ (êîëüöåâîé áóôåð)" << endl;
+    cout << "3 - Ðàáîòà ñ î÷åðåäüþ (äâà ñòåêà)" << endl;
+    cout << "4 - Ïîêàçàòü âñå ñòðóêòóðû" << endl;
+}
 // Ôóíêöèè äëÿ îáðàáîòêè âûáîðà â ìåíþ
 void HandleStackMenuChoice(int choice, Stack*& stack) {
     switch (choice) {
@@ -543,16 +552,12 @@ int main() {
     cout << "=== ÄÅÌÎÍÑÒÐÀÖÈß ÑÒÐÓÊÒÓÐ ÄÀÍÍÛÕ ===" << endl;
 
     do {
-        cout << "\n=== ÃËÀÂÍÎÅ ÌÅÍÞ ===" << endl;
-        cout << "0 - Âûõîä èç ïðîãðàììû" << endl;
-        cout << "1 - Ðàáîòà ñî ñòåêîì" << endl;
-        cout << "2 - Ðàáîòà ñ î÷åðåäüþ (êîëüöåâîé áóôåð)" << endl;
-        cout << "3 - Ðàáîòà ñ î÷åðåäüþ (äâà ñòåêà)" << endl;
-        cout << "4 - Ïîêàçàòü âñå ñòðóêòóðû" << endl;
+        ShowMainMenu();
 
         mainChoice = GetValidatedInputInRange("Âûáåðèòå äåéñòâèå: ", 0, 5);
 
         switch (mainChoice) {
+
         case 0: {
             cout << "Âûõîä èç ïðîãðàììû..." << endl;
             break;
@@ -560,7 +565,7 @@ int main() {
 
         case 1: {
             do {
-                cout << "\n=== ÐÀÁÎÒÀ ÑÎ ÑÒÅÊÎÌ ===" << endl;
+                cout << "\nÐÀÁÎÒÀ ÑÎ ÑÒÅÊÎÌ" << endl;
                 PrintStackInfo(myStack, "Òåêóùèé ñòåê");
                 ShowStackMenu();
 
@@ -573,7 +578,7 @@ int main() {
 
         case 2: {
             do {
-                cout << "\n=== Î×ÅÐÅÄÜ (ÊÎËÜÖÅÂÎÉ ÁÓÔÅÐ) ===" << endl;
+                cout << "\nÎ×ÅÐÅÄÜ (ÊÎËÜÖÅÂÎÉ ÁÓÔÅÐ)" << endl;
                 PrintQueueInfo(myQueue, "Òåêóùàÿ î÷åðåäü");
                 ShowQueueMenu();
 
@@ -586,7 +591,7 @@ int main() {
 
         case 3: {
             do {
-                cout << "\n=== Î×ÅÐÅÄÜ (ÄÂÀ ÑÒÅÊÀ) ===" << endl;
+                cout << "\nÎ×ÅÐÅÄÜ (ÄÂÀ ÑÒÅÊÀ)" << endl;
                 PrintQueueTwoStacksInfo(myQueueTwoStacks, "Òåêóùàÿ î÷åðåäü íà äâóõ ñòåêàõ");
                 ShowQueueTwoStacksMenu();
 
@@ -598,7 +603,7 @@ int main() {
         }
 
         case 4: {
-            cout << "\n=== ÂÑÅ ÑÒÐÓÊÒÓÐÛ ÄÀÍÍÛÕ ===" << endl;
+            cout << "\nÂÑÅ ÑÒÐÓÊÒÓÐÛ ÄÀÍÍÛÕ" << endl;
             PrintStackInfo(myStack, "ÑÒÅÊ");
             PrintQueueInfo(myQueue, "Î×ÅÐÅÄÜ (ÊÎËÜÖÅÂÎÉ ÁÓÔÅÐ)");
             PrintQueueTwoStacksInfo(myQueueTwoStacks, "Î×ÅÐÅÄÜ (ÄÂÀ ÑÒÅÊÀ)");
