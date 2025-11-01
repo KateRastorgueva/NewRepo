@@ -10,7 +10,6 @@ using namespace std::chrono;
 DoublyLinkedList PerformanceTester::CreateFilledList(int size) {
     DoublyLinkedList list;
     for (int i = 0; i < size; i++) {
-        // Генерируем строки вместо чисел
         string value = "value_" + to_string(rand() % 1000);
         list.PushBack(value);
     }
@@ -82,6 +81,39 @@ MeasurementResults* PerformanceTester::PerformMeasurements(int& resultsCount) {
 
     return results;
 }
+
+/*static string IntToString(int value) {
+    if (value == 0) return "0";
+
+    string result = "";
+    bool negative = (value < 0);
+
+    if (negative) {
+        value = -value;
+    }
+
+    while (value > 0) {
+        char digit = '0' + (value % 10);
+        result = digit + result;
+        value /= 10;
+    }
+
+    if (negative) {
+        result = "-" + result;
+    }
+
+    return result;
+}
+
+
+ string value = "value_" + IntToString(rand() % 1000);
+
+*/
+
+
+
+
+
 /*#include "PerformanceTester.h"
 #include <cstdlib>
 #include <ctime>

@@ -76,15 +76,15 @@ static void InvalidInput()
 {
     cout << "Invalid choice! Please try again.\n";
 }
-static bool IsAsciiDigit(char c) {
-    return c >= '0' && c <= '9';
+static bool IsAsciiDigit(char element) {
+    return element >= '0' && element <= '9';
 }
 static void PrintRangeError(int minValue, int maxValue) {
     cout << "Please enter a number between " << minValue << " and " << maxValue << ".\n";
 }
-static bool ContainsOnlyDigits(const string& str, bool allowNegative = false) {
-    for (int i = 0; i < str.length(); i++) {
-        char element = str[i];
+static bool ContainsOnlyDigits(const string& value, bool allowNegative = false) {
+    for (int i = 0; i < value.length(); i++) {
+        char element = value[i];
         if (!IsAsciiDigit(element)) {
             if (!(allowNegative && i == 0 && element == '-')) {
                 return false;
@@ -93,13 +93,13 @@ static bool ContainsOnlyDigits(const string& str, bool allowNegative = false) {
     }
     return true;
 }
-static bool HasLeadingZeros(const string& str) {
-    if (str.length() > 1) {
-        if (str[0] == '0')
+static bool HasLeadingZeros(const string& value) {
+    if (value.length() > 1) {
+        if (value[0] == '0')
         {
             return true;
         }                   
-        if (str[0] == '-' && str[1] == '0') 
+        if (value[0] == '-' && value[1] == '0') 
         {
             return true;
         } 
