@@ -5,7 +5,7 @@
 Stack* CreateStack(int capacity);
 
 // Функция помещения элемента в стек
-void Push(Stack* stack, int value);
+bool Push(Stack* stack, int value);
 
 // Функция извлечения элемента из стека
 int Pop(Stack* stack);

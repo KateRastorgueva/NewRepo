@@ -12,300 +12,537 @@
 using namespace std;
 
 // Установка русской кодировки для Windows
-void SetRussianEncoding() {
+void SetRussianEncoding()
+{
     SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
 }
 
-int GetValidatedInput(const string& prompt) {
+void ExceptionNeedCorrectNumber()
+{
+    cout << "Ошибка! Введите корректное число: ";
+}
+
+void ExceptionNumberBig()
+{
+    cout << "Число слишком большое! Введите меньшее число: ";
+}
+
+bool IsValidIntegerString(const string& value)
+{
+    if (value.empty())
+    {
+        return false;
+    }
+
+    for (int i = 0; i < value.length(); i++)
+    {
+        if (value[i] < '0' || value[i] > '9')
+        {
+            return false;
+        }
+    }
+
+    if (value.length() > 1 && value[0] == '0')
+    {
+        return false;
+    }
+
+    if (value.length() > 1)
+    {
+        bool allZeros = true;
+        for (int i = 0; i < value.length(); i++)
+        {
+            if (value[i] != '0')
+            {
+                allZeros = false;
+                break;
+            }
+        }
+        if (allZeros)
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int GetValidatedInput(const string& prompt)
+{
     string input;
 
-    while (true) {
+    while (true)
+    {
         cout << prompt;
         getline(cin, input);
 
-        if (input.empty()) {
-            cout << "Ошибка! Введите целое число: ";
+        if (!IsValidIntegerString(input))
+        {
+            ExceptionNeedCorrectNumber();
             continue;
         }
-        bool isValid = true;
-        bool hasNonZero = false;
+        if (input.length() > 10)
+        {
+            ExceptionNumberBig();
+            continue;
+        }
 
-        for (size_t i = 0; i < input.length(); i++) {
-            char c = input[i];
+        int result = 0;
+        for (int i = 0; i < input.length(); i++)
+        {
+            int digit = input[i] - '0';
 
-            if (!isdigit(static_cast<unsigned char>(c))) {
-                isValid = false;
+            if (result > (2147483647 - digit) / 10)
+            {
+                ExceptionNumberBig();
                 break;
             }
-            if (c != '0') {
-                hasNonZero = true;
+
+            result = result * 10 + digit;
+
+            if (i == input.length() - 1)
+            {
+                return result;
             }
-        }
-
-        if (!hasNonZero && input.length() > 1) {
-            cout << "Ошибка! Введите корректное число: "; 
-            continue;
-        }
-
-        if (!isValid) {
-            cout << "Ошибка! Введите целое число: ";
-            continue;
-        }
-
-        try {
-            long value = stol(input);
-            return static_cast<int>(value);
-        }
-        catch (const out_of_range&) {
-            cout << "Число слишком большое! Введите меньшее число: ";
-        }
-        catch (const exception&) {
-            cout << "Ошибка! Введите целое число: ";
         }
     }
 }
 
-int GetValidatedInputInRange(const string& prompt, int min, int max) {
+int GetValidatedInputInRange(const string& prompt, int min, int max)
+{
     int value;
 
-    while (true) {
+    while (true)
+    {
         value = GetValidatedInput(prompt);
-        if (value >= min && value <= max) {
+        if (value >= min && value <= max)
+        {
             return value;
         }
         cout << "Ошибка! Введите число от " << min << " до " << max << ": ";
     }
 }
-// Вспомогательные функции для создания структур
-Stack* CreateStructureStack() {
-    int capacity = GetValidatedInput("Введите вместимость стека: ");
-    if (capacity <= 0) {
+
+bool ValidateCapacity(int capacity)
+{
+    if (capacity <= 0)
+    {
         cout << "Ошибка! Вместимость должна быть положительной." << endl;
+        return false;
+    }
+    return true;
+}
+
+// Общие функции для вывода текста
+void ShowSectionHeader(const string& title)
+{
+    cout << "\n" << title << endl;
+}
+
+void ShowCreationSuccess(const string& structureName)
+{
+    cout << structureName << " создан(а) успешно!" << endl;
+}
+
+void ShowCreationError(const string& structureName)
+{
+    cout << "Ошибка создания " << structureName << "!" << endl;
+}
+
+void ShowAddSuccess(int value, const string& structureName)
+{
+    cout << "Элемент " << value << " добавлен в " << structureName << "." << endl;
+}
+
+void ShowAddError(const string& structureName)
+{
+    cout << structureName << " полон(а)! Невозможно добавить элемент." << endl;
+}
+
+void ShowResizeSuccess(int newCapacity, const string& structureName)
+{
+    cout << "Размер " << structureName << " изменен на " << newCapacity << endl;
+}
+
+void ShowResizeError(const string& structureName)
+{
+    cout << "Ошибка изменения размера " << structureName << "!" << endl;
+}
+
+Stack* CreateStructureStack()
+{
+    int capacity = GetValidatedInput("Введите вместимость стека: ");
+    if (!ValidateCapacity(capacity))
+    {
         return nullptr;
     }
+
     Stack* stack = CreateStack(capacity);
-    if (stack != nullptr) {
-        cout << "Стек создан успешно!" << endl;
+    if (stack != nullptr)
+    {
+        ShowCreationSuccess("Стек");
     }
-    else {
-        cout << "Ошибка создания стека!" << endl;
+    else
+    {
+        ShowCreationError("стека");
     }
     return stack;
 }
 
-Queue* CreateStructureQueue() {
+Queue* CreateStructureQueue()
+{
     int capacity = GetValidatedInput("Введите вместимость очереди: ");
-    if (capacity <= 0) {
-        cout << "Ошибка! Вместимость должна быть положительной." << endl;
+    if (!ValidateCapacity(capacity))
+    {
         return nullptr;
     }
+
     Queue* queue = CreateQueue(capacity);
-    if (queue != nullptr) {
-        cout << "Очередь создана успешно!" << endl;
+    if (queue != nullptr)
+    {
+        ShowCreationSuccess("Очередь");
     }
-    else {
-        cout << "Ошибка создания очереди!" << endl;
+    else
+    {
+        ShowCreationError("очереди");
     }
     return queue;
 }
 
-QueueTwoStacks* CreateStructureQueueTwoStacks() {
+QueueTwoStacks* CreateStructureQueueTwoStacks()
+{
     int capacity = GetValidatedInput("Введите вместимость очереди: ");
-    if (capacity <= 0) {
-        cout << "Ошибка! Вместимость должна быть положительной." << endl;
+    if (!ValidateCapacity(capacity))
+    {
         return nullptr;
     }
+
     QueueTwoStacks* queue = CreateQueueTwoStacks(capacity);
-    if (queue != nullptr) {
-        cout << "Очередь создана успешно!" << endl;
+    if (queue != nullptr)
+    {
+        ShowCreationSuccess("Очередь");
     }
-    else {
-        cout << "Ошибка создания очереди!" << endl;
+    else
+    {
+        ShowCreationError("очереди");
     }
     return queue;
+}
+
+CircularBuffer* CreateStructureCircularBuffer()
+{
+    int capacity = GetValidatedInput("Введите вместимость кольцевого буфера: ");
+    if (!ValidateCapacity(capacity))
+    {
+        return nullptr;
+    }
+
+    CircularBuffer* circularBuffer = CreateCircularBuffer(capacity);
+    if (circularBuffer != nullptr)
+    {
+        ShowCreationSuccess("Кольцевой буфер");
+    }
+    else
+    {
+        ShowCreationError("кольцевого буфера");
+    }
+    return circularBuffer;
 }
 
 // Вспомогательные функции для проверки существования структур
-bool CheckStructureExists(void* structure, const string& structureName) {
-    if (structure == nullptr) {
+bool CheckStructureExists(void* structure, const string& structureName)
+{
+    if (structure == nullptr)
+    {
         cout << structureName << " не создан(а)!" << endl;
         return false;
     }
     return true;
 }
 
-bool CheckStructureNotExists(void* structure, const string& structureName) {
-    if (structure != nullptr) {
+bool CheckStructureNotExists(void* structure, const string& structureName)
+{
+    if (structure != nullptr)
+    {
         cout << structureName << " уже существует! Удалите его сначала." << endl;
         return false;
     }
     return true;
 }
 
-// Вспомогательные функции для добавления элементов
-void AddElementToStack(Stack*& stack) {
-    if (!CheckStructureExists(stack, "Стек")) return;
+// Общая функция проверки пустоты структуры
+bool CheckStructureEmpty(bool isEmpty, const string& structureName)
+{
+    if (isEmpty)
+    {
+        cout << structureName << " пуст(а/ая)! Невозможно извлечь элемент." << endl;
+        return true;
+    }
+    return false;
+}
 
-    if (IsFull(stack)) {
-        cout << "Стек полон! Невозможно добавить элемент." << endl;
+// Общая функция вывода извлеченного элемента
+void ShowExtractedElement(int value, bool success = true)
+{
+    if (success && value != -1)
+    {
+        cout << "Извлечен элемент: " << value << endl;
+    }
+    else
+    {
+        cout << "Ошибка извлечения элемента!" << endl;
+    }
+}
+
+void AddElementToCircularBuffer(CircularBuffer*& circularBuffer)
+{
+    if (!CheckStructureExists(circularBuffer, "Кольцевой буфер"))
+    {
         return;
     }
 
     int value = GetValidatedInput("Введите значение для добавления: ");
-    Push(stack, value);
-    cout << "Элемент " << value << " добавлен в стек." << endl;
+    if (EnqueueCircularBuffer(circularBuffer, value))
+    {
+        ShowAddSuccess(value, "кольцевой буфер");
+    }
+    else
+    {
+        ShowAddError("Кольцевой буфер");
+    }
 }
 
-void AddElementToQueue(Queue*& queue) {
-    if (!CheckStructureExists(queue, "Очередь")) return;
-
-    if (IsQueueFull(queue)) {
-        cout << "Очередь полна! Невозможно добавить элемент." << endl;
+void AddElementToStack(Stack*& stack)
+{
+    if (!CheckStructureExists(stack, "Стек"))
+    {
         return;
     }
 
     int value = GetValidatedInput("Введите значение для добавления: ");
-    if (Enqueue(queue, value)) {
-        cout << "Элемент " << value << " добавлен в очередь." << endl;
+    if (Push(stack, value))
+    {
+        ShowAddSuccess(value, "стек");
     }
-    else {
-        cout << "Ошибка добавления элемента!" << endl;
+    else
+    {
+        ShowAddError("Стек");
     }
 }
 
-void AddElementToQueueTwoStacks(QueueTwoStacks*& queue) {
-    if (!CheckStructureExists(queue, "Очередь")) return;
+void AddElementToQueue(Queue*& queue)
+{
+    if (!CheckStructureExists(queue, "Очередь"))
+    {
+        return;
+    }
+
+    int value = GetValidatedInput("Введите значение для добавления: ");
+    if (Enqueue(queue, value))
+    {
+        ShowAddSuccess(value, "очередь");
+    }
+    else
+    {
+        ShowAddError("Очередь");
+    }
+}
+
+void AddElementToQueueTwoStacks(QueueTwoStacks*& queue)
+{
+    if (!CheckStructureExists(queue, "Очередь"))
+    {
+        return;
+    }
 
     int value = GetValidatedInput("Введите значение для добавления: ");
     EnqueueTwoStacks(queue, value);
-    cout << "Элемент " << value << " добавлен в очередь." << endl;
+    ShowAddSuccess(value, "очередь");
 }
 
-// Вспомогательные функции для извлечения элементов
-void ExtractElementFromStack(Stack*& stack) {
-    if (!CheckStructureExists(stack, "Стек")) return;
+// Упрощенные функции извлечения элементов
+void ExtractElementFromStack(Stack*& stack)
+{
+    if (!CheckStructureExists(stack, "Стек"))
+    {
+        return;
+    }
 
-    if (IsEmpty(stack)) {
-        cout << "Стек пуст! Невозможно извлечь элемент." << endl;
+    if (CheckStructureEmpty(IsEmpty(stack), "Стек"))
+    {
         return;
     }
 
     int value = Pop(stack);
-    cout << "Извлечен элемент: " << value << endl;
+    ShowExtractedElement(value);
 }
 
-void ExtractElementFromQueue(Queue*& queue) {
-    if (!CheckStructureExists(queue, "Очередь")) return;
+void ExtractElementFromQueue(Queue*& queue)
+{
+    if (!CheckStructureExists(queue, "Очередь"))
+    {
+        return;
+    }
 
-    if (IsQueueEmpty(queue)) {
-        cout << "Очередь пуста! Невозможно извлечь элемент." << endl;
+    if (CheckStructureEmpty(IsQueueEmpty(queue), "Очередь"))
+    {
         return;
     }
 
     int value = Dequeue(queue);
-    if (value != -1) {
-        cout << "Извлечен элемент: " << value << endl;
-    }
-    else {
-        cout << "Ошибка извлечения элемента!" << endl;
-    }
+    ShowExtractedElement(value, value != -1);
 }
 
-void ExtractElementFromQueueTwoStacks(QueueTwoStacks*& queue) {
-    if (!CheckStructureExists(queue, "Очередь")) return;
+void ExtractElementFromQueueTwoStacks(QueueTwoStacks*& queue)
+{
+    if (!CheckStructureExists(queue, "Очередь"))
+    {
+        return;
+    }
 
-    if (IsQueueTwoStacksEmpty(queue)) {
-        cout << "Очередь пуста! Невозможно извлечь элемент." << endl;
+    if (CheckStructureEmpty(IsQueueTwoStacksEmpty(queue), "Очередь"))
+    {
         return;
     }
 
     int value = DequeueTwoStacks(queue);
-    if (value != -1) {
-        cout << "Извлечен элемент: " << value << endl;
+    ShowExtractedElement(value, value != -1);
+}
+
+void ExtractElementFromCircularBuffer(CircularBuffer*& circularBuffer)
+{
+    if (!CheckStructureExists(circularBuffer, "Кольцевой буфер"))
+    {
+        return;
     }
-    else {
-        cout << "Ошибка извлечения элемента!" << endl;
+
+    if (CheckStructureEmpty(GetUsedSpace(circularBuffer) == 0, "Кольцевой буфер"))
+    {
+        return;
     }
+
+    int value = DequeueCircularBuffer(circularBuffer);
+    ShowExtractedElement(value, value != -1);
 }
 
 // Вспомогательные функции для просмотра элементов
-void PeekElementFromStack(Stack*& stack) {
-    if (!CheckStructureExists(stack, "Стек")) return;
-
-    if (IsEmpty(stack)) {
-        cout << "Стек пуст!" << endl;
+void PeekElementFromStack(Stack*& stack)
+{
+    if (!CheckStructureExists(stack, "Стек"))
+    {
         return;
     }
 
     int value = Peek(stack);
-    cout << "Верхний элемент: " << value << endl;
+    if (value != -1)
+    {
+        cout << "Верхний элемент: " << value << endl;
+    }
+    else
+    {
+        cout << "Стек пуст!" << endl;
+    }
 }
 
-// Вспомогательные функции для удаления структур
-void DeleteStructureStack(Stack*& stack) {
-    if (stack != nullptr) {
+// Общая функция для вывода сообщений об удалении
+void ShowDeleteMessage(bool wasDeleted, const string& structureName)
+{
+    if (wasDeleted)
+    {
+        cout << structureName << " удален(а)." << endl;
+    }
+    else
+    {
+        cout << structureName << " уже удален(а) или не создан(а)." << endl;
+    }
+}
+
+// Упрощенные функции удаления структур
+void DeleteStructureStack(Stack*& stack)
+{
+    bool wasDeleted = (stack != nullptr);
+    if (wasDeleted)
+    {
         DeleteStack(stack);
         stack = nullptr;
-        cout << "Стек удален." << endl;
     }
-    else {
-        cout << "Стек уже удален или не создан." << endl;
-    }
+    ShowDeleteMessage(wasDeleted, "Стек");
 }
 
-void DeleteStructureQueue(Queue*& queue) {
-    if (queue != nullptr) {
+void DeleteStructureQueue(Queue*& queue)
+{
+    bool wasDeleted = (queue != nullptr);
+    if (wasDeleted)
+    {
         DeleteQueue(queue);
         queue = nullptr;
-        cout << "Очередь удалена." << endl;
     }
-    else {
-        cout << "Очередь уже удалена или не создана." << endl;
-    }
+    ShowDeleteMessage(wasDeleted, "Очередь");
 }
 
-void DeleteStructureQueueTwoStacks(QueueTwoStacks*& queue) {
-    if (queue != nullptr) {
+void DeleteStructureQueueTwoStacks(QueueTwoStacks*& queue)
+{
+    bool wasDeleted = (queue != nullptr);
+    if (wasDeleted)
+    {
         DeleteQueueTwoStacks(queue);
         queue = nullptr;
-        cout << "Очередь удалена." << endl;
     }
-    else {
-        cout << "Очередь уже удалена или не создана." << endl;
+    ShowDeleteMessage(wasDeleted, "Очередь");
+}
+
+void DeleteStructureCircularBuffer(CircularBuffer*& circularBuffer)
+{
+    bool wasDeleted = (circularBuffer != nullptr);
+    if (wasDeleted)
+    {
+        DeleteCircularBuffer(circularBuffer);
+        circularBuffer = nullptr;
     }
+    ShowDeleteMessage(wasDeleted, "Кольцевой буфер");
 }
 
 // Функции для вывода характеристик структур
-void PrintStackInfo(Stack* stack, const string& name) {
-    cout << "=== " << name << " ===" << endl;
-    if (stack == nullptr) {
+void PrintStackInfo(Stack* stack, const string& name)
+{
+    cout << name << endl;
+    if (stack == nullptr)
+    {
         cout << "Стек не создан или удален" << endl;
         return;
     }
+
     cout << "Вместимость: " << stack->_capacity << endl;
     cout << "Вершина (top): " << stack->_top << endl;
     cout << "Пуст: " << (IsEmpty(stack) ? "да" : "нет") << endl;
     cout << "Полон: " << (IsFull(stack) ? "да" : "нет") << endl;
 
     cout << "Содержимое (сверху вниз): ";
-    if (IsEmpty(stack)) {
+    if (IsEmpty(stack))
+    {
         cout << "пусто";
     }
-    else {
+    else
+    {
         Stack* tempStack = CreateStack(stack->_capacity);
         int count = 0;
 
-        while (!IsEmpty(stack)) {
+        while (!IsEmpty(stack))
+        {
             int value = Pop(stack);
             Push(tempStack, value);
             count++;
         }
 
-        for (int i = 0; i < count; i++) {
+        for (int i = 0; i < count; i++)
+        {
             int value = Pop(tempStack);
             cout << value;
-            if (i < count - 1) cout << " <- ";
+            if (i < count - 1)
+            {
+                cout << " <- ";
+            }
             Push(stack, value);
         }
 
@@ -314,50 +551,113 @@ void PrintStackInfo(Stack* stack, const string& name) {
     cout << endl << endl;
 }
 
-void PrintQueueInfo(Queue* queue, const string& name) {
-    cout << "=== " << name << " ===" << endl;
-    if (queue == nullptr) {
+void PrintCircularBufferInfo(CircularBuffer* circularBuffer, const string& name)
+{
+    cout << name << endl;
+    if (circularBuffer == nullptr)
+    {
+        cout << "Кольцевой буфер не создан или удален" << endl;
+        return;
+    }
+
+    cout << "Вместимость: " << circularBuffer->_capacity << endl;
+    cout << "Голова (head): " << circularBuffer->_head << endl;
+    cout << "Хвост (tail): " << circularBuffer->_tail << endl;
+    cout << "Количество элементов: " << circularBuffer->_count << endl;
+    cout << "Пуст: " << (GetUsedSpace(circularBuffer) == 0 ? "да" : "нет") << endl;
+    cout << "Полон: " << (GetFreeSpaceCircular(circularBuffer) == 0 ? "да" : "нет") << endl;
+    cout << "Занято мест: " << GetUsedSpace(circularBuffer) << endl;
+    cout << "Свободно мест: " << GetFreeSpaceCircular(circularBuffer) << endl;
+
+    cout << "Содержимое (начало -> конец): ";
+    if (GetUsedSpace(circularBuffer) == 0)
+    {
+        cout << "пусто";
+    }
+    else
+    {
+        CircularBuffer* tempBuffer = CreateCircularBuffer(circularBuffer->_capacity);
+        int count = circularBuffer->_count;
+
+        for (int i = 0; i < count; i++)
+        {
+            int value = DequeueCircularBuffer(circularBuffer);
+            cout << value;
+            if (i < count - 1)
+            {
+                cout << " -> ";
+            }
+            EnqueueCircularBuffer(tempBuffer, value);
+        }
+
+        for (int i = 0; i < count; i++)
+        {
+            int value = DequeueCircularBuffer(tempBuffer);
+            EnqueueCircularBuffer(circularBuffer, value);
+        }
+
+        DeleteCircularBuffer(tempBuffer);
+    }
+    cout << endl << endl;
+}
+
+void PrintQueueInfo(Queue* queue, const string& name)
+{
+    cout << name << endl;
+    if (queue == nullptr)
+    {
         cout << "Очередь не создана или удалена" << endl;
         return;
     }
+
     cout << "Пуста: " << (IsQueueEmpty(queue) ? "да" : "нет") << endl;
     cout << "Полна: " << (IsQueueFull(queue) ? "да" : "нет") << endl;
     cout << "Занято мест: " << GetUsedSpace(queue->_circularBuffer) << endl;
     cout << "Свободно мест: " << GetFreeSpace(queue->_circularBuffer) << endl;
 
     cout << "Содержимое (начало -> конец): ";
-    if (IsQueueEmpty(queue)) {
+    if (IsQueueEmpty(queue))
+    {
         cout << "пусто";
     }
-    else {
+    else
+    {
         int capacity = GetUsedSpace(queue->_circularBuffer) + GetFreeSpace(queue->_circularBuffer);
         Queue* tempQueue = CreateQueue(capacity);
         int count = 0;
 
-        while (!IsQueueEmpty(queue)) {
+        while (!IsQueueEmpty(queue))
+        {
             int value = Dequeue(queue);
             cout << value;
-            if (!IsQueueEmpty(queue)) cout << " -> ";
+            if (!IsQueueEmpty(queue))
+            {
+                cout << " -> ";
+            }
             Enqueue(tempQueue, value);
             count++;
         }
 
-        while (!IsQueueEmpty(tempQueue)) {
+        while (!IsQueueEmpty(tempQueue))
+        {
             int value = Dequeue(tempQueue);
             Enqueue(queue, value);
         }
 
         DeleteQueue(tempQueue);
     }
-    cout << endl << endl;
+    cout << endl;
 }
 
-void PrintQueueTwoStacksInfo(QueueTwoStacks* queue, const string& name) {
-    cout << "=== " << name << " ===" << endl;
-    if (queue == nullptr) {
+void PrintQueueTwoStacksInfo(QueueTwoStacks* queue, const string& name)
+{
+    cout << name << endl;
+    if (queue == nullptr)
+    {
         cout << "Очередь на двух стеках не создана или удалена" << endl;
         return;
     }
+
     cout << "Пуста: " << (IsQueueTwoStacksEmpty(queue) ? "да" : "нет") << endl;
 
     cout << "InputStack: ";
@@ -367,23 +667,30 @@ void PrintQueueTwoStacksInfo(QueueTwoStacks* queue, const string& name) {
     PrintStackInfo(queue->_outputStack, "OutputStack очереди");
 
     cout << "Содержимое очереди (начало -> конец): ";
-    if (IsQueueTwoStacksEmpty(queue)) {
+    if (IsQueueTwoStacksEmpty(queue))
+    {
         cout << "пусто";
     }
-    else {
+    else
+    {
         int capacity = queue->_inputStack->_capacity;
         QueueTwoStacks* tempQueue = CreateQueueTwoStacks(capacity);
         int count = 0;
 
-        while (!IsQueueTwoStacksEmpty(queue)) {
+        while (!IsQueueTwoStacksEmpty(queue))
+        {
             int value = DequeueTwoStacks(queue);
             cout << value;
-            if (!IsQueueTwoStacksEmpty(queue)) cout << " -> ";
+            if (!IsQueueTwoStacksEmpty(queue))
+            {
+                cout << " -> ";
+            }
             EnqueueTwoStacks(tempQueue, value);
             count++;
         }
 
-        while (!IsQueueTwoStacksEmpty(tempQueue)) {
+        while (!IsQueueTwoStacksEmpty(tempQueue))
+        {
             int value = DequeueTwoStacks(tempQueue);
             EnqueueTwoStacks(queue, value);
         }
@@ -393,228 +700,352 @@ void PrintQueueTwoStacksInfo(QueueTwoStacks* queue, const string& name) {
     cout << endl << endl;
 }
 
-void ShowStackMenu() {
+// Функции меню
+void ShowStructureMenu(const string& structureName, bool hasPeek = false)
+{
     cout << "0 - Назад в главное меню" << endl;
-    cout << "1 - Создать стек" << endl;
-    cout << "2 - Добавить элемент (Push)" << endl;
-    cout << "3 - Извлечь элемент (Pop)" << endl;
-    cout << "4 - Посмотреть верхний элемент (Peek)" << endl;
-    cout << "5 - Изменить размер стека" << endl;
-    cout << "6 - Удалить стек" << endl;
+    cout << "1 - Создать " << structureName << endl;
+    cout << "2 - Добавить элемент" << endl;
+    cout << "3 - Извлечь элемент" << endl;
+    cout << "4 - Изменить размер" << endl;
+    cout << "5 - Удалить " << structureName << endl;
+    if (hasPeek)
+    {
+        cout << "6 - Посмотреть верхний элемент" << endl;
+    }
 }
 
-void ShowQueueMenu() {
-    cout << "0 - Назад в главное меню" << endl;
-    cout << "1 - Создать очередь" << endl;
-    cout << "2 - Добавить элемент (Enqueue)" << endl;
-    cout << "3 - Извлечь элемент (Dequeue)" << endl;
-    cout << "4 - Изменить размер очереди" << endl;
-    cout << "5 - Удалить очередь" << endl;
+void ShowStackMenu()
+{
+    ShowStructureMenu("стек", true);
 }
 
-void ShowQueueTwoStacksMenu() {
-    cout << "0 - Назад в главное меню" << endl;
-    cout << "1 - Создать очередь" << endl;
-    cout << "2 - Добавить элемент (Enqueue)" << endl;
-    cout << "3 - Извлечь элемент (Dequeue)" << endl;
-    cout << "4 - Изменить размер очереди" << endl;
-    cout << "5 - Удалить очередь" << endl;
+void ShowCircularBufferMenu()
+{
+    ShowStructureMenu("кольцевой буфер");
 }
+
+void ShowQueueMenu()
+{
+    ShowStructureMenu("очередь");
+}
+
+void ShowQueueTwoStacksMenu()
+{
+    ShowStructureMenu("очередь");
+}
+
 void ShowMainMenu()
 {
-    cout << "\n=== ГЛАВНОЕ МЕНЮ ===" << endl;
+    cout << "\nГЛАВНОЕ МЕНЮ" << endl;
     cout << "0 - Выход из программы" << endl;
     cout << "1 - Работа со стеком" << endl;
-    cout << "2 - Работа с очередью (кольцевой буфер)" << endl;
-    cout << "3 - Работа с очередью (два стека)" << endl;
-    cout << "4 - Показать все структуры" << endl;
+    cout << "2 - Работа с кольцевым буфером" << endl;
+    cout << "3 - Работа с очередью (кольцевой буфер)" << endl;
+    cout << "4 - Работа с очередью (два стека)" << endl;
+    cout << "5 - Показать все структуры" << endl;
 }
-// Функции для обработки выбора в меню
-void HandleStackMenuChoice(int choice, Stack*& stack) {
-    switch (choice) {
-    case 1: {
-        if (CheckStructureNotExists(stack, "Стек")) {
+
+// Обработчики выбора меню
+void HandleStackMenuChoice(int choice, Stack*& stack)
+{
+    switch (choice)
+    {
+    case 1:
+    {
+        if (CheckStructureNotExists(stack, "Стек"))
+        {
             stack = CreateStructureStack();
         }
         break;
     }
-    case 2: {
+
+    case 2:
+    {
         AddElementToStack(stack);
         break;
     }
-    case 3: {
+
+    case 3:
+    {
         ExtractElementFromStack(stack);
         break;
     }
-    case 4: {
+
+    case 4:
+    {
         PeekElementFromStack(stack);
         break;
     }
-    case 5: {
-        if (CheckStructureExists(stack, "Стек")) {
+
+    case 5:
+    {
+        if (CheckStructureExists(stack, "Стек"))
+        {
             int newCapacity = GetValidatedInput("Введите новый размер стека: ");
-            if (ResizeStack(stack, newCapacity)) {
-                cout << "Размер стека изменен на " << newCapacity << endl;
+            if (ResizeStack(stack, newCapacity))
+            {
+                ShowResizeSuccess(newCapacity, "стека");
             }
-            else {
-                cout << "Ошибка изменения размера стека!" << endl;
+            else
+            {
+                ShowResizeError("стека");
             }
         }
         break;
     }
-    case 6: {
+
+    case 6:
+    {
         DeleteStructureStack(stack);
         break;
     }
     }
 }
 
-void HandleQueueMenuChoice(int choice, Queue*& queue) {
-    switch (choice) {
-    case 1: {
-        if (CheckStructureNotExists(queue, "Очередь")) {
+void HandleCircularBufferMenuChoice(int choice, CircularBuffer*& circularBuffer)
+{
+    switch (choice)
+    {
+    case 1:
+    {
+        if (CheckStructureNotExists(circularBuffer, "Кольцевой буфер"))
+        {
+            circularBuffer = CreateStructureCircularBuffer();
+        }
+        break;
+    }
+
+    case 2:
+    {
+        AddElementToCircularBuffer(circularBuffer);
+        break;
+    }
+
+    case 3:
+    {
+        ExtractElementFromCircularBuffer(circularBuffer);
+        break;
+    }
+
+    case 4:
+    {
+        if (CheckStructureExists(circularBuffer, "Кольцевой буфер"))
+        {
+            int newCapacity = GetValidatedInput("Введите новый размер кольцевого буфера: ");
+            if (ResizeCircularBuffer(circularBuffer, newCapacity))
+            {
+                ShowResizeSuccess(newCapacity, "кольцевого буфера");
+            }
+            else
+            {
+                ShowResizeError("кольцевого буфера");
+            }
+        }
+        break;
+    }
+
+    case 5:
+    {
+        DeleteStructureCircularBuffer(circularBuffer);
+        break;
+    }
+    }
+}
+
+void HandleQueueMenuChoice(int choice, Queue*& queue)
+{
+    switch (choice)
+    {
+    case 1:
+    {
+        if (CheckStructureNotExists(queue, "Очередь"))
+        {
             queue = CreateStructureQueue();
         }
         break;
     }
-    case 2: {
+
+    case 2:
+    {
         AddElementToQueue(queue);
         break;
     }
-    case 3: {
+
+    case 3:
+    {
         ExtractElementFromQueue(queue);
         break;
     }
-    case 4: {
-        if (CheckStructureExists(queue, "Очередь")) {
+
+    case 4:
+    {
+        if (CheckStructureExists(queue, "Очередь"))
+        {
             int newCapacity = GetValidatedInput("Введите новый размер очереди: ");
-            if (ResizeQueue(queue, newCapacity)) {
-                cout << "Размер очереди изменен на " << newCapacity << endl;
+            if (ResizeQueue(queue, newCapacity))
+            {
+                ShowResizeSuccess(newCapacity, "очереди");
             }
-            else {
-                cout << "Ошибка изменения размера очереди!" << endl;
+            else
+            {
+                ShowResizeError("очереди");
             }
         }
         break;
     }
-    case 5: {
+
+    case 5:
+    {
         DeleteStructureQueue(queue);
         break;
     }
     }
 }
 
-void HandleQueueTwoStacksMenuChoice(int choice, QueueTwoStacks*& queue) {
-    switch (choice) {
-    case 1: {
-        if (CheckStructureNotExists(queue, "Очередь")) {
+void HandleQueueTwoStacksMenuChoice(int choice, QueueTwoStacks*& queue)
+{
+    switch (choice)
+    {
+    case 1:
+    {
+        if (CheckStructureNotExists(queue, "Очередь"))
+        {
             queue = CreateStructureQueueTwoStacks();
         }
         break;
     }
-    case 2: {
+
+    case 2:
+    {
         AddElementToQueueTwoStacks(queue);
         break;
     }
-    case 3: {
+
+    case 3:
+    {
         ExtractElementFromQueueTwoStacks(queue);
         break;
     }
-    case 4: {
-        if (CheckStructureExists(queue, "Очередь")) {
+
+    case 4:
+    {
+        if (CheckStructureExists(queue, "Очередь"))
+        {
             int newCapacity = GetValidatedInput("Введите новый размер очереди: ");
-            if (ResizeQueueTwoStacks(queue, newCapacity)) {
-                cout << "Размер очереди изменен на " << newCapacity << endl;
+            if (ResizeQueueTwoStacks(queue, newCapacity))
+            {
+                ShowResizeSuccess(newCapacity, "очереди");
             }
-            else {
-                cout << "Ошибка изменения размера очереди!" << endl;
+            else
+            {
+                ShowResizeError("очереди");
             }
         }
         break;
     }
-    case 5: {
+
+    case 5:
+    {
         DeleteStructureQueueTwoStacks(queue);
         break;
     }
     }
 }
 
-// Главное меню
-int main() {
-    SetRussianEncoding(); // Установка русской кодировки
+int main()
+{
+    SetRussianEncoding();
 
     Stack* myStack = nullptr;
+    CircularBuffer* myCircularBuffer = nullptr;
     Queue* myQueue = nullptr;
     QueueTwoStacks* myQueueTwoStacks = nullptr;
 
     int mainChoice, subChoice;
 
-    cout << "=== ДЕМОНСТРАЦИЯ СТРУКТУР ДАННЫХ ===" << endl;
+    cout << "ДЕМОНСТРАЦИЯ СТРУКТУР ДАННЫХ" << endl;
 
-    do {
+    do
+    {
         ShowMainMenu();
-
         mainChoice = GetValidatedInputInRange("Выберите действие: ", 0, 5);
 
-        switch (mainChoice) {
-
-        case 0: {
+        switch (mainChoice)
+        {
+        case 0:
+        {
             cout << "Выход из программы..." << endl;
             break;
         }
 
-        case 1: {
-            do {
-                cout << "\nРАБОТА СО СТЕКОМ" << endl;
+        case 1:
+        {
+            do
+            {
+                ShowSectionHeader("РАБОТА СО СТЕКОМ");
                 PrintStackInfo(myStack, "Текущий стек");
                 ShowStackMenu();
-
                 subChoice = GetValidatedInputInRange("Выберите действие: ", 0, 6);
                 HandleStackMenuChoice(subChoice, myStack);
-
             } while (subChoice != 0);
             break;
         }
 
-        case 2: {
-            do {
-                cout << "\nОЧЕРЕДЬ (КОЛЬЦЕВОЙ БУФЕР)" << endl;
+        case 2:
+        {
+            do
+            {
+                ShowSectionHeader("КОЛЬЦЕВОЙ БУФЕР");
+                PrintCircularBufferInfo(myCircularBuffer, "Текущий кольцевой буфер");
+                ShowCircularBufferMenu();
+                subChoice = GetValidatedInputInRange("Выберите действие: ", 0, 5);
+                HandleCircularBufferMenuChoice(subChoice, myCircularBuffer);
+            } while (subChoice != 0);
+            break;
+        }
+
+        case 3:
+        {
+            do
+            {
+                ShowSectionHeader("ОЧЕРЕДЬ (КОЛЬЦЕВОЙ БУФЕР)");
                 PrintQueueInfo(myQueue, "Текущая очередь");
                 ShowQueueMenu();
-
                 subChoice = GetValidatedInputInRange("Выберите действие: ", 0, 5);
                 HandleQueueMenuChoice(subChoice, myQueue);
-
             } while (subChoice != 0);
             break;
         }
 
-        case 3: {
-            do {
-                cout << "\nОЧЕРЕДЬ (ДВА СТЕКА)" << endl;
+        case 4:
+        {
+            do
+            {
+                ShowSectionHeader("ОЧЕРЕДЬ (ДВА СТЕКА)");
                 PrintQueueTwoStacksInfo(myQueueTwoStacks, "Текущая очередь на двух стеках");
                 ShowQueueTwoStacksMenu();
-
                 subChoice = GetValidatedInputInRange("Выберите действие: ", 0, 5);
                 HandleQueueTwoStacksMenuChoice(subChoice, myQueueTwoStacks);
-
             } while (subChoice != 0);
             break;
         }
 
-        case 4: {
-            cout << "\nВСЕ СТРУКТУРЫ ДАННЫХ" << endl;
+        case 5:
+        {
+            ShowSectionHeader("ВСЕ СТРУКТУРЫ ДАННЫХ");
             PrintStackInfo(myStack, "СТЕК");
+            PrintCircularBufferInfo(myCircularBuffer, "КОЛЬЦЕВОЙ БУФЕР");
             PrintQueueInfo(myQueue, "ОЧЕРЕДЬ (КОЛЬЦЕВОЙ БУФЕР)");
             PrintQueueTwoStacksInfo(myQueueTwoStacks, "ОЧЕРЕДЬ (ДВА СТЕКА)");
             break;
         }
         }
-
     } while (mainChoice != 0);
 
     // Очистка памяти перед выходом
     DeleteStructureStack(myStack);
+    DeleteStructureCircularBuffer(myCircularBuffer);
     DeleteStructureQueue(myQueue);
     DeleteStructureQueueTwoStacks(myQueueTwoStacks);
 

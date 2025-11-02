@@ -34,7 +34,7 @@ Stack* CreateStack(int capacity)
 // Функция проверки, пуст ли стек
 bool IsEmpty(Stack* stack)
 {
-    if (stack == nullptr)
+    if (stack == nullptr) 
     {
         return true;
     }
@@ -52,11 +52,11 @@ bool IsFull(Stack* stack)
 }
 
 // Функция помещения элемента в стек
-void Push(Stack* stack, int value)
+bool Push(Stack* stack, int value)
 {
     if (stack == nullptr || IsFull(stack))
     {
-        return;
+        return false;
     }
 
     stack->_top++;
@@ -68,7 +68,7 @@ int Pop(Stack* stack)
 {
     if (stack == nullptr || IsEmpty(stack))
     {
-        return -1; // Возвращаем значение ошибки
+        return -1;
     }
 
     int value = stack->_buffer[stack->_top];

@@ -102,7 +102,7 @@ bool ResizeCircularBuffer(CircularBuffer* circularBuffer, int newCapacity)
         return false;
     }
 
-    // Копируем элементы в новый буфер
+
     for (int i = 0; i < circularBuffer->_count; i++)
     {
         newBuffer[i] = circularBuffer->_buffer[(circularBuffer->_tail + i) % circularBuffer->_capacity];
@@ -111,7 +111,7 @@ bool ResizeCircularBuffer(CircularBuffer* circularBuffer, int newCapacity)
     delete[] circularBuffer->_buffer;
     circularBuffer->_buffer = newBuffer;
     circularBuffer->_capacity = newCapacity;
-    circularBuffer->_head = circularBuffer->_count;
+    circularBuffer->_head = circularBuffer->_count % newCapacity;
     circularBuffer->_tail = 0;
 
     return true;
