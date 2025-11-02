@@ -61,8 +61,8 @@ bool EnqueueCircularBuffer(CircularBuffer* circularBuffer, int value)
         return false;
     }
 
-    circularBuffer->_buffer[circularBuffer->_head] = value;
-    circularBuffer->_head = (circularBuffer->_head + 1) % circularBuffer->_capacity;
+    circularBuffer->_buffer[circularBuffer->_tail] = value;
+    circularBuffer->_tail = (circularBuffer->_tail + 1) % circularBuffer->_capacity;
     circularBuffer->_count++;
 
     return true;
@@ -74,9 +74,8 @@ int DequeueCircularBuffer(CircularBuffer* circularBuffer)
     {
         return -1;
     }
-
-    int value = circularBuffer->_buffer[circularBuffer->_tail];
-    circularBuffer->_tail = (circularBuffer->_tail + 1) % circularBuffer->_capacity;
+    int value = circularBuffer->_buffer[circularBuffer->_head];
+    circularBuffer->_head = (circularBuffer->_head + 1) % circularBuffer->_capacity;
     circularBuffer->_count--;
 
     return value;
@@ -110,17 +109,17 @@ bool ResizeCircularBuffer(CircularBuffer* circularBuffer, int newCapacity)
         return false;
     }
 
-
     for (int i = 0; i < circularBuffer->_count; i++)
     {
-        newBuffer[i] = circularBuffer->_buffer[(circularBuffer->_tail + i) % circularBuffer->_capacity];
+        int index = (circularBuffer->_head + i) % circularBuffer->_capacity;
+        newBuffer[i] = circularBuffer->_buffer[index];
     }
 
     delete[] circularBuffer->_buffer;
     circularBuffer->_buffer = newBuffer;
     circularBuffer->_capacity = newCapacity;
-    circularBuffer->_head = circularBuffer->_count % newCapacity;
-    circularBuffer->_tail = 0;
+    circularBuffer->_head = 0; 
+    circularBuffer->_tail = circularBuffer->_count;
 
     return true;
 }

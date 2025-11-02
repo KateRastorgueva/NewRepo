@@ -262,8 +262,7 @@ void ShowExtractedElement(int value, bool success = true)
 }
 
 // Общая функция для добавления элементов
-void AddElementToStructure(void*& structure, const string& structureName,
-    bool (*addFunc)(void*, int), bool alwaysSuccess = false)
+void AddElementToStructure(void*& structure, const string& structureName, bool (*addFunction)(void*, int))
 {
     if (!CheckStructureExists(structure, structureName))
     {
@@ -271,7 +270,7 @@ void AddElementToStructure(void*& structure, const string& structureName,
     }
 
     int value = GetValidatedInput("Введите значение для добавления: ");
-    bool success = alwaysSuccess ? true : addFunc(structure, value);
+    bool success = addFunction(structure, value);
 
     if (success)
     {
@@ -282,6 +281,8 @@ void AddElementToStructure(void*& structure, const string& structureName,
         ShowAddError(structureName);
     }
 }
+
+// Функции-обертки остаются без изменений
 
 void AddElementToCircularBuffer(CircularBuffer*& circularBuffer)
 {
@@ -319,7 +320,7 @@ void ExtractElementFromStructure(void*& structure, const string& structureName,
     int value = extractFunc(structure);
     ShowExtractedElement(value, value != -1);
 }
-// Функции-обертки для извлечения
+
 void ExtractElementFromStack(Stack*& stack)
 {
     ExtractElementFromStructure((void*&)stack, "Стек", (bool (*)(void*))IsEmpty,(int (*)(void*))Pop);
@@ -353,51 +354,50 @@ void ShowDeleteMessage(bool wasDeleted, const string& structureName)
     }
 }
 
-// Упрощенные функции удаления структур
-void DeleteStructureStack(Stack*& stack)
+// Универсальная функция удаления структур
+void DeleteStructure(void*& structure, const string& structureName, void (*deleteFunc)(void*&))
 {
-    bool wasDeleted = (stack != nullptr);
+    bool wasDeleted = (structure != nullptr);
     if (wasDeleted)
     {
-        DeleteStack(stack);
-        stack = nullptr;
+        deleteFunc(structure);
+        structure = nullptr;
     }
-    ShowDeleteMessage(wasDeleted, "Стек");
+    ShowDeleteMessage(wasDeleted, structureName);
+}
+
+// Специализированные функции удаления структур
+void DeleteStructureStack(Stack*& stack)
+{
+    DeleteStructure((void*&)stack, "Стек", (void (*)(void*&))DeleteStack);
 }
 
 void DeleteStructureQueue(Queue*& queue)
 {
-    bool wasDeleted = (queue != nullptr);
-    if (wasDeleted)
-    {
-        DeleteQueue(queue);
-        queue = nullptr;
-    }
-    ShowDeleteMessage(wasDeleted, "Очередь");
+    DeleteStructure((void*&)queue, "Очередь", (void (*)(void*&))DeleteQueue);
 }
 
 void DeleteStructureQueueTwoStacks(QueueTwoStacks*& queue)
 {
-    bool wasDeleted = (queue != nullptr);
-    if (wasDeleted)
-    {
-        DeleteQueueTwoStacks(queue);
-        queue = nullptr;
-    }
-    ShowDeleteMessage(wasDeleted, "Очередь");
+    DeleteStructure((void*&)queue, "Очередь", (void (*)(void*&))DeleteQueueTwoStacks);
 }
 
 void DeleteStructureCircularBuffer(CircularBuffer*& circularBuffer)
 {
-    bool wasDeleted = (circularBuffer != nullptr);
-    if (wasDeleted)
-    {
-        DeleteCircularBuffer(circularBuffer);
-        circularBuffer = nullptr;
-    }
-    ShowDeleteMessage(wasDeleted, "Кольцевой буфер");
+    DeleteStructure((void*&)circularBuffer, "Кольцевой буфер", (void (*)(void*&))DeleteCircularBuffer);
 }
 
+
+void WriteInfo(int valueCapacity, int valueTop)
+{
+    cout << "Вместимость: " << valueCapacity << endl;
+    cout << "Вершина (top): " << valueTop << endl;
+}
+void IsFullEmpty(bool valueEmpty, bool valueFull)
+{
+    cout << "Пуст(а): " << (valueEmpty ? "да" : "нет") << endl;
+    cout << "Полон(а): " << (valueFull ? "да" : "нет") << endl;
+}
 // Функции для вывода характеристик структур
 void PrintStackInfo(Stack* stack, const string& name)
 {
@@ -407,11 +407,8 @@ void PrintStackInfo(Stack* stack, const string& name)
         cout << "Стек не создан или удален" << endl;
         return;
     }
-
-    cout << "Вместимость: " << stack->_capacity << endl;
-    cout << "Вершина (top): " << stack->_top << endl;
-    cout << "Пуст: " << (IsEmpty(stack) ? "да" : "нет") << endl;
-    cout << "Полон: " << (IsFull(stack) ? "да" : "нет") << endl;
+    WriteInfo(stack->_capacity, stack->_top);
+    IsFullEmpty(IsEmpty(stack), IsFull(stack));
 
     cout << "Содержимое (сверху вниз): ";
     if (IsEmpty(stack))
@@ -459,43 +456,30 @@ void PrintCircularBufferInfo(CircularBuffer* circularBuffer, const string& name)
     cout << "Голова (head): " << circularBuffer->_head << endl;
     cout << "Хвост (tail): " << circularBuffer->_tail << endl;
     cout << "Количество элементов: " << circularBuffer->_count << endl;
-    cout << "Пуст: " << (GetUsedSpace(circularBuffer) == 0 ? "да" : "нет") << endl;
-    cout << "Полон: " << (GetFreeSpaceCircular(circularBuffer) == 0 ? "да" : "нет") << endl;
-    cout << "Занято мест: " << GetUsedSpace(circularBuffer) << endl;
-    cout << "Свободно мест: " << GetFreeSpaceCircular(circularBuffer) << endl;
+    IsFullEmpty(circularBuffer->_count == 0, circularBuffer->_count == circularBuffer->_capacity);
+    cout << "Занято мест: " << circularBuffer->_count << endl;
+    cout << "Свободно мест: " << (circularBuffer->_capacity - circularBuffer->_count) << endl;
 
     cout << "Содержимое (начало -> конец): ";
-    if (GetUsedSpace(circularBuffer) == 0)
+    if (circularBuffer->_count == 0)
     {
         cout << "пусто";
     }
     else
     {
-        CircularBuffer* tempBuffer = CreateCircularBuffer(circularBuffer->_capacity);
-        int count = circularBuffer->_count;
-
-        for (int i = 0; i < count; i++)
+        // Просто печатаем без изменения исходного буфера
+        for (int i = 0; i < circularBuffer->_count; i++)
         {
-            int value = DequeueCircularBuffer(circularBuffer);
-            cout << value;
-            if (i < count - 1)
+            int index = (circularBuffer->_head + i) % circularBuffer->_capacity;
+            cout << circularBuffer->_buffer[index];
+            if (i < circularBuffer->_count - 1)
             {
                 cout << " -> ";
             }
-            EnqueueCircularBuffer(tempBuffer, value);
         }
-
-        for (int i = 0; i < count; i++)
-        {
-            int value = DequeueCircularBuffer(tempBuffer);
-            EnqueueCircularBuffer(circularBuffer, value);
-        }
-
-        DeleteCircularBuffer(tempBuffer);
     }
     cout << endl << endl;
 }
-
 void PrintQueueInfo(Queue* queue, const string& name)
 {
     cout << name << endl;
@@ -504,9 +488,7 @@ void PrintQueueInfo(Queue* queue, const string& name)
         cout << "Очередь не создана или удалена" << endl;
         return;
     }
-
-    cout << "Пуста: " << (IsQueueEmpty(queue) ? "да" : "нет") << endl;
-    cout << "Полна: " << (IsQueueFull(queue) ? "да" : "нет") << endl;
+    IsFullEmpty(IsQueueEmpty(queue), IsQueueFull(queue));
     cout << "Занято мест: " << GetUsedSpace(queue->_circularBuffer) << endl;
     cout << "Свободно мест: " << GetFreeSpaceQueue(queue) << endl;
 
@@ -553,7 +535,6 @@ void PrintQueueTwoStacksInfo(QueueTwoStacks* queue, const string& name)
         return;
     }
 
-    cout << "Пуста: " << (IsQueueTwoStacksEmpty(queue) ? "да" : "нет") << endl;
 
     PrintStackInfo(queue->_inputStack, "InputStack очереди");
 
