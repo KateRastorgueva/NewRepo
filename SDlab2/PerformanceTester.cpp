@@ -37,32 +37,32 @@ MeasurementResults* PerformanceTester::PerformMeasurements(int& resultsCount) {
             steady_clock::time_point begin1 = steady_clock::now();
             list.PushFront("test_value");
             steady_clock::time_point end1 = steady_clock::now();
-            totalPushFront += duration_cast<nanoseconds>(end1 - begin1).count();
+            totalPushFront += duration_cast<microseconds>(end1 - begin1).count();
 
             // PushBack 
             steady_clock::time_point begin2 = steady_clock::now();
             list.PushBack("test_value");
             steady_clock::time_point end2 = steady_clock::now();
-            totalPushBack += duration_cast<nanoseconds>(end2 - begin2).count();
+            totalPushBack += duration_cast<microseconds>(end2 - begin2).count();
 
             // PopFront
             steady_clock::time_point begin3 = steady_clock::now();
             if (!list.IsEmpty()) list.PopFront();
             steady_clock::time_point end3 = steady_clock::now();
-            totalPopFront += duration_cast<nanoseconds>(end3 - begin3).count();
+            totalPopFront += duration_cast<microseconds>(end3 - begin3).count();
 
             // PopBack 
             steady_clock::time_point begin4 = steady_clock::now();
             if (!list.IsEmpty()) list.PopBack();
             steady_clock::time_point end4 = steady_clock::now();
-            totalPopBack += duration_cast<nanoseconds>(end4 - begin4).count();
+            totalPopBack += duration_cast<microseconds>(end4 - begin4).count();
 
             // Search 
             string target = "value_" + to_string(rand() % 1000);
             steady_clock::time_point begin5 = steady_clock::now();
             list.LinearSearch(target);
             steady_clock::time_point end5 = steady_clock::now();
-            totalSearch += duration_cast<nanoseconds>(end5 - begin5).count();
+            totalSearch += duration_cast<microseconds>(end5 - begin5).count();
 
             // Sort 
             steady_clock::time_point begin6 = steady_clock::now();
@@ -81,6 +81,100 @@ MeasurementResults* PerformanceTester::PerformMeasurements(int& resultsCount) {
 
     return results;
 }
+/*#include "PerformanceTester.h"
+#include <cstdlib>
+#include <ctime>
+#include <chrono>
+#include <string>
+
+using namespace std;
+using namespace std::chrono;
+
+DoublyLinkedList PerformanceTester::CreateFilledList(int size) {
+    DoublyLinkedList list;
+    for (int i = 0; i < size; i++) {
+        string value = "value_" + to_string(rand() % 1000);
+        list.PushBack(value);
+    }
+    return list;
+}
+
+long MeasureOperationTime(void (*operation)(void*), void* data) {
+    steady_clock::time_point begin = steady_clock::now();
+    operation(data);
+    steady_clock::time_point end = steady_clock::now();
+    return duration_cast<microseconds>(end - begin).count();
+}
+
+void PushFrontWrapper(void* data) {
+    DoublyLinkedList* list = (DoublyLinkedList*)data;
+    list->PushFront("test_value");
+}
+
+void PushBackWrapper(void* data) {
+    DoublyLinkedList* list = (DoublyLinkedList*)data;
+    list->PushBack("test_value");
+}
+
+void PopFrontWrapper(void* data) {
+    DoublyLinkedList* list = (DoublyLinkedList*)data;
+    if (!list->IsEmpty()) list->PopFront();
+}
+
+void PopBackWrapper(void* data) {
+    DoublyLinkedList* list = (DoublyLinkedList*)data;
+    if (!list->IsEmpty()) list->PopBack();
+}
+
+void SearchWrapper(void* data) {
+    DoublyLinkedList* list = (DoublyLinkedList*)data;
+    string target = "value_" + to_string(rand() % 1000);
+    list->LinearSearch(target);
+}
+
+void SortWrapper(void* data) {
+    DoublyLinkedList* list = (DoublyLinkedList*)data;
+    list->Sort();
+}
+
+MeasurementResults* PerformanceTester::PerformMeasurements(int& resultsCount) {
+    const int sizesCount = 5;
+    int sizes[sizesCount] = { 10, 100, 1000, 5000, 10000 };
+    resultsCount = sizesCount;
+
+    static MeasurementResults results[sizesCount];
+
+    for (int i = 0; i < sizesCount; i++) {
+        int size = sizes[i];
+        results[i].Size = size;
+        const int measurements = 1;
+
+        long totalPushFront = 0, totalPushBack = 0, totalPopFront = 0, totalPopBack = 0;
+        long totalSearch = 0, totalSort = 0;
+
+        for (int j = 0; j < measurements; j++) {
+            DoublyLinkedList list = CreateFilledList(size);
+
+            // Измеряем ВСЕ операции через общую функцию (в микросекундах)
+            totalPushFront += MeasureOperationTime(PushFrontWrapper, &list);
+            totalPushBack += MeasureOperationTime(PushBackWrapper, &list);
+            totalPopFront += MeasureOperationTime(PopFrontWrapper, &list);
+            totalPopBack += MeasureOperationTime(PopBackWrapper, &list);
+            totalSearch += MeasureOperationTime(SearchWrapper, &list);
+            totalSort += MeasureOperationTime(SortWrapper, &list);
+        }
+
+        results[i].PushFrontTime = totalPushFront / measurements;
+        results[i].PushBackTime = totalPushBack / measurements;
+        results[i].PopFrontTime = totalPopFront / measurements;
+        results[i].PopBackTime = totalPopBack / measurements;
+        results[i].SearchTime = totalSearch / measurements;
+        results[i].SortTime = totalSort / measurements;
+    }
+
+    return results;
+}*/
+
 
 /*static string IntToString(int value) {
     if (value == 0) return "0";
