@@ -8,3 +8,4 @@ void DeleteQueue(Queue* queue);
 bool IsQueueEmpty(Queue* queue);
 bool IsQueueFull(Queue* queue);
 bool ResizeQueue(Queue* queue, int newCapacity);
+int GetFreeSpaceQueue(Queue* queue);

@@ -265,7 +265,7 @@ bool CheckStructureNotExists(void* structure, const string& structureName)
 {
     if (structure != nullptr)
     {
-        cout << structureName << " уже существует! Удалите его сначала." << endl;
+        cout << structureName << " уже существует! Удалите сначала." << endl;
         return false;
     }
     return true;
@@ -426,24 +426,6 @@ void ExtractElementFromCircularBuffer(CircularBuffer*& circularBuffer)
     ShowExtractedElement(value, value != -1);
 }
 
-// Вспомогательные функции для просмотра элементов
-void PeekElementFromStack(Stack*& stack)
-{
-    if (!CheckStructureExists(stack, "Стек"))
-    {
-        return;
-    }
-
-    int value = Peek(stack);
-    if (value != -1)
-    {
-        cout << "Верхний элемент: " << value << endl;
-    }
-    else
-    {
-        cout << "Стек пуст!" << endl;
-    }
-}
 
 // Общая функция для вывода сообщений об удалении
 void ShowDeleteMessage(bool wasDeleted, const string& structureName)
@@ -613,7 +595,7 @@ void PrintQueueInfo(Queue* queue, const string& name)
     cout << "Пуста: " << (IsQueueEmpty(queue) ? "да" : "нет") << endl;
     cout << "Полна: " << (IsQueueFull(queue) ? "да" : "нет") << endl;
     cout << "Занято мест: " << GetUsedSpace(queue->_circularBuffer) << endl;
-    cout << "Свободно мест: " << GetFreeSpace(queue->_circularBuffer) << endl;
+    cout << "Свободно мест: " << GetFreeSpaceQueue(queue) << endl;
 
     cout << "Содержимое (начало -> конец): ";
     if (IsQueueEmpty(queue))
@@ -622,7 +604,7 @@ void PrintQueueInfo(Queue* queue, const string& name)
     }
     else
     {
-        int capacity = GetUsedSpace(queue->_circularBuffer) + GetFreeSpace(queue->_circularBuffer);
+        int capacity = GetUsedSpace(queue->_circularBuffer) + GetFreeSpaceQueue(queue);
         Queue* tempQueue = CreateQueue(capacity);
         int count = 0;
 
@@ -701,7 +683,7 @@ void PrintQueueTwoStacksInfo(QueueTwoStacks* queue, const string& name)
 }
 
 // Функции меню
-void ShowStructureMenu(const string& structureName, bool hasPeek = false)
+void ShowStructureMenu(const string& structureName)
 {
     cout << "0 - Назад в главное меню" << endl;
     cout << "1 - Создать " << structureName << endl;
@@ -709,15 +691,11 @@ void ShowStructureMenu(const string& structureName, bool hasPeek = false)
     cout << "3 - Извлечь элемент" << endl;
     cout << "4 - Изменить размер" << endl;
     cout << "5 - Удалить " << structureName << endl;
-    if (hasPeek)
-    {
-        cout << "6 - Посмотреть верхний элемент" << endl;
-    }
 }
 
 void ShowStackMenu()
 {
-    ShowStructureMenu("стек", true);
+    ShowStructureMenu("стек");
 }
 
 void ShowCircularBufferMenu()
@@ -774,12 +752,6 @@ void HandleStackMenuChoice(int choice, Stack*& stack)
 
     case 4:
     {
-        PeekElementFromStack(stack);
-        break;
-    }
-
-    case 5:
-    {
         if (CheckStructureExists(stack, "Стек"))
         {
             int newCapacity = GetValidatedInput("Введите новый размер стека: ");
@@ -795,7 +767,7 @@ void HandleStackMenuChoice(int choice, Stack*& stack)
         break;
     }
 
-    case 6:
+    case 5:
     {
         DeleteStructureStack(stack);
         break;

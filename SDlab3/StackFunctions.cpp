@@ -76,16 +76,6 @@ int Pop(Stack* stack)
     return value;
 }
 
-// Функция просмотра верхнего элемента без извлечения
-int Peek(Stack* stack)
-{
-    if (stack == nullptr || IsEmpty(stack))
-    {
-        return -1;
-    }
-
-    return stack->_buffer[stack->_top];
-}
 
 // Функция удаления стека (очистка памяти)
 void DeleteStack(Stack* stack)

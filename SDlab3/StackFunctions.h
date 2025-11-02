@@ -16,9 +16,6 @@ bool IsEmpty(Stack* stack);
 // Функция проверки, полон ли стек  
 bool IsFull(Stack* stack);
 
-// Функция просмотра верхнего элемента без извлечения
-int Peek(Stack* stack);
-
 // Функция удаления стека (очистка памяти)
 void DeleteStack(Stack* stack);
 
