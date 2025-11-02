@@ -33,15 +33,13 @@ QueueTwoStacks* CreateQueueTwoStacks(int capacity)
 
     return queue;
 }
-
-void EnqueueTwoStacks(QueueTwoStacks* queue, int value)
+bool EnqueueQueueTwoStacks(QueueTwoStacks* queue, int value)
 {
     if (queue == nullptr)
     {
-        return;
+        return false;
     }
-
-    Push(queue->_inputStack, value);
+    return Push(queue->_inputStack, value);
 }
 
 int DequeueTwoStacks(QueueTwoStacks* queue)

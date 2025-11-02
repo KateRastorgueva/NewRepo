@@ -45,6 +45,14 @@ int GetUsedSpace(CircularBuffer* circularBuffer)
     }
     return circularBuffer->_count;
 }
+bool IsCircularBufferEmpty(CircularBuffer* ñircularBuffer)
+{
+    if (ñircularBuffer == nullptr)
+    {
+        return true;
+    }
+    return GetUsedSpace(ñircularBuffer) == 0;
+}
 
 bool EnqueueCircularBuffer(CircularBuffer* circularBuffer, int value)
 {

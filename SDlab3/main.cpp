@@ -283,25 +283,6 @@ void AddElementToStructure(void*& structure, const string& structureName,
     }
 }
 
-// Общая функция для извлечения элементов
-void ExtractElementFromStructure(void*& structure, const string& structureName,
-    bool (*isEmptyFunc)(void*), int (*extractFunc)(void*))
-{
-    if (!CheckStructureExists(structure, structureName))
-    {
-        return;
-    }
-
-    if (CheckStructureEmpty(isEmptyFunc(structure), structureName))
-    {
-        return;
-    }
-
-    int value = extractFunc(structure);
-    ShowExtractedElement(value, value != -1);
-}
-
-// Функции-обертки для добавления
 void AddElementToCircularBuffer(CircularBuffer*& circularBuffer)
 {
     AddElementToStructure((void*&)circularBuffer, "Кольцевой буфер", (bool (*)(void*, int))EnqueueCircularBuffer);
@@ -319,64 +300,44 @@ void AddElementToQueue(Queue*& queue)
 
 void AddElementToQueueTwoStacks(QueueTwoStacks*& queue)
 {
-    AddElementToStructure(
-        (void*&)queue,
-        "Очередь",
-        nullptr,  // специальный случай
-        true      // всегда успешно
-    );
-    // Дополнительный вызов для QueueTwoStacks
-    if (queue != nullptr)
-    {
-        int value = GetValidatedInput("Введите значение для добавления: ");
-        EnqueueTwoStacks(queue, value);
-    }
+    AddElementToStructure((void*&)queue, "Очередь", (bool (*)(void*, int)) EnqueueQueueTwoStacks);
 }
+// Общая функция для извлечения элементов
+void ExtractElementFromStructure(void*& structure, const string& structureName,
+    bool (*isEmptyFunc)(void*), int (*extractFunc)(void*))
+{
+    if (!CheckStructureExists(structure, structureName))
+    {
+        return;
+    }
 
+    if (CheckStructureEmpty(isEmptyFunc(structure), structureName))
+    {
+        return;
+    }
+
+    int value = extractFunc(structure);
+    ShowExtractedElement(value, value != -1);
+}
 // Функции-обертки для извлечения
 void ExtractElementFromStack(Stack*& stack)
 {
-    ExtractElementFromStructure(
-        (void*&)stack,
-        "Стек",
-        (bool (*)(void*))IsEmpty,
-        (int (*)(void*))Pop
-    );
+    ExtractElementFromStructure((void*&)stack, "Стек", (bool (*)(void*))IsEmpty,(int (*)(void*))Pop);
 }
 
 void ExtractElementFromQueue(Queue*& queue)
 {
-    ExtractElementFromStructure(
-        (void*&)queue,
-        "Очередь",
-        (bool (*)(void*))IsQueueEmpty,
-        (int (*)(void*))Dequeue
-    );
+    ExtractElementFromStructure((void*&)queue, "Очередь",(bool (*)(void*))IsQueueEmpty,(int (*)(void*))Dequeue );
 }
 
 void ExtractElementFromQueueTwoStacks(QueueTwoStacks*& queue)
 {
-    ExtractElementFromStructure(
-        (void*&)queue,
-        "Очередь",
-        (bool (*)(void*))IsQueueTwoStacksEmpty,
-        (int (*)(void*))DequeueTwoStacks
-    );
+    ExtractElementFromStructure((void*&)queue, "Очередь", (bool (*)(void*))IsQueueTwoStacksEmpty,(int (*)(void*))DequeueTwoStacks );
 }
 
 void ExtractElementFromCircularBuffer(CircularBuffer*& circularBuffer)
 {
-    // Специальная функция для проверки пустоты CircularBuffer
-    auto circularBufferIsEmpty = [](void* buffer) -> bool {
-        return GetUsedSpace((CircularBuffer*)buffer) == 0;
-        };
-
-    ExtractElementFromStructure(
-        (void*&)circularBuffer,
-        "Кольцевой буфер",
-        circularBufferIsEmpty,
-        (int (*)(void*))DequeueCircularBuffer
-    );
+    ExtractElementFromStructure((void*&)circularBuffer, "Кольцевой буфер",(bool (*)(void*))IsCircularBufferEmpty,(int (*)(void*))DequeueCircularBuffer);
 }
 
 // Общая функция для вывода сообщений об удалении
@@ -606,7 +567,7 @@ void PrintQueueTwoStacksInfo(QueueTwoStacks* queue, const string& name)
     else
     {
         int capacity = queue->_inputStack->_capacity;
-        QueueTwoStacks* tempQueue = CreateQueueTwoStacks(capacity);
+        QueueTwoStacks* temporaryQueue = CreateQueueTwoStacks(capacity);
         int count = 0;
 
         while (!IsQueueTwoStacksEmpty(queue))
@@ -617,17 +578,17 @@ void PrintQueueTwoStacksInfo(QueueTwoStacks* queue, const string& name)
             {
                 cout << " -> ";
             }
-            EnqueueTwoStacks(tempQueue, value);
+            EnqueueQueueTwoStacks(temporaryQueue, value);
             count++;
         }
 
-        while (!IsQueueTwoStacksEmpty(tempQueue))
+        while (!IsQueueTwoStacksEmpty(temporaryQueue))
         {
-            int value = DequeueTwoStacks(tempQueue);
-            EnqueueTwoStacks(queue, value);
+            int value = DequeueTwoStacks(temporaryQueue);
+            EnqueueQueueTwoStacks(queue, value);
         }
 
-        DeleteQueueTwoStacks(tempQueue);
+        DeleteQueueTwoStacks(temporaryQueue);
     }
     cout << endl << endl;
 }
