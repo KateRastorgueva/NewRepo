@@ -114,26 +114,14 @@ bool ResizeQueueTwoStacks(QueueTwoStacks* queue, int newCapacity)
         return false;
     }
 
-    // ВРЕМЕННЫЙ СТЕК для сохранения порядка в InputStack
-    Stack* tempStack = CreateStack(newCapacity);
-
-    // Копируем элементы из inputStack с сохранением порядка
+    // Копируем элементы из inputStack
     while (!IsEmpty(queue->_inputStack))
     {
         int value = Pop(queue->_inputStack);
-        Push(tempStack, value);  // сначала в временный стек
+        Push(newInputStack, value);
     }
 
-    // Переносим из временного стека в новый InputStack
-    while (!IsEmpty(tempStack))
-    {
-        int value = Pop(tempStack);
-        Push(newInputStack, value);  // теперь порядок правильный
-    }
-
-    DeleteStack(tempStack);
-
-    // Копируем элементы из outputStack (тут порядок уже правильный)
+    // Копируем элементы из outputStack
     while (!IsEmpty(queue->_outputStack))
     {
         int value = Pop(queue->_outputStack);

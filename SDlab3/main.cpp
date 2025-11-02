@@ -174,84 +174,46 @@ int GetValidatedCapacity(const string& structureName)
     return GetValidatedInput("Введите вместимость " + structureName + ": ");
 }
 
-Stack* CreateStructureStack()
+// Общая функция создания
+void* CreateStructureGeneric(const string& structureName, void* (*createFunction)(int))
 {
-    int capacity = GetValidatedCapacity("стека");
+    int capacity = GetValidatedCapacity(structureName);
     if (!ValidateCapacity(capacity))
     {
         return nullptr;
     }
 
-    Stack* stack = CreateStack(capacity);
-    if (stack != nullptr)
+    void* structure = createFunction(capacity);
+    if (structure != nullptr)
     {
-        ShowCreationSuccess("Стек");
+        ShowCreationSuccess(structureName);
     }
     else
     {
-        ShowCreationError("стека");
+        ShowCreationError(structureName);
     }
-    return stack;
+    return structure;
+}
+
+// Обертки для каждого типа
+Stack* CreateStructureStack()
+{
+    return (Stack*)CreateStructureGeneric("Стек", (void* (*)(int))CreateStack);
 }
 
 Queue* CreateStructureQueue()
 {
-    int capacity = GetValidatedCapacity("очереди");
-    if (!ValidateCapacity(capacity))
-    {
-        return nullptr;
-    }
-
-    Queue* queue = CreateQueue(capacity);
-    if (queue != nullptr)
-    {
-        ShowCreationSuccess("Очередь");
-    }
-    else
-    {
-        ShowCreationError("очереди");
-    }
-    return queue;
+    return (Queue*)CreateStructureGeneric("Очередь", (void* (*)(int))CreateQueue);
 }
 
 QueueTwoStacks* CreateStructureQueueTwoStacks()
 {
-    int capacity = GetValidatedCapacity("очереди");
-    if (!ValidateCapacity(capacity))
-    {
-        return nullptr;
-    }
-
-    QueueTwoStacks* queue = CreateQueueTwoStacks(capacity);
-    if (queue != nullptr)
-    {
-        ShowCreationSuccess("Очередь");
-    }
-    else
-    {
-        ShowCreationError("очереди");
-    }
-    return queue;
+    return (QueueTwoStacks*)CreateStructureGeneric("Очередь", (void* (*)(int))CreateQueueTwoStacks);
 }
 
 CircularBuffer* CreateStructureCircularBuffer()
 {
-    int capacity = GetValidatedCapacity("кольцевого буфера");
-    if (!ValidateCapacity(capacity))
-    {
-        return nullptr;
-    }
-
-    CircularBuffer* circularBuffer = CreateCircularBuffer(capacity);
-    if (circularBuffer != nullptr)
-    {
-        ShowCreationSuccess("Кольцевой буфер");
-    }
-    else
-    {
-        ShowCreationError("кольцевого буфера");
-    }
-    return circularBuffer;
+    return (CircularBuffer*)CreateStructureGeneric("Кольцевой буфер", (void* (*)(int))CreateCircularBuffer);
 }
 
 // Вспомогательные функции для проверки существования структур
@@ -299,137 +261,123 @@ void ShowExtractedElement(int value, bool success = true)
     }
 }
 
-void AddElementToCircularBuffer(CircularBuffer*& circularBuffer)
+// Общая функция для добавления элементов
+void AddElementToStructure(void*& structure, const string& structureName,
+    bool (*addFunc)(void*, int), bool alwaysSuccess = false)
 {
-    if (!CheckStructureExists(circularBuffer, "Кольцевой буфер"))
+    if (!CheckStructureExists(structure, structureName))
     {
         return;
     }
 
     int value = GetValidatedInput("Введите значение для добавления: ");
-    if (EnqueueCircularBuffer(circularBuffer, value))
+    bool success = alwaysSuccess ? true : addFunc(structure, value);
+
+    if (success)
     {
-        ShowAddSuccess(value, "кольцевой буфер");
+        ShowAddSuccess(value, structureName);
     }
     else
     {
-        ShowAddError("Кольцевой буфер");
+        ShowAddError(structureName);
     }
+}
+
+// Общая функция для извлечения элементов
+void ExtractElementFromStructure(void*& structure, const string& structureName,
+    bool (*isEmptyFunc)(void*), int (*extractFunc)(void*))
+{
+    if (!CheckStructureExists(structure, structureName))
+    {
+        return;
+    }
+
+    if (CheckStructureEmpty(isEmptyFunc(structure), structureName))
+    {
+        return;
+    }
+
+    int value = extractFunc(structure);
+    ShowExtractedElement(value, value != -1);
+}
+
+// Функции-обертки для добавления
+void AddElementToCircularBuffer(CircularBuffer*& circularBuffer)
+{
+    AddElementToStructure((void*&)circularBuffer, "Кольцевой буфер", (bool (*)(void*, int))EnqueueCircularBuffer);
 }
 
 void AddElementToStack(Stack*& stack)
 {
-    if (!CheckStructureExists(stack, "Стек"))
-    {
-        return;
-    }
-
-    int value = GetValidatedInput("Введите значение для добавления: ");
-    if (Push(stack, value))
-    {
-        ShowAddSuccess(value, "стек");
-    }
-    else
-    {
-        ShowAddError("Стек");
-    }
+    AddElementToStructure((void*&)stack, "Стек", (bool (*)(void*, int))Push);
 }
 
 void AddElementToQueue(Queue*& queue)
 {
-    if (!CheckStructureExists(queue, "Очередь"))
-    {
-        return;
-    }
-
-    int value = GetValidatedInput("Введите значение для добавления: ");
-    if (Enqueue(queue, value))
-    {
-        ShowAddSuccess(value, "очередь");
-    }
-    else
-    {
-        ShowAddError("Очередь");
-    }
+    AddElementToStructure((void*&)queue,"Очередь",(bool (*)(void*, int))Enqueue);
 }
 
 void AddElementToQueueTwoStacks(QueueTwoStacks*& queue)
 {
-    if (!CheckStructureExists(queue, "Очередь"))
+    AddElementToStructure(
+        (void*&)queue,
+        "Очередь",
+        nullptr,  // специальный случай
+        true      // всегда успешно
+    );
+    // Дополнительный вызов для QueueTwoStacks
+    if (queue != nullptr)
     {
-        return;
+        int value = GetValidatedInput("Введите значение для добавления: ");
+        EnqueueTwoStacks(queue, value);
     }
-
-    int value = GetValidatedInput("Введите значение для добавления: ");
-    EnqueueTwoStacks(queue, value);
-    ShowAddSuccess(value, "очередь");
 }
 
-// Упрощенные функции извлечения элементов
+// Функции-обертки для извлечения
 void ExtractElementFromStack(Stack*& stack)
 {
-    if (!CheckStructureExists(stack, "Стек"))
-    {
-        return;
-    }
-
-    if (CheckStructureEmpty(IsEmpty(stack), "Стек"))
-    {
-        return;
-    }
-
-    int value = Pop(stack);
-    ShowExtractedElement(value);
+    ExtractElementFromStructure(
+        (void*&)stack,
+        "Стек",
+        (bool (*)(void*))IsEmpty,
+        (int (*)(void*))Pop
+    );
 }
 
 void ExtractElementFromQueue(Queue*& queue)
 {
-    if (!CheckStructureExists(queue, "Очередь"))
-    {
-        return;
-    }
-
-    if (CheckStructureEmpty(IsQueueEmpty(queue), "Очередь"))
-    {
-        return;
-    }
-
-    int value = Dequeue(queue);
-    ShowExtractedElement(value, value != -1);
+    ExtractElementFromStructure(
+        (void*&)queue,
+        "Очередь",
+        (bool (*)(void*))IsQueueEmpty,
+        (int (*)(void*))Dequeue
+    );
 }
 
 void ExtractElementFromQueueTwoStacks(QueueTwoStacks*& queue)
 {
-    if (!CheckStructureExists(queue, "Очередь"))
-    {
-        return;
-    }
-
-    if (CheckStructureEmpty(IsQueueTwoStacksEmpty(queue), "Очередь"))
-    {
-        return;
-    }
-
-    int value = DequeueTwoStacks(queue);
-    ShowExtractedElement(value, value != -1);
+    ExtractElementFromStructure(
+        (void*&)queue,
+        "Очередь",
+        (bool (*)(void*))IsQueueTwoStacksEmpty,
+        (int (*)(void*))DequeueTwoStacks
+    );
 }
 
 void ExtractElementFromCircularBuffer(CircularBuffer*& circularBuffer)
 {
-    if (!CheckStructureExists(circularBuffer, "Кольцевой буфер"))
-    {
-        return;
-    }
+    // Специальная функция для проверки пустоты CircularBuffer
+    auto circularBufferIsEmpty = [](void* buffer) -> bool {
+        return GetUsedSpace((CircularBuffer*)buffer) == 0;
+        };
 
-    if (CheckStructureEmpty(GetUsedSpace(circularBuffer) == 0, "Кольцевой буфер"))
-    {
-        return;
-    }
-
-    int value = DequeueCircularBuffer(circularBuffer);
-    ShowExtractedElement(value, value != -1);
+    ExtractElementFromStructure(
+        (void*&)circularBuffer,
+        "Кольцевой буфер",
+        circularBufferIsEmpty,
+        (int (*)(void*))DequeueCircularBuffer
+    );
 }
-
 
 // Общая функция для вывода сообщений об удалении
 void ShowDeleteMessage(bool wasDeleted, const string& structureName)
