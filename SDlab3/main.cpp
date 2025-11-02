@@ -109,13 +109,13 @@ int GetValidatedInput(const string& prompt)
     }
 }
 
-int GetValidatedInputInRange(const string& prompt, int min, int max)
+int GetValidatedInputInRange(int min, int max)
 {
     int value;
 
     while (true)
     {
-        value = GetValidatedInput(prompt);
+        value = GetValidatedInput("Выберите действие: ");
         if (value >= min && value <= max)
         {
             return value;
@@ -169,10 +169,14 @@ void ShowResizeError(const string& structureName)
 {
     cout << "Ошибка изменения размера " << structureName << "!" << endl;
 }
+int GetValidatedCapacity(const string& structureName)
+{
+    return GetValidatedInput("Введите вместимость " + structureName + ": ");
+}
 
 Stack* CreateStructureStack()
 {
-    int capacity = GetValidatedInput("Введите вместимость стека: ");
+    int capacity = GetValidatedCapacity("стека");
     if (!ValidateCapacity(capacity))
     {
         return nullptr;
@@ -192,7 +196,7 @@ Stack* CreateStructureStack()
 
 Queue* CreateStructureQueue()
 {
-    int capacity = GetValidatedInput("Введите вместимость очереди: ");
+    int capacity = GetValidatedCapacity("очереди");
     if (!ValidateCapacity(capacity))
     {
         return nullptr;
@@ -212,7 +216,7 @@ Queue* CreateStructureQueue()
 
 QueueTwoStacks* CreateStructureQueueTwoStacks()
 {
-    int capacity = GetValidatedInput("Введите вместимость очереди: ");
+    int capacity = GetValidatedCapacity("очереди");
     if (!ValidateCapacity(capacity))
     {
         return nullptr;
@@ -232,7 +236,7 @@ QueueTwoStacks* CreateStructureQueueTwoStacks()
 
 CircularBuffer* CreateStructureCircularBuffer()
 {
-    int capacity = GetValidatedInput("Введите вместимость кольцевого буфера: ");
+    int capacity = GetValidatedCapacity("кольцевого буфера");
     if (!ValidateCapacity(capacity))
     {
         return nullptr;
@@ -642,10 +646,8 @@ void PrintQueueTwoStacksInfo(QueueTwoStacks* queue, const string& name)
 
     cout << "Пуста: " << (IsQueueTwoStacksEmpty(queue) ? "да" : "нет") << endl;
 
-    cout << "InputStack: ";
     PrintStackInfo(queue->_inputStack, "InputStack очереди");
 
-    cout << "OutputStack: ";
     PrintStackInfo(queue->_outputStack, "OutputStack очереди");
 
     cout << "Содержимое очереди (начало -> конец): ";
@@ -941,7 +943,7 @@ int main()
     do
     {
         ShowMainMenu();
-        mainChoice = GetValidatedInputInRange("Выберите действие: ", 0, 5);
+        mainChoice = GetValidatedInputInRange( 0, 5);
 
         switch (mainChoice)
         {
@@ -958,7 +960,7 @@ int main()
                 ShowSectionHeader("РАБОТА СО СТЕКОМ");
                 PrintStackInfo(myStack, "Текущий стек");
                 ShowStackMenu();
-                subChoice = GetValidatedInputInRange("Выберите действие: ", 0, 6);
+                subChoice = GetValidatedInputInRange(0, 5);
                 HandleStackMenuChoice(subChoice, myStack);
             } while (subChoice != 0);
             break;
@@ -971,7 +973,7 @@ int main()
                 ShowSectionHeader("КОЛЬЦЕВОЙ БУФЕР");
                 PrintCircularBufferInfo(myCircularBuffer, "Текущий кольцевой буфер");
                 ShowCircularBufferMenu();
-                subChoice = GetValidatedInputInRange("Выберите действие: ", 0, 5);
+                subChoice = GetValidatedInputInRange(0, 5);
                 HandleCircularBufferMenuChoice(subChoice, myCircularBuffer);
             } while (subChoice != 0);
             break;
@@ -984,7 +986,7 @@ int main()
                 ShowSectionHeader("ОЧЕРЕДЬ (КОЛЬЦЕВОЙ БУФЕР)");
                 PrintQueueInfo(myQueue, "Текущая очередь");
                 ShowQueueMenu();
-                subChoice = GetValidatedInputInRange("Выберите действие: ", 0, 5);
+                subChoice = GetValidatedInputInRange(0, 5);
                 HandleQueueMenuChoice(subChoice, myQueue);
             } while (subChoice != 0);
             break;
@@ -997,7 +999,7 @@ int main()
                 ShowSectionHeader("ОЧЕРЕДЬ (ДВА СТЕКА)");
                 PrintQueueTwoStacksInfo(myQueueTwoStacks, "Текущая очередь на двух стеках");
                 ShowQueueTwoStacksMenu();
-                subChoice = GetValidatedInputInRange("Выберите действие: ", 0, 5);
+                subChoice = GetValidatedInputInRange(0, 5);
                 HandleQueueTwoStacksMenuChoice(subChoice, myQueueTwoStacks);
             } while (subChoice != 0);
             break;
