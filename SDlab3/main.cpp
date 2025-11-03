@@ -578,14 +578,17 @@ void DeleteStructureCircularBuffer(CircularBuffer*& circularBuffer)
     }
     ShowDeleteMessage(wasDeleted, "Кольцевой буфер");
 }
-
+void WriteIsDeleteNotCreated(string value)
+{
+    cout<<value<< "не создан(а) или удален(а)" << endl;
+}
 // Функции вывода информации о структурах
 void PrintStackInfo(Stack* stack, const string& name)
 {
     cout << name << endl;
     if (stack == nullptr)
     {
-        cout << "Стек не создан или удален" << endl;
+        WriteIsDeleteNotCreated("Стек");
         return;
     }
 
@@ -624,13 +627,12 @@ void PrintStackInfo(Stack* stack, const string& name)
     }
     cout << endl << endl;
 }
-
 void PrintCircularBufferInfo(CircularBuffer* circularBuffer, const string& name)
 {
     cout << name << endl;
     if (circularBuffer == nullptr)
     {
-        cout << "Кольцевой буфер не создан или удален" << endl;
+        WriteIsDeleteNotCreated("Кольцевой буфер");
         return;
     }
 
@@ -645,37 +647,24 @@ void PrintCircularBufferInfo(CircularBuffer* circularBuffer, const string& name)
     }
     else
     {
-        CircularBuffer* tempBuffer = CreateCircularBuffer(circularBuffer->_capacity);
-        int count = circularBuffer->_count;
-
-        for (int i = 0; i < count; i++)
+        for (int i = 0; i < circularBuffer->_count; i++)
         {
-            int value = DequeueCircularBuffer(circularBuffer);
-            cout << value;
-            if (i < count - 1)
+            int index = (circularBuffer->_head + i) % circularBuffer->_capacity;
+            cout << circularBuffer->_buffer[index];
+            if (i < circularBuffer->_count - 1)
             {
                 cout << " -> ";
             }
-            EnqueueCircularBuffer(tempBuffer, value);
         }
-
-        for (int i = 0; i < count; i++)
-        {
-            int value = DequeueCircularBuffer(tempBuffer);
-            EnqueueCircularBuffer(circularBuffer, value);
-        }
-
-        DeleteCircularBuffer(tempBuffer);
     }
     cout << endl << endl;
 }
-
 void PrintQueueInfo(Queue* queue, const string& name)
 {
     cout << name << endl;
     if (queue == nullptr)
     {
-        cout << "Очередь не создана или удалена" << endl;
+        WriteIsDeleteNotCreated("Очередь");
         return;
     }
 
@@ -721,7 +710,7 @@ void PrintQueueTwoStacksInfo(QueueTwoStacks* queue, const string& name)
     cout << name << endl;
     if (queue == nullptr)
     {
-        cout << "Очередь на двух стеках не создана или удалена" << endl;
+        WriteIsDeleteNotCreated("Очередь на двух стеках");
         return;
     }
 
@@ -774,8 +763,6 @@ void ShowStructureMenu(const string& structureName)
     cout << "4 - Изменить размер" << endl;
     cout << "5 - Удалить " << structureName << endl;
 }
-
-
 
 void ShowMainMenu()
 {
