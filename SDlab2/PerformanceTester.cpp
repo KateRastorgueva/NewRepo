@@ -7,70 +7,86 @@
 using namespace std;
 using namespace std::chrono;
 
-DoublyLinkedList PerformanceTester::CreateFilledList(int size) {
+/// <summary>
+/// Создает заполненный список указанного размера со случайными значениями
+/// </summary>
+/// <param name="size">Размер создаваемого списка</param>
+/// <returns>Заполненный двусвязный список</returns>
+DoublyLinkedList PerformanceTester::CreateFilledList(int size)
+{
     DoublyLinkedList list;
-    for (int i = 0; i < size; i++) {
+    for (int i = 0; i < size; i++)
+    {
         string value = to_string(rand() % 1000);
         list.PushBack(value);
     }
     return list;
 }
 
-MeasurementResults* PerformanceTester::PerformMeasurements(int& resultsCount) {
+/// <summary>
+/// Выполняет измерения производительности операций списка для различных размеров
+/// </summary>
+/// <param name="resultsCount">Количество возвращаемых результатов измерений</param>
+/// <returns>Массив результатов измерений для разных размеров списка</returns>
+MeasurementResults* PerformanceTester::PerformMeasurements(int& resultsCount)
+{
     const int sizesCount = 5;
     int sizes[sizesCount] = { 10, 100, 1000, 5000, 10000 };
     resultsCount = sizesCount;
 
     static MeasurementResults results[sizesCount];
 
-    for (int i = 0; i < sizesCount; i++) {
+    for (int i = 0; i < sizesCount; i++)
+    {
         int size = sizes[i];
         results[i].Size = size;
         const int measurements = 5;
         long totalPushFront = 0, totalPushBack = 0, totalPopFront = 0, totalPopBack = 0;
         long totalSearch = 0, totalSort = 0;
 
-        for (int j = 0; j < measurements; j++) {
+        for (int j = 0; j < measurements; j++)
+        {
             DoublyLinkedList list = CreateFilledList(size);
 
-            // PushFront 
+            // Измерение времени операции PushFront
             steady_clock::time_point begin1 = steady_clock::now();
             list.PushFront("999");
             steady_clock::time_point end1 = steady_clock::now();
             totalPushFront += duration_cast<nanoseconds>(end1 - begin1).count();
 
-            // PushBack 
+            // Измерение времени операции PushBack
             steady_clock::time_point begin2 = steady_clock::now();
             list.PushBack("999");
             steady_clock::time_point end2 = steady_clock::now();
             totalPushBack += duration_cast<nanoseconds>(end2 - begin2).count();
 
-            // PopFront
+            // Измерение времени операции PopFront
             steady_clock::time_point begin3 = steady_clock::now();
             if (!list.IsEmpty()) list.PopFront();
             steady_clock::time_point end3 = steady_clock::now();
             totalPopFront += duration_cast<nanoseconds>(end3 - begin3).count();
 
-            // PopBack 
+            // Измерение времени операции PopBack
             steady_clock::time_point begin4 = steady_clock::now();
             if (!list.IsEmpty()) list.PopBack();
             steady_clock::time_point end4 = steady_clock::now();
             totalPopBack += duration_cast<nanoseconds>(end4 - begin4).count();
 
-            // Search 
+            // Измерение времени операции поиска
             int target = rand() % 1000;
             steady_clock::time_point begin5 = steady_clock::now();
             list.LinearSearch(to_string(target));
             steady_clock::time_point end5 = steady_clock::now();
             totalSearch += duration_cast<nanoseconds>(end5 - begin5).count();
 
-            // Sort 
+            // Измерение времени операции сортировки
             steady_clock::time_point begin6 = steady_clock::now();
             list.Sort();
             steady_clock::time_point end6 = steady_clock::now();
             totalSort += duration_cast<microseconds>(end6 - begin6).count();
         }
 
+        // Вычисление среднего времени для каждой операции
         results[i].PushFrontTime = totalPushFront / measurements;
         results[i].PushBackTime = totalPushBack / measurements;
         results[i].PopFrontTime = totalPopFront / measurements;
