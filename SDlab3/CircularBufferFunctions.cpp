@@ -81,7 +81,7 @@ int DequeueCircularBuffer(CircularBuffer* circularBuffer)
     return value;
 }
 
-void DeleteCircularBuffer(CircularBuffer* circularBuffer)
+void DeleteCircularBuffer(CircularBuffer*& circularBuffer)
 {
     if (circularBuffer == nullptr)
     {
@@ -95,6 +95,7 @@ void DeleteCircularBuffer(CircularBuffer* circularBuffer)
     }
 
     delete circularBuffer;
+    circularBuffer = nullptr;
 }
 bool ResizeCircularBuffer(CircularBuffer* circularBuffer, int newCapacity)
 {
@@ -109,6 +110,7 @@ bool ResizeCircularBuffer(CircularBuffer* circularBuffer, int newCapacity)
         return false;
     }
 
+    // Копируем элементы в правильном порядке
     for (int i = 0; i < circularBuffer->_count; i++)
     {
         int index = (circularBuffer->_head + i) % circularBuffer->_capacity;
@@ -118,8 +120,8 @@ bool ResizeCircularBuffer(CircularBuffer* circularBuffer, int newCapacity)
     delete[] circularBuffer->_buffer;
     circularBuffer->_buffer = newBuffer;
     circularBuffer->_capacity = newCapacity;
-    circularBuffer->_head = 0; 
-    circularBuffer->_tail = circularBuffer->_count;
+    circularBuffer->_head = 0;
+    circularBuffer->_tail = circularBuffer->_count % newCapacity;
 
     return true;
 }

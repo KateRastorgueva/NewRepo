@@ -8,5 +8,5 @@ int GetUsedSpace(CircularBuffer* circularBuffer);
 bool IsCircularBufferEmpty(CircularBuffer* ñircularBuffer);
 bool EnqueueCircularBuffer(CircularBuffer* circularBuffer, int value);
 int DequeueCircularBuffer(CircularBuffer* circularBuffer);
-void DeleteCircularBuffer(CircularBuffer* circularBuffer);
+void DeleteCircularBuffer(CircularBuffer*& circularBuffer);
 bool ResizeCircularBuffer(CircularBuffer* circularBuffer, int newCapacity);

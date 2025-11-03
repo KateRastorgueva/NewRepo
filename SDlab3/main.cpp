@@ -282,8 +282,6 @@ void AddElementToStructure(void*& structure, const string& structureName, bool (
     }
 }
 
-// Функции-обертки остаются без изменений
-
 void AddElementToCircularBuffer(CircularBuffer*& circularBuffer)
 {
     AddElementToStructure((void*&)circularBuffer, "Кольцевой буфер", (bool (*)(void*, int))EnqueueCircularBuffer);
@@ -304,8 +302,7 @@ void AddElementToQueueTwoStacks(QueueTwoStacks*& queue)
     AddElementToStructure((void*&)queue, "Очередь", (bool (*)(void*, int)) EnqueueQueueTwoStacks);
 }
 // Общая функция для извлечения элементов
-void ExtractElementFromStructure(void*& structure, const string& structureName,
-    bool (*isEmptyFunc)(void*), int (*extractFunc)(void*))
+void ExtractElementFromStructure(void*& structure, const string& structureName, bool (*isEmptyFunc)(void*), int (*extractFunction)(void*))
 {
     if (!CheckStructureExists(structure, structureName))
     {
@@ -317,7 +314,7 @@ void ExtractElementFromStructure(void*& structure, const string& structureName,
         return;
     }
 
-    int value = extractFunc(structure);
+    int value = extractFunction(structure);
     ShowExtractedElement(value, value != -1);
 }
 
@@ -355,12 +352,12 @@ void ShowDeleteMessage(bool wasDeleted, const string& structureName)
 }
 
 // Универсальная функция удаления структур
-void DeleteStructure(void*& structure, const string& structureName, void (*deleteFunc)(void*&))
+void DeleteStructure(void*& structure, const string& structureName, void (*deleteFunction)(void*&))
 {
     bool wasDeleted = (structure != nullptr);
     if (wasDeleted)
     {
-        deleteFunc(structure);
+        deleteFunction(structure);
         structure = nullptr;
     }
     ShowDeleteMessage(wasDeleted, structureName);
@@ -398,180 +395,192 @@ void IsFullEmpty(bool valueEmpty, bool valueFull)
     cout << "Пуст(а): " << (valueEmpty ? "да" : "нет") << endl;
     cout << "Полон(а): " << (valueFull ? "да" : "нет") << endl;
 }
-// Функции для вывода характеристик структур
-void PrintStackInfo(Stack* stack, const string& name)
+void WriteIsEmpty()
 {
-    cout << name << endl;
-    if (stack == nullptr)
-    {
-        cout << "Стек не создан или удален" << endl;
-        return;
-    }
-    WriteInfo(stack->_capacity, stack->_top);
-    IsFullEmpty(IsEmpty(stack), IsFull(stack));
-
-    cout << "Содержимое (сверху вниз): ";
-    if (IsEmpty(stack))
-    {
-        cout << "пусто";
-    }
-    else
-    {
-        Stack* tempStack = CreateStack(stack->_capacity);
-        int count = 0;
-
-        while (!IsEmpty(stack))
-        {
-            int value = Pop(stack);
-            Push(tempStack, value);
-            count++;
-        }
-
-        for (int i = 0; i < count; i++)
-        {
-            int value = Pop(tempStack);
-            cout << value;
-            if (i < count - 1)
-            {
-                cout << " <- ";
-            }
-            Push(stack, value);
-        }
-
-        DeleteStack(tempStack);
-    }
-    cout << endl << endl;
+    cout << "пусто";
 }
-
-void PrintCircularBufferInfo(CircularBuffer* circularBuffer, const string& name)
+// Общая функция для стека и буфера
+void PrintContainerInfo(void* container, const string& name, bool isStack)
 {
     cout << name << endl;
-    if (circularBuffer == nullptr)
-    {
-        cout << "Кольцевой буфер не создан или удален" << endl;
+
+    if (container == nullptr) {
+        cout << (isStack ? "Стек" : "Кольцевой буфер") << " не создан или удален" << endl;
         return;
     }
 
-    cout << "Вместимость: " << circularBuffer->_capacity << endl;
-    cout << "Голова (head): " << circularBuffer->_head << endl;
-    cout << "Хвост (tail): " << circularBuffer->_tail << endl;
-    cout << "Количество элементов: " << circularBuffer->_count << endl;
-    IsFullEmpty(circularBuffer->_count == 0, circularBuffer->_count == circularBuffer->_capacity);
-    cout << "Занято мест: " << circularBuffer->_count << endl;
-    cout << "Свободно мест: " << (circularBuffer->_capacity - circularBuffer->_count) << endl;
+    if (isStack) {
+        Stack* stack = (Stack*)container;
+        WriteInfo(stack->_capacity, stack->_top);
+        IsFullEmpty(IsEmpty(stack), IsFull(stack));
 
-    cout << "Содержимое (начало -> конец): ";
-    if (circularBuffer->_count == 0)
-    {
-        cout << "пусто";
+        cout << "Содержимое (сверху вниз): ";
+        if (IsEmpty(stack)) {
+            cout << "пусто";
+        }
+        else {
+            Stack* tempStack = CreateStack(stack->_capacity);
+            int count = 0;
+
+            while (!IsEmpty(stack)) {
+                int value = Pop(stack);
+                Push(tempStack, value);
+                count++;
+            }
+
+            for (int i = 0; i < count; i++) {
+                int value = Pop(tempStack);
+                cout << value;
+                if (i < count - 1) {
+                    cout << " <- ";
+                }
+                Push(stack, value);
+            }
+            DeleteStack(tempStack);
+        }
     }
-    else
-    {
-        // Просто печатаем без изменения исходного буфера
-        for (int i = 0; i < circularBuffer->_count; i++)
-        {
-            int index = (circularBuffer->_head + i) % circularBuffer->_capacity;
-            cout << circularBuffer->_buffer[index];
-            if (i < circularBuffer->_count - 1)
-            {
-                cout << " -> ";
+    else {
+        CircularBuffer* circularBuffer = (CircularBuffer*)container;
+        cout << "Вместимость: " << circularBuffer->_capacity << endl;
+        cout << "Голова (head): " << circularBuffer->_head << endl;
+        cout << "Хвост (tail): " << circularBuffer->_tail << endl;
+        cout << "Количество элементов: " << circularBuffer->_count << endl;
+        IsFullEmpty(circularBuffer->_count == 0, circularBuffer->_count == circularBuffer->_capacity);
+        cout << "Занято мест: " << circularBuffer->_count << endl;
+        cout << "Свободно мест: " << (circularBuffer->_capacity - circularBuffer->_count) << endl;
+
+        cout << "Содержимое (начало -> конец): ";
+        if (circularBuffer->_count == 0) {
+            cout << "пусто";
+        }
+        else {
+            for (int i = 0; i < circularBuffer->_count; i++) {
+                int index = (circularBuffer->_head + i) % circularBuffer->_capacity;
+                cout << circularBuffer->_buffer[index];
+                if (i < circularBuffer->_count - 1) {
+                    cout << " -> ";
+                }
             }
         }
     }
     cout << endl << endl;
 }
-void PrintQueueInfo(Queue* queue, const string& name)
+
+// Общая функция для всех типов очередей
+void PrintQueueInfo(void* queue, const string& name, int queueType)
 {
     cout << name << endl;
-    if (queue == nullptr)
-    {
+
+    if (queue == nullptr) {
         cout << "Очередь не создана или удалена" << endl;
         return;
     }
-    IsFullEmpty(IsQueueEmpty(queue), IsQueueFull(queue));
-    cout << "Занято мест: " << GetUsedSpace(queue->_circularBuffer) << endl;
-    cout << "Свободно мест: " << GetFreeSpaceQueue(queue) << endl;
 
-    cout << "Содержимое (начало -> конец): ";
-    if (IsQueueEmpty(queue))
-    {
-        cout << "пусто";
+    if (queueType == 0) { // Обычная очередь
+        Queue* q = (Queue*)queue;
+        IsFullEmpty(IsQueueEmpty(q), IsQueueFull(q));
+        cout << "Занято мест: " << GetUsedSpace(q->_circularBuffer) << endl;
+        cout << "Свободно мест: " << GetFreeSpaceQueue(q) << endl;
     }
-    else
-    {
-        int capacity = GetUsedSpace(queue->_circularBuffer) + GetFreeSpaceQueue(queue);
-        Queue* tempQueue = CreateQueue(capacity);
-        int count = 0;
-
-        while (!IsQueueEmpty(queue))
-        {
-            int value = Dequeue(queue);
-            cout << value;
-            if (!IsQueueEmpty(queue))
-            {
-                cout << " -> ";
-            }
-            Enqueue(tempQueue, value);
-            count++;
-        }
-
-        while (!IsQueueEmpty(tempQueue))
-        {
-            int value = Dequeue(tempQueue);
-            Enqueue(queue, value);
-        }
-
-        DeleteQueue(tempQueue);
+    else { // Очередь на двух стеках
+        QueueTwoStacks* q = (QueueTwoStacks*)queue;
+        PrintContainerInfo(q->_inputStack, "InputStack очереди", true);
+        PrintContainerInfo(q->_outputStack, "OutputStack очереди", true);
     }
-    cout << endl;
-}
-
-void PrintQueueTwoStacksInfo(QueueTwoStacks* queue, const string& name)
-{
-    cout << name << endl;
-    if (queue == nullptr)
-    {
-        cout << "Очередь на двух стеках не создана или удалена" << endl;
-        return;
-    }
-
-
-    PrintStackInfo(queue->_inputStack, "InputStack очереди");
-
-    PrintStackInfo(queue->_outputStack, "OutputStack очереди");
 
     cout << "Содержимое очереди (начало -> конец): ";
-    if (IsQueueTwoStacksEmpty(queue))
-    {
+
+    bool isEmpty = (queueType == 0) ? IsQueueEmpty((Queue*)queue) : IsQueueTwoStacksEmpty((QueueTwoStacks*)queue);
+
+    if (isEmpty) {
         cout << "пусто";
     }
-    else
-    {
-        int capacity = queue->_inputStack->_capacity;
-        QueueTwoStacks* temporaryQueue = CreateQueueTwoStacks(capacity);
+    else {
+        int capacity;
+        void* tempQueue;
+
+        if (queueType == 0) {
+            Queue* q = (Queue*)queue;
+            capacity = GetUsedSpace(q->_circularBuffer) + GetFreeSpaceQueue(q);
+            tempQueue = CreateQueue(capacity);
+        }
+        else {
+            QueueTwoStacks* q = (QueueTwoStacks*)queue;
+            capacity = q->_inputStack->_capacity;
+            tempQueue = CreateQueueTwoStacks(capacity);
+        }
+
         int count = 0;
 
-        while (!IsQueueTwoStacksEmpty(queue))
-        {
-            int value = DequeueTwoStacks(queue);
+        // Извлекаем и печатаем элементы
+        while (queueType == 0 ? !IsQueueEmpty((Queue*)queue) : !IsQueueTwoStacksEmpty((QueueTwoStacks*)queue)) {
+            int value;
+            if (queueType == 0) {
+                value = Dequeue((Queue*)queue);
+            }
+            else {
+                value = DequeueTwoStacks((QueueTwoStacks*)queue);
+            }
+
             cout << value;
-            if (!IsQueueTwoStacksEmpty(queue))
-            {
+
+            bool tempEmpty = (queueType == 0) ?
+                IsQueueEmpty((Queue*)queue) :
+                IsQueueTwoStacksEmpty((QueueTwoStacks*)queue);
+
+            if (!tempEmpty) {
                 cout << " -> ";
             }
-            EnqueueQueueTwoStacks(temporaryQueue, value);
+
+            // Сохраняем во временную очередь
+            if (queueType == 0) {
+                Enqueue((Queue*)tempQueue, value);
+            }
+            else {
+                EnqueueQueueTwoStacks((QueueTwoStacks*)tempQueue, value);
+            }
             count++;
         }
 
-        while (!IsQueueTwoStacksEmpty(temporaryQueue))
-        {
-            int value = DequeueTwoStacks(temporaryQueue);
-            EnqueueQueueTwoStacks(queue, value);
+        // Восстанавливаем исходную очередь
+        while (queueType == 0 ? !IsQueueEmpty((Queue*)tempQueue) : !IsQueueTwoStacksEmpty((QueueTwoStacks*)tempQueue)) {
+            int value;
+            if (queueType == 0) {
+                value = Dequeue((Queue*)tempQueue);
+                Enqueue((Queue*)queue, value);
+            }
+            else {
+                value = DequeueTwoStacks((QueueTwoStacks*)tempQueue);
+                EnqueueQueueTwoStacks((QueueTwoStacks*)queue, value);
+            }
         }
 
-        DeleteQueueTwoStacks(temporaryQueue);
+        // Освобождаем временную очередь
+        if (queueType == 0) {
+            DeleteQueue((Queue*&)tempQueue);
+        }
+        else {
+            DeleteQueueTwoStacks((QueueTwoStacks*&)tempQueue);
+        }
     }
     cout << endl << endl;
+}
+
+// Старые функции-обертки для обратной совместимости
+void PrintStackInfo(Stack* stack, const string& name) {
+    PrintContainerInfo(stack, name, true);
+}
+
+void PrintCircularBufferInfo(CircularBuffer* circularBuffer, const string& name) {
+    PrintContainerInfo(circularBuffer, name, false);
+}
+
+void PrintQueueInfo(Queue* queue, const string& name) {
+    PrintQueueInfo(queue, name, 0);
+}
+
+void PrintQueueTwoStacksInfo(QueueTwoStacks* queue, const string& name) {
+    PrintQueueInfo(queue, name, 1);
 }
 
 // Функции меню

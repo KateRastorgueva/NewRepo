@@ -17,6 +17,6 @@ bool IsEmpty(Stack* stack);
 bool IsFull(Stack* stack);
 
 // Функция удаления стека (очистка памяти)
-void DeleteStack(Stack* stack);
+void DeleteStack(Stack*& stack);
 
 bool ResizeStack(Stack* stack, int newCapacity);

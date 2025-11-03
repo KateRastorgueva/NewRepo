@@ -66,7 +66,7 @@ int DequeueTwoStacks(QueueTwoStacks* queue)
     return Pop(queue->_outputStack);
 }
 
-void DeleteQueueTwoStacks(QueueTwoStacks* queue)
+void DeleteQueueTwoStacks(QueueTwoStacks*& queue)
 {
     if (queue == nullptr)
     {
@@ -84,6 +84,7 @@ void DeleteQueueTwoStacks(QueueTwoStacks* queue)
     }
 
     delete queue;
+    queue = nullptr;
 }
 
 bool IsQueueTwoStacksEmpty(QueueTwoStacks* queue)
@@ -101,37 +102,70 @@ bool ResizeQueueTwoStacks(QueueTwoStacks* queue, int newCapacity)
         return false;
     }
 
-    // Создаем временные стеки нового размера
-    Stack* newInputStack = CreateStack(newCapacity);
-    Stack* newOutputStack = CreateStack(newCapacity);
-
-    if (newInputStack == nullptr || newOutputStack == nullptr)
+    // Считаем общее количество элементов
+    int totalElements = (queue->_inputStack->_top + 1) + (queue->_outputStack->_top + 1);
+    if (newCapacity < totalElements)
     {
-        if (newInputStack != nullptr) DeleteStack(newInputStack);
-        if (newOutputStack != nullptr) DeleteStack(newOutputStack);
+        return false; // Новый размер слишком мал
+    }
+
+    // Создаем новую временную очередь для сохранения правильного порядка
+    QueueTwoStacks* tempQueue = CreateQueueTwoStacks(newCapacity);
+    if (tempQueue == nullptr)
+    {
         return false;
     }
 
-    // Копируем элементы из inputStack
-    while (!IsEmpty(queue->_inputStack))
+    // Переносим все элементы из исходной очереди во временную, сохраняя порядок
+    // Сначала переносим outputStack (это начало очереди)
+    Stack* tempStack = CreateStack(queue->_outputStack->_capacity);
+    if (tempStack != nullptr)
     {
-        int value = Pop(queue->_inputStack);
-        Push(newInputStack, value);
+        // Сохраняем outputStack в правильном порядке
+        while (!IsEmpty(queue->_outputStack))
+        {
+            int value = Pop(queue->_outputStack);
+            Push(tempStack, value);
+        }
+        // Восстанавливаем из tempStack в tempQueue (теперь в правильном порядке)
+        while (!IsEmpty(tempStack))
+        {
+            int value = Pop(tempStack);
+            EnqueueQueueTwoStacks(tempQueue, value);
+        }
+        DeleteStack(tempStack);
     }
 
-    // Копируем элементы из outputStack
-    while (!IsEmpty(queue->_outputStack))
+    // Затем переносим inputStack (это конец очереди)
+    tempStack = CreateStack(queue->_inputStack->_capacity);
+    if (tempStack != nullptr)
     {
-        int value = Pop(queue->_outputStack);
-        Push(newOutputStack, value);
+        // Сохраняем inputStack в правильном порядке
+        while (!IsEmpty(queue->_inputStack))
+        {
+            int value = Pop(queue->_inputStack);
+            Push(tempStack, value);
+        }
+        // Восстанавливаем из tempStack в tempQueue
+        while (!IsEmpty(tempStack))
+        {
+            int value = Pop(tempStack);
+            EnqueueQueueTwoStacks(tempQueue, value);
+        }
+        DeleteStack(tempStack);
     }
 
-    // Заменяем старые стеки
+    // Заменяем старые стеки новыми
     DeleteStack(queue->_inputStack);
     DeleteStack(queue->_outputStack);
 
-    queue->_inputStack = newInputStack;
-    queue->_outputStack = newOutputStack;
+    queue->_inputStack = tempQueue->_inputStack;
+    queue->_outputStack = tempQueue->_outputStack;
+
+    // Освобождаем временную структуру
+    tempQueue->_inputStack = nullptr;
+    tempQueue->_outputStack = nullptr;
+    DeleteQueueTwoStacks(tempQueue);
 
     return true;
 }

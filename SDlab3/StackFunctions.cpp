@@ -61,6 +61,7 @@ bool Push(Stack* stack, int value)
 
     stack->_top++;
     stack->_buffer[stack->_top] = value;
+    return true;
 }
 
 // Функция извлечения элемента из стека
@@ -77,20 +78,19 @@ int Pop(Stack* stack)
 }
 
 
-// Функция удаления стека (очистка памяти)
-void DeleteStack(Stack* stack)
+void DeleteStack(Stack*& stack)
 {
     if (stack == nullptr)
     {
         return;
     }
-    // Удаляем буфер
     if (stack->_buffer != nullptr)
     {
         delete[] stack->_buffer;
         stack->_buffer = nullptr;
     }
     delete stack;
+    stack = nullptr;
 }
 
 bool ResizeStack(Stack* stack, int newCapacity)

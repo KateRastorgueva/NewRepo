@@ -42,7 +42,7 @@ int Dequeue(Queue* queue)
     return DequeueCircularBuffer(queue->_circularBuffer);
 }
 
-void DeleteQueue(Queue* queue)
+void DeleteQueue(Queue*& queue)
 {
     if (queue == nullptr)
     {
@@ -55,6 +55,7 @@ void DeleteQueue(Queue* queue)
     }
 
     delete queue;
+    queue = nullptr;
 }
 
 bool IsQueueEmpty(Queue* queue)
@@ -85,7 +86,7 @@ bool ResizeQueue(Queue* queue, int newCapacity)
 }
 int GetFreeSpaceQueue(Queue* queue)
 {
-    if (queue == nullptr)
+    if (queue == nullptr || queue->_circularBuffer == nullptr)
     {
         return 0;
     }
