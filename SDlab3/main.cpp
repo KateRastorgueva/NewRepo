@@ -8,7 +8,7 @@
 #include "QueueTwoStacksFunctions.h"
 #include "CircularBufferFunctions.h"
 #include "CircularBuffer.h"
-
+ 
 using namespace std;
 
 // Установка русской кодировки для Windows
