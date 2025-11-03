@@ -236,8 +236,7 @@ void DoublyLinkedList::Sort()
         {
             if (current->Data > current->Next->Data)
             {
-                // Обмен данными
-                std::string temp = current->Data;
+                string temp = current->Data;
                 current->Data = current->Next->Data;
                 current->Next->Data = temp;
                 swapped = true;
