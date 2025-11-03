@@ -102,7 +102,7 @@ bool ResizeStack(Stack* stack, int newCapacity)
 
     if (newCapacity <= stack->_top)
     {
-        return false; // Новый размер меньше текущего количества элементов
+        return false;
     }
 
     int* newBuffer = new int[newCapacity];
@@ -111,7 +111,6 @@ bool ResizeStack(Stack* stack, int newCapacity)
         return false;
     }
 
-    // Копируем существующие элементы
     for (int i = 0; i <= stack->_top; i++)
     {
         newBuffer[i] = stack->_buffer[i];

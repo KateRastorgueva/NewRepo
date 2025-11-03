@@ -102,22 +102,17 @@ bool ResizeQueueTwoStacks(QueueTwoStacks* queue, int newCapacity)
         return false;
     }
 
-    // —читаем общее количество элементов
     int totalElements = (queue->_inputStack->_top + 1) + (queue->_outputStack->_top + 1);
     if (newCapacity < totalElements)
     {
-        return false; // Ќовый размер слишком мал
+        return false;
     }
-
-    // —оздаем новую временную очередь дл€ сохранени€ правильного пор€дка
     QueueTwoStacks* tempQueue = CreateQueueTwoStacks(newCapacity);
     if (tempQueue == nullptr)
     {
         return false;
     }
-
-    // ѕереносим все элементы из исходной очереди во временную, сохран€€ пор€док
-    // —начала переносим outputStack (это начало очереди)
+    //  начало очереди
     Stack* tempStack = CreateStack(queue->_outputStack->_capacity);
     if (tempStack != nullptr)
     {
@@ -127,7 +122,6 @@ bool ResizeQueueTwoStacks(QueueTwoStacks* queue, int newCapacity)
             int value = Pop(queue->_outputStack);
             Push(tempStack, value);
         }
-        // ¬осстанавливаем из tempStack в tempQueue (теперь в правильном пор€дке)
         while (!IsEmpty(tempStack))
         {
             int value = Pop(tempStack);
@@ -136,17 +130,15 @@ bool ResizeQueueTwoStacks(QueueTwoStacks* queue, int newCapacity)
         DeleteStack(tempStack);
     }
 
-    // «атем переносим inputStack (это конец очереди)
+    // конец очереди
     tempStack = CreateStack(queue->_inputStack->_capacity);
     if (tempStack != nullptr)
     {
-        // —охран€ем inputStack в правильном пор€дке
         while (!IsEmpty(queue->_inputStack))
         {
             int value = Pop(queue->_inputStack);
             Push(tempStack, value);
         }
-        // ¬осстанавливаем из tempStack в tempQueue
         while (!IsEmpty(tempStack))
         {
             int value = Pop(tempStack);
@@ -155,7 +147,6 @@ bool ResizeQueueTwoStacks(QueueTwoStacks* queue, int newCapacity)
         DeleteStack(tempStack);
     }
 
-    // «амен€ем старые стеки новыми
     DeleteStack(queue->_inputStack);
     DeleteStack(queue->_outputStack);
 
