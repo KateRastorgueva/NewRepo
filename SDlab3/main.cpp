@@ -247,7 +247,99 @@ void ShowExtractedElement(int value)
         cout << "Ошибка извлечения элемента!" << endl;
     }
 }
+// Шаблонная функция для создания структур
+template<typename T, typename CreatorFunc>
+T* CreateStructure(CreatorFunc creator, const string& structureName)
+{
+    int capacity = GetValidatedCapacity(structureName);
+    if (!ValidateCapacity(capacity))
+    {
+        return nullptr;
+    }
 
+    T* structure = creator(capacity);
+    if (structure != nullptr)
+    {
+        ShowCreationSuccess(structureName);
+    }
+    else
+    {
+        ShowCreationError(structureName);
+    }
+    return structure;
+}
+
+// Шаблонная функция для добавления элементов
+template<typename StructureType, typename AddFunction>
+void AddElementToStructure(StructureType*& structure, AddFunction addFunc, const string& structureName)
+{
+    if (!CheckStructureExists(structure, structureName))
+    {
+        return;
+    }
+
+    int value = GetValueForAddition();
+    if (addFunc(structure, value))
+    {
+        ShowAddSuccess(value, structureName);
+    }
+    else
+    {
+        ShowAddError(structureName);
+    }
+}
+
+// Шаблонная функция для извлечения элементов
+template<typename StructureType, typename ExtractFunction, typename IsEmptyFunction>
+void ExtractElementFromStructure(StructureType*& structure, ExtractFunction extractFunc,
+    IsEmptyFunction isEmptyFunc, const string& structureName)
+{
+    if (!CheckStructureExists(structure, structureName))
+    {
+        return;
+    }
+
+    if (CheckStructureEmpty(isEmptyFunc(structure), structureName))
+    {
+        return;
+    }
+
+    int value = extractFunc(structure);
+    ShowExtractedElement(value);
+}
+
+// Шаблонная функция для изменения размера
+template<typename StructureType, typename ResizeFunction>
+void ResizeStructure(StructureType*& structure, ResizeFunction resizeFunc, const string& structureName)
+{
+    if (!CheckStructureExists(structure, structureName))
+    {
+        return;
+    }
+
+    int newCapacity = GetValidatedInput("Введите новый размер " + structureName + ": ");
+    if (resizeFunc(structure, newCapacity))
+    {
+        ShowResizeSuccess(newCapacity, structureName);
+    }
+    else
+    {
+        ShowResizeError(structureName);
+    }
+}
+
+// Шаблонная функция для удаления структур
+template<typename StructureType, typename DeleteFunction>
+void DeleteStructure(StructureType*& structure, DeleteFunction deleteFunc, const string& structureName)
+{
+    bool wasDeleted = (structure != nullptr);
+    if (wasDeleted)
+    {
+        deleteFunc(structure);
+        structure = nullptr;
+    }
+    ShowDeleteMessage(wasDeleted, structureName);
+}
 // Функции создания структур
 Stack* CreateStructureStack()
 {
@@ -784,7 +876,7 @@ void HandleStackMenuChoice(int choice, Stack*& stack)
     {
         if (CheckStructureNotExists(stack, "Стек"))
         {
-            stack = CreateStructureStack();
+            stack = CreateStructure<Stack>(CreateStack, "стек");
         }
         break;
     }
@@ -862,7 +954,7 @@ void HandleQueueMenuChoice(int choice, Queue*& queue)
     {
         if (CheckStructureNotExists(queue, "Очередь"))
         {
-            queue = CreateStructureQueue();
+            queue = CreateStructure<Queue>(CreateQueue, "очередь");
         }
         break;
     }
@@ -901,7 +993,7 @@ void HandleQueueTwoStacksMenuChoice(int choice, QueueTwoStacks*& queue)
     {
         if (CheckStructureNotExists(queue, "Очередь"))
         {
-            queue = CreateStructureQueueTwoStacks();
+            queue = CreateStructure<QueueTwoStacks>(CreateQueueTwoStacks, "очереди");
         }
         break;
     }
