@@ -322,8 +322,8 @@ DoublyLinkedList<int> PerformanceTester::CreateFilledList(int size) {
     }
     return list;
 }
-template<typename Func>
-static long MeasureOperationTime(Func operation, bool useMicroseconds = false) {
+template<typename Function>
+static long MeasureOperationTime(Function operation, bool useMicroseconds = false) {
     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
     operation();
     std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();

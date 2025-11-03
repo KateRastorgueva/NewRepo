@@ -8,7 +8,20 @@
 #include "PerformanceTester.h"
 
 using namespace std;
-
+/// <summary>
+/// Выводит фразу список пустой 
+/// </summary>
+void ShowIsEmpty(bool input)
+{
+    if (input)
+    {
+        cout << "List is empty!\n";
+    }
+    else
+    {
+        cout << "List is not empty!\n";
+    }
+}
 /// <summary>
 /// Проверяет, что список не пуст, и выводит сообщение если пуст
 /// </summary>
@@ -18,7 +31,7 @@ static bool ValidateListNotEmpty(const DoublyLinkedList& list)
 {
     if (list.IsEmpty())
     {
-        cout << "List is empty!\n";
+        ShowIsEmpty(true);
         return false;
     }
     return true;
@@ -263,7 +276,14 @@ static bool IsFrontPosition(const string& position)
 /// <returns>Отображаемое имя позиции</returns>
 static string GetPositionDisplayName(const string& position)
 {
-    return position == "front" ? "front" : "back";
+    if (position == "front")
+    {
+        return "front";
+    }
+    else
+    {
+        return "back";
+    }
 }
 
 
@@ -298,7 +318,15 @@ static void HandleRemoveEndOperation(DoublyLinkedList& list, const string& posit
         return;
     }
 
-    string removed = IsFrontPosition(position) ? list.GetHead()->Data : list.GetTail()->Data;
+    string removed;
+    if (IsFrontPosition(position) == true)
+    {
+        removed = list.GetHead()->Data;
+    }
+    else
+    {
+        removed = list.GetTail()->Data;
+    }
     if (IsFrontPosition(position))
     {
         list.PopFront();
@@ -537,7 +565,14 @@ void HandleListOperations()
         }
         case 14:
         {
-            cout << "List is " << (list.IsEmpty() ? "empty" : "not empty") << "\n";
+            if (list.IsEmpty() == true)
+            {
+                ShowIsEmpty(true);
+            }
+            else
+            {
+                ShowIsEmpty(false);
+            }
             break;
         }
         case 15:
