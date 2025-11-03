@@ -247,9 +247,10 @@ void ShowExtractedElement(int value)
         cout << "Ошибка извлечения элемента!" << endl;
     }
 }
+
 // Шаблонная функция для создания структур
-template<typename T, typename CreatorFunc>
-T* CreateStructure(CreatorFunc creator, const string& structureName)
+template<typename StructureType, typename CreatorFunction>
+StructureType* CreateStructure(CreatorFunction creator, const string& structureName)
 {
     int capacity = GetValidatedCapacity(structureName);
     if (!ValidateCapacity(capacity))
@@ -257,7 +258,7 @@ T* CreateStructure(CreatorFunc creator, const string& structureName)
         return nullptr;
     }
 
-    T* structure = creator(capacity);
+    StructureType* structure = creator(capacity);
     if (structure != nullptr)
     {
         ShowCreationSuccess(structureName);
@@ -329,8 +330,8 @@ void ResizeStructure(StructureType*& structure, ResizeFunction resizeFunc, const
 }
 
 // Шаблонная функция для удаления структур
-template<typename StructureType, typename DeleteFunction>
-void DeleteStructure(StructureType*& structure, DeleteFunction deleteFunc, const string& structureName)
+template<typename T, typename DeleteFunc>
+void DeleteStructure(T*& structure, DeleteFunc deleteFunc, const string& structureName)
 {
     bool wasDeleted = (structure != nullptr);
     if (wasDeleted)
@@ -340,124 +341,6 @@ void DeleteStructure(StructureType*& structure, DeleteFunction deleteFunc, const
     }
     ShowDeleteMessage(wasDeleted, structureName);
 }
-// Функции создания структур
-Stack* CreateStructureStack()
-{
-    int capacity = GetValidatedCapacity("стека");
-    if (!ValidateCapacity(capacity))
-    {
-        return nullptr;
-    }
-
-    Stack* stack = CreateStack(capacity);
-    if (stack != nullptr)
-    {
-        ShowCreationSuccess("Стек");
-    }
-    else
-    {
-        ShowCreationError("стека");
-    }
-    return stack;
-}
-
-Queue* CreateStructureQueue()
-{
-    int capacity = GetValidatedCapacity("очереди");
-    if (!ValidateCapacity(capacity))
-    {
-        return nullptr;
-    }
-
-    Queue* queue = CreateQueue(capacity);
-    if (queue != nullptr)
-    {
-        ShowCreationSuccess("Очередь");
-    }
-    else
-    {
-        ShowCreationError("очереди");
-    }
-    return queue;
-}
-
-QueueTwoStacks* CreateStructureQueueTwoStacks()
-{
-    int capacity = GetValidatedCapacity("очереди");
-    if (!ValidateCapacity(capacity))
-    {
-        return nullptr;
-    }
-
-    QueueTwoStacks* queue = CreateQueueTwoStacks(capacity);
-    if (queue != nullptr)
-    {
-        ShowCreationSuccess("Очередь");
-    }
-    else
-    {
-        ShowCreationError("очереди");
-    }
-    return queue;
-}
-
-CircularBuffer* CreateStructureCircularBuffer()
-{
-    int capacity = GetValidatedCapacity("кольцевого буфера");
-    if (!ValidateCapacity(capacity))
-    {
-        return nullptr;
-    }
-
-    CircularBuffer* circularBuffer = CreateCircularBuffer(capacity);
-    if (circularBuffer != nullptr)
-    {
-        ShowCreationSuccess("Кольцевой буфер");
-    }
-    else
-    {
-        ShowCreationError("кольцевого буфера");
-    }
-    return circularBuffer;
-}
-
-// Функции добавления элементов
-void AddElementToStack(Stack*& stack)
-{
-    if (!CheckStructureExists(stack, "Стек"))
-    {
-        return;
-    }
-
-    int value = GetValueForAddition();
-    if (Push(stack, value))
-    {
-        ShowAddSuccess(value, "стек");
-    }
-    else
-    {
-        ShowAddError("Стек");
-    }
-}
-
-void AddElementToQueue(Queue*& queue)
-{
-    if (!CheckStructureExists(queue, "Очередь"))
-    {
-        return;
-    }
-
-    int value = GetValueForAddition();
-    if (Enqueue(queue, value))
-    {
-        ShowAddSuccess(value, "очередь");
-    }
-    else
-    {
-        ShowAddError("Очередь");
-    }
-}
-
 void AddElementToQueueTwoStacks(QueueTwoStacks*& queue)
 {
     if (!CheckStructureExists(queue, "Очередь"))
@@ -470,206 +353,18 @@ void AddElementToQueueTwoStacks(QueueTwoStacks*& queue)
     ShowAddSuccess(value, "очередь");
 }
 
-void AddElementToCircularBuffer(CircularBuffer*& circularBuffer)
-{
-    if (!CheckStructureExists(circularBuffer, "Кольцевой буфер"))
-    {
-        return;
-    }
-
-    int value = GetValueForAddition();
-    if (EnqueueCircularBuffer(circularBuffer, value))
-    {
-        ShowAddSuccess(value, "кольцевой буфер");
-    }
-    else
-    {
-        ShowAddError("Кольцевой буфер");
-    }
-}
-
-// Функции извлечения элементов
-void ExtractElementFromStack(Stack*& stack)
-{
-    if (!CheckStructureExists(stack, "Стек"))
-    {
-        return;
-    }
-
-    if (CheckStructureEmpty(IsEmpty(stack), "Стек"))
-    {
-        return;
-    }
-
-    int value = Pop(stack);
-    ShowExtractedElement(value);
-}
-
-void ExtractElementFromQueue(Queue*& queue)
-{
-    if (!CheckStructureExists(queue, "Очередь"))
-    {
-        return;
-    }
-
-    if (CheckStructureEmpty(IsQueueEmpty(queue), "Очередь"))
-    {
-        return;
-    }
-
-    int value = Dequeue(queue);
-    ShowExtractedElement(value);
-}
-
-void ExtractElementFromQueueTwoStacks(QueueTwoStacks*& queue)
-{
-    if (!CheckStructureExists(queue, "Очередь"))
-    {
-        return;
-    }
-
-    if (CheckStructureEmpty(IsQueueTwoStacksEmpty(queue), "Очередь"))
-    {
-        return;
-    }
-
-    int value = DequeueTwoStacks(queue);
-    ShowExtractedElement(value);
-}
-
 void ExtractElementFromCircularBuffer(CircularBuffer*& circularBuffer)
-{
-    if (!CheckStructureExists(circularBuffer, "Кольцевой буфер"))
+{   
+    bool (*isEmptyFunc)(CircularBuffer*) = [](CircularBuffer* cb)
     {
-        return;
-    }
+        return GetUsedSpace(cb) == 0;
+     };
 
-    if (CheckStructureEmpty(GetUsedSpace(circularBuffer) == 0, "Кольцевой буфер"))
-    {
-        return;
-    }
-
-    int value = DequeueCircularBuffer(circularBuffer);
-    ShowExtractedElement(value);
+    ExtractElementFromStructure<CircularBuffer>(circularBuffer, DequeueCircularBuffer,
+        isEmptyFunc, "Кольцевой буфер");
 }
 
-// Функции изменения размера
-void ResizeStack(Stack*& stack)
-{
-    if (!CheckStructureExists(stack, "Стек"))
-    {
-        return;
-    }
 
-    int newCapacity = GetValidatedInput("Введите новый размер стека: ");
-    if (ResizeStack(stack, newCapacity))
-    {
-        ShowResizeSuccess(newCapacity, "стека");
-    }
-    else
-    {
-        ShowResizeError("стека");
-    }
-}
-
-void ResizeQueue(Queue*& queue)
-{
-    if (!CheckStructureExists(queue, "Очередь"))
-    {
-        return;
-    }
-
-    int newCapacity = GetValidatedInput("Введите новый размер очереди: ");
-    if (ResizeQueue(queue, newCapacity))
-    {
-        ShowResizeSuccess(newCapacity, "очереди");
-    }
-    else
-    {
-        ShowResizeError("очереди");
-    }
-}
-
-void ResizeQueueTwoStacks(QueueTwoStacks*& queue)
-{
-    if (!CheckStructureExists(queue, "Очередь"))
-    {
-        return;
-    }
-
-    int newCapacity = GetValidatedInput("Введите новый размер очереди: ");
-    if (ResizeQueueTwoStacks(queue, newCapacity))
-    {
-        ShowResizeSuccess(newCapacity, "очереди");
-    }
-    else
-    {
-        ShowResizeError("очереди");
-    }
-}
-
-void ResizeCircularBuffer(CircularBuffer*& circularBuffer)
-{
-    if (!CheckStructureExists(circularBuffer, "Кольцевой буфер"))
-    {
-        return;
-    }
-
-    int newCapacity = GetValidatedInput("Введите новый размер кольцевого буфера: ");
-    if (ResizeCircularBuffer(circularBuffer, newCapacity))
-    {
-        ShowResizeSuccess(newCapacity, "кольцевого буфера");
-    }
-    else
-    {
-        ShowResizeError("кольцевого буфера");
-    }
-}
-
-// Функции удаления структур
-void DeleteStructureStack(Stack*& stack)
-{
-    bool wasDeleted = (stack != nullptr);
-    if (wasDeleted)
-    {
-        DeleteStack(stack);
-        stack = nullptr;
-    }
-    ShowDeleteMessage(wasDeleted, "Стек");
-}
-
-void DeleteStructureQueue(Queue*& queue)
-{
-    bool wasDeleted = (queue != nullptr);
-    if (wasDeleted)
-    {
-        DeleteQueue(queue);
-        queue = nullptr;
-    }
-    ShowDeleteMessage(wasDeleted, "Очередь");
-}
-
-void DeleteStructureQueueTwoStacks(QueueTwoStacks*& queue)
-{
-    bool wasDeleted = (queue != nullptr);
-    if (wasDeleted)
-    {
-        DeleteQueueTwoStacks(queue);
-        queue = nullptr;
-    }
-    ShowDeleteMessage(wasDeleted, "Очередь");
-}
-
-void DeleteStructureCircularBuffer(CircularBuffer*& circularBuffer)
-{
-    bool wasDeleted = (circularBuffer != nullptr);
-    if (wasDeleted)
-    {
-        DeleteCircularBuffer(circularBuffer);
-        circularBuffer = nullptr;
-    }
-    ShowDeleteMessage(wasDeleted, "Кольцевой буфер");
-}
 void WriteIsDeleteNotCreated(string value)
 {
     cout<<value<< "не создан(а) или удален(а)" << endl;
@@ -883,25 +578,25 @@ void HandleStackMenuChoice(int choice, Stack*& stack)
 
     case 2:
     {
-        AddElementToStack(stack);
+        AddElementToStructure<Stack>(stack, Push, "Стек");
         break;
     }
 
     case 3:
     {
-        ExtractElementFromStack(stack);
+        ExtractElementFromStructure<Stack>(stack, Pop, IsEmpty, "Стек");
         break;
     }
 
     case 4:
     {
-        ResizeStack(stack);
+        ResizeStructure<Stack>(stack, ResizeStack, "стека");
         break;
     }
 
     case 5:
     {
-        DeleteStructureStack(stack);
+        DeleteStructure<Stack>(stack, DeleteStack, "Стек");
         break;
     }
     }
@@ -915,14 +610,14 @@ void HandleCircularBufferMenuChoice(int choice, CircularBuffer*& circularBuffer)
     {
         if (CheckStructureNotExists(circularBuffer, "Кольцевой буфер"))
         {
-            circularBuffer = CreateStructureCircularBuffer();
+            circularBuffer = CreateStructure<CircularBuffer>(CreateCircularBuffer, "кольцевого буфера");
         }
         break;
     }
 
     case 2:
     {
-        AddElementToCircularBuffer(circularBuffer);
+        AddElementToStructure<CircularBuffer>(circularBuffer, EnqueueCircularBuffer, "Кольцевой буфер");
         break;
     }
 
@@ -934,13 +629,13 @@ void HandleCircularBufferMenuChoice(int choice, CircularBuffer*& circularBuffer)
 
     case 4:
     {
-        ResizeCircularBuffer(circularBuffer);
+        ResizeStructure<CircularBuffer>(circularBuffer, ResizeCircularBuffer, "кольцевого буфера");
         break;
     }
 
     case 5:
     {
-        DeleteStructureCircularBuffer(circularBuffer);
+        DeleteStructure<CircularBuffer>(circularBuffer, DeleteCircularBuffer, "Кольцевой буфер");
         break;
     }
     }
@@ -961,25 +656,26 @@ void HandleQueueMenuChoice(int choice, Queue*& queue)
 
     case 2:
     {
-        AddElementToQueue(queue);
+        AddElementToStructure<Queue>(queue, Enqueue, "Очередь");
         break;
     }
 
     case 3:
     {
-        ExtractElementFromQueue(queue);
+        ExtractElementFromStructure<Queue>(queue, Dequeue, IsQueueEmpty, "Очередь");
         break;
     }
 
     case 4:
     {
-        ResizeQueue(queue);
+        ResizeStructure<Queue>(queue, ResizeQueue, "очереди");
         break;
     }
 
     case 5:
     {
-        DeleteStructureQueue(queue);
+        DeleteStructure<Queue>(queue, DeleteQueue, "Очередь");
+
         break;
     }
     }
@@ -1006,19 +702,19 @@ void HandleQueueTwoStacksMenuChoice(int choice, QueueTwoStacks*& queue)
 
     case 3:
     {
-        ExtractElementFromQueueTwoStacks(queue);
+        ExtractElementFromStructure<QueueTwoStacks>(queue, DequeueTwoStacks, IsQueueTwoStacksEmpty, "Очередь");
         break;
     }
 
     case 4:
     {
-        ResizeQueueTwoStacks(queue);
+        ResizeStructure<QueueTwoStacks>(queue, ResizeQueueTwoStacks, "очереди");
         break;
     }
 
     case 5:
     {
-        DeleteStructureQueueTwoStacks(queue);
+        DeleteStructure<QueueTwoStacks>(queue, DeleteQueueTwoStacks, "Очередь");
         break;
     }
     }
@@ -1115,10 +811,11 @@ int main()
     } while (mainChoice != 0);
 
     // Очистка памяти перед выходом
-    DeleteStructureStack(myStack);
-    DeleteStructureCircularBuffer(myCircularBuffer);
-    DeleteStructureQueue(myQueue);
-    DeleteStructureQueueTwoStacks(myQueueTwoStacks);
+    DeleteStructure<Stack>(myStack, DeleteStack, "Стек");
+    DeleteStructure<Queue>(myQueue, DeleteQueue, "Очередь");
+    DeleteStructure<QueueTwoStacks>(myQueueTwoStacks, DeleteQueueTwoStacks, "Очередь");
+    DeleteStructure<CircularBuffer>(myCircularBuffer, DeleteCircularBuffer, "Кольцевой буфер");
+
 
     return 0;
 }
