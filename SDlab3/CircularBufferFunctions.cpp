@@ -1,4 +1,4 @@
-#include "CircularBufferFunctions.h"
+#include "CircularBuffer.h"
 
 CircularBuffer* CreateCircularBuffer(int capacity)
 {
@@ -13,17 +13,17 @@ CircularBuffer* CreateCircularBuffer(int capacity)
         return nullptr;
     }
 
-    circularBuffer->_buffer = new int[capacity];
-    if (circularBuffer->_buffer == nullptr)
+    circularBuffer->Buffer = new int[capacity];
+    if (circularBuffer->Buffer == nullptr)
     {
         delete circularBuffer;
         return nullptr;
     }
 
-    circularBuffer->_capacity = capacity;
-    circularBuffer->_head = 0;
-    circularBuffer->_tail = 0;
-    circularBuffer->_count = 0;
+    circularBuffer->Capacity = capacity;
+    circularBuffer->Head = 0;
+    circularBuffer->Tail = 0;
+    circularBuffer->Count = 0;
 
     return circularBuffer;
 }
@@ -34,7 +34,7 @@ int GetFreeSpaceCircular(CircularBuffer* circularBuffer)
     {
         return 0;
     }
-    return circularBuffer->_capacity - circularBuffer->_count;
+    return circularBuffer->Capacity - circularBuffer->Count;
 }
 
 int GetUsedSpace(CircularBuffer* circularBuffer)
@@ -43,7 +43,7 @@ int GetUsedSpace(CircularBuffer* circularBuffer)
     {
         return 0;
     }
-    return circularBuffer->_count;
+    return circularBuffer->Count;
 }
 bool IsCircularBufferEmpty(CircularBuffer* ñircularBuffer)
 {
@@ -56,50 +56,49 @@ bool IsCircularBufferEmpty(CircularBuffer* ñircularBuffer)
 
 bool EnqueueCircularBuffer(CircularBuffer* circularBuffer, int value)
 {
-    if (circularBuffer == nullptr || circularBuffer->_count == circularBuffer->_capacity)
+    if (circularBuffer == nullptr || circularBuffer->Count == circularBuffer->Capacity)
     {
         return false;
     }
 
-    circularBuffer->_buffer[circularBuffer->_tail] = value;
-    circularBuffer->_tail = (circularBuffer->_tail + 1) % circularBuffer->_capacity;
-    circularBuffer->_count++;
+    circularBuffer->Buffer[circularBuffer->Tail] = value;
+    circularBuffer->Tail = (circularBuffer->Tail + 1) % circularBuffer->Capacity;
+    circularBuffer->Count++;
 
     return true;
 }
 
 int DequeueCircularBuffer(CircularBuffer* circularBuffer)
 {
-    if (circularBuffer == nullptr || circularBuffer->_count == 0)
+    if (circularBuffer == nullptr || circularBuffer->Count == 0)
     {
         return -1;
     }
-    int value = circularBuffer->_buffer[circularBuffer->_head];
-    circularBuffer->_head = (circularBuffer->_head + 1) % circularBuffer->_capacity;
-    circularBuffer->_count--;
+    int value = circularBuffer->Buffer[circularBuffer->Head];
+    circularBuffer->Head = (circularBuffer->Head + 1) % circularBuffer->Capacity;
+    circularBuffer->Count--;
 
     return value;
 }
 
-void DeleteCircularBuffer(CircularBuffer*& circularBuffer)
+void DeleteCircularBuffer(CircularBuffer* circularBuffer)
 {
     if (circularBuffer == nullptr)
     {
         return;
     }
 
-    if (circularBuffer->_buffer != nullptr)
+    if (circularBuffer->Buffer != nullptr)
     {
-        delete[] circularBuffer->_buffer;
-        circularBuffer->_buffer = nullptr;
+        delete[] circularBuffer->Buffer;
+        circularBuffer->Buffer = nullptr;
     }
 
     delete circularBuffer;
-    circularBuffer = nullptr;
 }
 bool ResizeCircularBuffer(CircularBuffer* circularBuffer, int newCapacity)
 {
-    if (circularBuffer == nullptr || newCapacity <= 0 || newCapacity < circularBuffer->_count)
+    if (circularBuffer == nullptr || newCapacity <= 0 || newCapacity < circularBuffer->Count)
     {
         return false;
     }
@@ -110,20 +109,20 @@ bool ResizeCircularBuffer(CircularBuffer* circularBuffer, int newCapacity)
         return false;
     }
 
-    for (int i = 0; i < circularBuffer->_count; i++)
+    for (int i = 0; i < circularBuffer->Count; i++)
     {
-        int index = (circularBuffer->_head + i) % circularBuffer->_capacity;
-        newBuffer[i] = circularBuffer->_buffer[index];
+        int index = (circularBuffer->Head + i) % circularBuffer->Capacity;
+        newBuffer[i] = circularBuffer->Buffer[index];
     }
 
-    delete[] circularBuffer->_buffer;
-    circularBuffer->_buffer = newBuffer;
-    circularBuffer->_capacity = newCapacity;
-    circularBuffer->_head = 0;
-    circularBuffer->_tail = circularBuffer->_count;
-    if (circularBuffer->_tail == circularBuffer->_capacity)
+    delete[] circularBuffer->Buffer;
+    circularBuffer->Buffer = newBuffer;
+    circularBuffer->Capacity = newCapacity;
+    circularBuffer->Head = 0;
+    circularBuffer->Tail = circularBuffer->Count;
+    if (circularBuffer->Tail == circularBuffer->Capacity)
     {
-        circularBuffer->_tail = 0;
+        circularBuffer->Tail = 0;
     }
 
     return true;

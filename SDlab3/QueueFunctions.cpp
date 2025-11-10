@@ -1,5 +1,5 @@
-#include "QueueFunctions.h"
-#include "CircularBufferFunctions.h"
+#include "Queue.h"
+#include "CircularBuffer.h"
 
 Queue* CreateQueue(int capacity)
 {
@@ -14,8 +14,8 @@ Queue* CreateQueue(int capacity)
         return nullptr;
     }
 
-    queue->_circularBuffer = CreateCircularBuffer(capacity);
-    if (queue->_circularBuffer == nullptr)
+    queue->CircularBuffer = CreateCircularBuffer(capacity);
+    if (queue->CircularBuffer == nullptr)
     {
         delete queue;
         return nullptr;
@@ -30,7 +30,7 @@ bool Enqueue(Queue* queue, int value)
     {
         return false;
     }
-    return EnqueueCircularBuffer(queue->_circularBuffer, value);
+    return EnqueueCircularBuffer(queue->CircularBuffer, value);
 }
 
 int Dequeue(Queue* queue)
@@ -39,23 +39,22 @@ int Dequeue(Queue* queue)
     {
         return -1;
     }
-    return DequeueCircularBuffer(queue->_circularBuffer);
+    return DequeueCircularBuffer(queue->CircularBuffer);
 }
 
-void DeleteQueue(Queue*& queue)
+void DeleteQueue(Queue* queue)
 {
     if (queue == nullptr)
     {
         return;
     }
 
-    if (queue->_circularBuffer != nullptr)
+    if (queue->CircularBuffer != nullptr)
     {
-        DeleteCircularBuffer(queue->_circularBuffer);
+        DeleteCircularBuffer(queue->CircularBuffer);
     }
 
     delete queue;
-    queue = nullptr;
 }
 
 bool IsQueueEmpty(Queue* queue)
@@ -64,7 +63,7 @@ bool IsQueueEmpty(Queue* queue)
     {
         return true;
     }
-    return GetUsedSpace(queue->_circularBuffer) == 0;
+    return GetUsedSpace(queue->CircularBuffer) == 0;
 }
 
 bool IsQueueFull(Queue* queue)
@@ -73,7 +72,7 @@ bool IsQueueFull(Queue* queue)
     {
         return true;
     }
-    return GetFreeSpaceCircular(queue->_circularBuffer) == 0;
+    return GetFreeSpaceCircular(queue->CircularBuffer) == 0;
 }
 
 bool ResizeQueue(Queue* queue, int newCapacity)
@@ -82,13 +81,13 @@ bool ResizeQueue(Queue* queue, int newCapacity)
     {
         return false;
     }
-    return ResizeCircularBuffer(queue->_circularBuffer, newCapacity);
+    return ResizeCircularBuffer(queue->CircularBuffer, newCapacity);
 }
 int GetFreeSpaceQueue(Queue* queue)
 {
-    if (queue == nullptr || queue->_circularBuffer == nullptr)
+    if (queue == nullptr || queue->CircularBuffer == nullptr)
     {
         return 0;
     }
-    return GetFreeSpaceCircular(queue->_circularBuffer);
+    return GetFreeSpaceCircular(queue->CircularBuffer);
 }

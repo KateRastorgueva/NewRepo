@@ -1,5 +1,5 @@
-#include "QueueTwoStacksFunctions.h"
-#include "StackFunctions.h"
+#include "QueueTwoStacks.h"
+#include "Stack.h"
 
 QueueTwoStacks* CreateQueueTwoStacks(int capacity)
 {
@@ -14,18 +14,18 @@ QueueTwoStacks* CreateQueueTwoStacks(int capacity)
         return nullptr;
     }
 
-    queue->_inputStack = CreateStack(capacity);
-    queue->_outputStack = CreateStack(capacity);
+    queue->InputStack = CreateStack(capacity);
+    queue->OutputStack = CreateStack(capacity);
 
-    if (queue->_inputStack == nullptr || queue->_outputStack == nullptr)
+    if (queue->InputStack == nullptr || queue->OutputStack == nullptr)
     {
-        if (queue->_inputStack != nullptr)
+        if (queue->InputStack != nullptr)
         {
-            DeleteStack(queue->_inputStack);
+            DeleteStack(queue->InputStack);
         }
-        if (queue->_outputStack != nullptr)
+        if (queue->OutputStack != nullptr)
         {
-            DeleteStack(queue->_outputStack);
+            DeleteStack(queue->OutputStack);
         }
         delete queue;
         return nullptr;
@@ -39,7 +39,7 @@ bool EnqueueQueueTwoStacks(QueueTwoStacks* queue, int value)
     {
         return false;
     }
-    return Push(queue->_inputStack, value);
+    return Push(queue->InputStack, value);
 }
 
 int DequeueTwoStacks(QueueTwoStacks* queue)
@@ -49,42 +49,41 @@ int DequeueTwoStacks(QueueTwoStacks* queue)
         return -1;
     }
 
-    if (IsEmpty(queue->_outputStack))
+    if (IsEmpty(queue->OutputStack))
     {
-        while (!IsEmpty(queue->_inputStack))
+        while (!IsEmpty(queue->InputStack))
         {
-            int value = Pop(queue->_inputStack);
-            Push(queue->_outputStack, value);
+            int value = Pop(queue->InputStack);
+            Push(queue->OutputStack, value);
         }
     }
 
-    if (IsEmpty(queue->_outputStack))
+    if (IsEmpty(queue->OutputStack))
     {
         return -1;
     }
 
-    return Pop(queue->_outputStack);
+    return Pop(queue->OutputStack);
 }
 
-void DeleteQueueTwoStacks(QueueTwoStacks*& queue)
+void DeleteQueueTwoStacks(QueueTwoStacks* queue)
 {
     if (queue == nullptr)
     {
         return;
     }
 
-    if (queue->_inputStack != nullptr)
+    if (queue->InputStack != nullptr)
     {
-        DeleteStack(queue->_inputStack);
+        DeleteStack(queue->InputStack);
     }
 
-    if (queue->_outputStack != nullptr)
+    if (queue->OutputStack != nullptr)
     {
-        DeleteStack(queue->_outputStack);
+        DeleteStack(queue->OutputStack);
     }
 
     delete queue;
-    queue = nullptr;
 }
 
 bool IsQueueTwoStacksEmpty(QueueTwoStacks* queue)
@@ -93,7 +92,7 @@ bool IsQueueTwoStacksEmpty(QueueTwoStacks* queue)
     {
         return true;
     }
-    return IsEmpty(queue->_inputStack) && IsEmpty(queue->_outputStack);
+    return IsEmpty(queue->InputStack) && IsEmpty(queue->OutputStack);
 }
 bool ResizeQueueTwoStacks(QueueTwoStacks* queue, int newCapacity)
 {
@@ -102,7 +101,7 @@ bool ResizeQueueTwoStacks(QueueTwoStacks* queue, int newCapacity)
         return false;
     }
 
-    int totalElements = (queue->_inputStack->_top + 1) + (queue->_outputStack->_top + 1);
+    int totalElements = (queue->InputStack->Top + 1) + (queue->OutputStack->Top + 1);
     if (newCapacity < totalElements)
     {
         return false;
@@ -113,13 +112,13 @@ bool ResizeQueueTwoStacks(QueueTwoStacks* queue, int newCapacity)
         return false;
     }
     //  начало очереди
-    Stack* tempStack = CreateStack(queue->_outputStack->_capacity);
+    Stack* tempStack = CreateStack(queue->OutputStack->Capacity);
     if (tempStack != nullptr)
     {
         // —охран€ем outputStack в правильном пор€дке
-        while (!IsEmpty(queue->_outputStack))
+        while (!IsEmpty(queue->OutputStack))
         {
-            int value = Pop(queue->_outputStack);
+            int value = Pop(queue->OutputStack);
             Push(tempStack, value);
         }
         while (!IsEmpty(tempStack))
@@ -131,12 +130,12 @@ bool ResizeQueueTwoStacks(QueueTwoStacks* queue, int newCapacity)
     }
 
     // конец очереди
-    tempStack = CreateStack(queue->_inputStack->_capacity);
+    tempStack = CreateStack(queue->InputStack->Capacity);
     if (tempStack != nullptr)
     {
-        while (!IsEmpty(queue->_inputStack))
+        while (!IsEmpty(queue->InputStack))
         {
-            int value = Pop(queue->_inputStack);
+            int value = Pop(queue->InputStack);
             Push(tempStack, value);
         }
         while (!IsEmpty(tempStack))
@@ -147,15 +146,15 @@ bool ResizeQueueTwoStacks(QueueTwoStacks* queue, int newCapacity)
         DeleteStack(tempStack);
     }
 
-    DeleteStack(queue->_inputStack);
-    DeleteStack(queue->_outputStack);
+    DeleteStack(queue->InputStack);
+    DeleteStack(queue->OutputStack);
 
-    queue->_inputStack = tempQueue->_inputStack;
-    queue->_outputStack = tempQueue->_outputStack;
+    queue->InputStack = tempQueue->InputStack;
+    queue->OutputStack = tempQueue->OutputStack;
 
     // ќсвобождаем временную структуру
-    tempQueue->_inputStack = nullptr;
-    tempQueue->_outputStack = nullptr;
+    tempQueue->InputStack = nullptr;
+    tempQueue->OutputStack = nullptr;
     DeleteQueueTwoStacks(tempQueue);
 
     return true;

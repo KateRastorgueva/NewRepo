@@ -1,4 +1,4 @@
-#include "StackFunctions.h"
+#include "Stack.h"
 
 // Функция создания стека
 Stack* CreateStack(int capacity)
@@ -17,16 +17,16 @@ Stack* CreateStack(int capacity)
     }
 
     // Выделение памяти для буфера
-    stack->_buffer = new int[capacity];
-    if (stack->_buffer == nullptr)
+    stack->Buffer = new int[capacity];
+    if (stack->Buffer == nullptr)
     {
         delete stack;
         return nullptr;
     }
 
     // Инициализация полей стека
-    stack->_capacity = capacity;
-    stack->_top = -1;
+    stack->Capacity = capacity;
+    stack->Top = -1;
 
     return stack;
 }
@@ -38,7 +38,7 @@ bool IsEmpty(Stack* stack)
     {
         return true;
     }
-    return stack->_top == -1;
+    return stack->Top == -1;
 }
 
 // Функция проверки, полон ли стек
@@ -48,7 +48,7 @@ bool IsFull(Stack* stack)
     {
         return true;
     }
-    return stack->_top == stack->_capacity - 1;
+    return stack->Top == stack->Capacity - 1;
 }
 
 // Функция помещения элемента в стек
@@ -59,8 +59,8 @@ bool Push(Stack* stack, int value)
         return false;
     }
 
-    stack->_top++;
-    stack->_buffer[stack->_top] = value;
+    stack->Top++;
+    stack->Buffer[stack->Top] = value;
     return true;
 }
 
@@ -72,25 +72,24 @@ int Pop(Stack* stack)
         return -1;
     }
 
-    int value = stack->_buffer[stack->_top];
-    stack->_top--;
+    int value = stack->Buffer[stack->Top];
+    stack->Top--;
     return value;
 }
 
 
-void DeleteStack(Stack*& stack)
+void DeleteStack(Stack* stack)
 {
     if (stack == nullptr)
     {
         return;
     }
-    if (stack->_buffer != nullptr)
+    if (stack->Buffer != nullptr)
     {
-        delete[] stack->_buffer;
-        stack->_buffer = nullptr;
+        delete[] stack->Buffer;
+        stack->Buffer = nullptr;
     }
     delete stack;
-    stack = nullptr;
 }
 
 bool ResizeStack(Stack* stack, int newCapacity)
@@ -100,7 +99,7 @@ bool ResizeStack(Stack* stack, int newCapacity)
         return false;
     }
 
-    if (newCapacity <= stack->_top)
+    if (newCapacity <= stack->Top)
     {
         return false;
     }
@@ -111,14 +110,14 @@ bool ResizeStack(Stack* stack, int newCapacity)
         return false;
     }
 
-    for (int i = 0; i <= stack->_top; i++)
+    for (int i = 0; i <= stack->Top; i++)
     {
-        newBuffer[i] = stack->_buffer[i];
+        newBuffer[i] = stack->Buffer[i];
     }
 
-    delete[] stack->_buffer;
-    stack->_buffer = newBuffer;
-    stack->_capacity = newCapacity;
+    delete[] stack->Buffer;
+    stack->Buffer = newBuffer;
+    stack->Capacity = newCapacity;
 
     return true;
 }

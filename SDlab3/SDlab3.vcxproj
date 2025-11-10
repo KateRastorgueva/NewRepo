@@ -127,21 +127,29 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CircularBufferConsole.cpp" />
     <ClCompile Include="CircularBufferFunctions.cpp" />
+    <ClCompile Include="ConsoleService.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="QueueConsole.cpp" />
     <ClCompile Include="QueueFunctions.cpp" />
+    <ClCompile Include="QueueTwoStacksConsole.cpp" />
     <ClCompile Include="QueueTwoStacksFunctions.cpp" />
+    <ClCompile Include="StackConsole.cpp" />
     <ClCompile Include="StackFunctions.cpp" />
+    <ClCompile Include="Validator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CircularBuffer.h" />
-    <ClInclude Include="CircularBufferFunctions.h" />
+    <ClInclude Include="CircularBufferConsole.h" />
+    <ClInclude Include="ConsoleService.h" />
     <ClInclude Include="Queue.h" />
-    <ClInclude Include="QueueFunctions.h" />
+    <ClInclude Include="QueueConsole.h" />
     <ClInclude Include="QueueTwoStacks.h" />
-    <ClInclude Include="QueueTwoStacksFunctions.h" />
+    <ClInclude Include="QueueTwoStacksConsole.h" />
     <ClInclude Include="Stack.h" />
-    <ClInclude Include="StackFunctions.h" />
+    <ClInclude Include="StackConsole.h" />
+    <ClInclude Include="Validator.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
