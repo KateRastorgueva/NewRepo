@@ -2,6 +2,7 @@
 #include <windows.h>
 #include "HashTable.h"
 #include "Validator.h"
+#include "ConsoleService.h"
 
 using namespace std;
 
@@ -9,116 +10,6 @@ void SetRussianEncoding()
 {
     SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
-}
-
-void PrintDictionaryInfo(const Dictionary* dictionary)
-{
-    if (dictionary == nullptr || dictionary->HashTable == nullptr)
-    {
-        cout << "Словарь не создан или удален" << endl;
-        return;
-    }
-
-    cout << "=== СОСТОЯНИЕ СЛОВАРЯ ===" << endl;
-    cout << "Количество элементов: " << dictionary->HashTable->Count << endl;
-
-    bool isEmpty = true;
-    for (int i = 0; i < dictionary->HashTable->Capacity; i++)
-    {
-        KeyValuePair* current = dictionary->HashTable->Buckets[i];
-        while (current != nullptr)
-        {
-            cout << "Ключ: '" << current->Key << "' -> Значение: '" << current->Value << "'" << endl;
-            current = current->Next;
-            isEmpty = false;
-        }
-    }
-
-    if (isEmpty)
-    {
-        cout << "Словарь пуст" << endl;
-    }
-    cout << "=========================" << endl << endl;
-}
-
-void PrintHashTableInfo(const Dictionary* dictionary)
-{
-    if (dictionary == nullptr || dictionary->HashTable == nullptr)
-    {
-        cout << "Хеш-таблица не создана или удалена" << endl;
-        return;
-    }
-
-    cout << "=== СОСТОЯНИЕ ХЕШ-ТАБЛИЦЫ ===" << endl;
-    cout << "Вместимость: " << dictionary->HashTable->Capacity << endl;
-    cout << "Количество элементов: " << dictionary->HashTable->Count << endl;
-    cout << "Коэффициент заполнения: " << static_cast<double>(dictionary->HashTable->Count) / dictionary->HashTable->Capacity << endl;
-
-    for (int i = 0; i < dictionary->HashTable->Capacity; i++)
-    {
-        cout << "Ячейка " << i << ": ";
-        KeyValuePair* current = dictionary->HashTable->Buckets[i];
-        if (current == nullptr)
-        {
-            cout << "пусто";
-        }
-        else
-        {
-            while (current != nullptr)
-            {
-                cout << "['" << current->Key << "'->'" << current->Value << "']";
-                if (current->Next != nullptr)
-                {
-                    cout << " -> ";
-                }
-                current = current->Next;
-            }
-        }
-        cout << endl;
-    }
-    cout << "==============================" << endl << endl;
-}
-
-void DemoRehashing(Dictionary*& dictionary)
-{
-    cout << "\n=== ДЕМОНСТРАЦИЯ ПЕРЕХЕШИРОВАНИЯ ===" << endl;
-
-    if (dictionary == nullptr)
-    {
-        dictionary = CreateDictionary(3); // Маленькая таблица для быстрой демонстрации
-        cout << "Создан словарь с вместимостью 3" << endl;
-    }
-
-    cout << "Начальное состояние:" << endl;
-    PrintHashTableInfo(dictionary);
-
-    // Добавляем элементы до срабатывания перехеширования
-    string testData[][2] = {
-        {"name", "John"}, {"age", "25"}, {"city", "Moscow"},
-        {"country", "Russia"}, {"job", "Developer"}, {"language", "C++"}
-    };
-
-    for (int i = 0; i < 6; i++)
-    {
-        cout << "\n--- Шаг " << (i + 1) << " ---" << endl;
-        cout << "Добавляем: '" << testData[i][0] << "' -> '" << testData[i][1] << "'" << endl;
-
-        DictionaryAdd(dictionary, testData[i][0], testData[i][1]);
-
-        cout << "Коэффициент заполнения: "
-            << static_cast<double>(dictionary->HashTable->Count) / dictionary->HashTable->Capacity << endl;
-
-        if (NeedsRehash(dictionary->HashTable))
-        {
-            cout << "!!! СРАБАТЫВАНИЕ ПЕРЕХЕШИРОВАНИЯ !!!" << endl;
-            Rehash(dictionary->HashTable);
-            cout << "Новая вместимость: " << dictionary->HashTable->Capacity << endl;
-        }
-
-        PrintHashTableInfo(dictionary);
-    }
-
-    cout << "=== ДЕМОНСТРАЦИЯ ЗАВЕРШЕНА ===" << endl;
 }
 
 void ShowMainMenu()
@@ -129,10 +20,6 @@ void ShowMainMenu()
     cout << "2 - Добавить элемент (key-value)" << endl;
     cout << "3 - Удалить элемент по ключу" << endl;
     cout << "4 - Найти элемент по ключу" << endl;
-    cout << "5 - Показать состояние словаря" << endl;
-    cout << "6 - Показать состояние хеш-таблицы" << endl;
-    cout << "7 - Демонстрация всех возможностей" << endl;
-    cout << "8 - Демонстрация перехеширования" << endl;
 }
 
 Dictionary* CreateDictionaryMenu()
@@ -146,11 +33,12 @@ Dictionary* CreateDictionaryMenu()
     Dictionary* dictionary = CreateDictionary(capacity);
     if (dictionary != nullptr)
     {
-        cout << "Словарь создан успешно!" << endl;
+        ConsoleService::PrintMessage("Успешно", "Словарь создан");
+        ConsoleService::PrintHashTableState(dictionary);
     }
     else
     {
-        cout << "Ошибка создания словаря!" << endl;
+        ConsoleService::PrintMessage("Ошибка", "Создания словаря");
     }
     return dictionary;
 }
@@ -159,7 +47,7 @@ void AddElementMenu(Dictionary* dictionary)
 {
     if (dictionary == nullptr)
     {
-        cout << "Словарь не создан!" << endl;
+        ConsoleService::PrintMessage("Ошибка", "Словарь не создан");
         return;
     }
 
@@ -171,19 +59,30 @@ void AddElementMenu(Dictionary* dictionary)
 
     if (DictionaryAdd(dictionary, key, value))
     {
-        cout << "Элемент успешно добавлен!" << endl;
+        ConsoleService::PrintMessage("Успешно", "Элемент добавлен");
+
+        // Демонстрация дубликатов
+        ConsoleService::PrintTitle("Попытка добавления дубликата:");
+        if (!DictionaryAdd(dictionary, key, value))
+        {
+            ConsoleService::PrintMessage("Информация", "Дубликат отклонен - метод устранения коллизий работает");
+        }
     }
     else
     {
-        cout << "Ошибка добавления! Возможно, ключ уже существует." << endl;
+        ConsoleService::PrintMessage("Ошибка", "Ключ уже существует");
     }
+
+    // Автоматический вывод состояния после операции
+    ConsoleService::PrintDictionaryState(dictionary);
+    ConsoleService::PrintHashTableState(dictionary);
 }
 
 void RemoveElementMenu(Dictionary* dictionary)
 {
     if (dictionary == nullptr)
     {
-        cout << "Словарь не создан!" << endl;
+        ConsoleService::PrintMessage("Ошибка", "Словарь не создан");
         return;
     }
 
@@ -193,19 +92,23 @@ void RemoveElementMenu(Dictionary* dictionary)
 
     if (DictionaryRemove(dictionary, key))
     {
-        cout << "Элемент успешно удален!" << endl;
+        ConsoleService::PrintMessage("Успешно", "Элемент удален");
     }
     else
     {
-        cout << "Элемент с таким ключом не найден!" << endl;
+        ConsoleService::PrintMessage("Ошибка", "Элемент не найден");
     }
+
+    // Автоматический вывод состояния после операции
+    ConsoleService::PrintDictionaryState(dictionary);
+    ConsoleService::PrintHashTableState(dictionary);
 }
 
 void FindElementMenu(const Dictionary* dictionary)
 {
     if (dictionary == nullptr)
     {
-        cout << "Словарь не создан!" << endl;
+        ConsoleService::PrintMessage("Ошибка", "Словарь не создан");
         return;
     }
 
@@ -216,63 +119,54 @@ void FindElementMenu(const Dictionary* dictionary)
     string value = DictionaryFind(dictionary, key);
     if (!value.empty())
     {
-        cout << "Найдено: ключ '" << key << "' -> значение '" << value << "'" << endl;
+        ConsoleService::PrintMessage("Найдено", "ключ '" + key + "' -> значение '" + value + "'");
     }
     else
     {
-        cout << "Элемент с ключом '" << key << "' не найден!" << endl;
+        ConsoleService::PrintMessage("Информация", "Элемент не найден");
     }
 }
 
-void DemoAllFeatures(Dictionary*& dictionary)
+void DemoRehashingScenario()
 {
-    cout << "\n=== ДЕМОНСТРАЦИЯ ВСЕХ ВОЗМОЖНОСТЕЙ ===" << endl;
+    ConsoleService::PrintTitle("ДЕМОНСТРАЦИЯ ПЕРЕХЕШИРОВАНИЯ");
 
-    // Создание словаря если не создан
-    if (dictionary == nullptr)
+    Dictionary* demoDictionary = CreateDictionary(3);
+    if (demoDictionary == nullptr)
     {
-        cout << "1. Создаем словарь с вместимостью 5..." << endl;
-        dictionary = CreateDictionary(5);
-        if (dictionary == nullptr)
+        return;
+    }
+
+    // Добавление нескольких наборов key-value
+    string testData[][2] = {
+        {"name", "John"},
+        {"age", "25"},
+        {"city", "Moscow"},
+        {"country", "Russia"},
+        {"job", "Developer"},
+        {"language", "C++"},
+        {"email", "test@mail.com"},
+        {"phone", "123456789"}
+    };
+
+    for (int i = 0; i < 8; i++)
+    {
+        ConsoleService::PrintTitle("Шаг " + to_string(i + 1) + ": Добавление '" + testData[i][0] + "'");
+
+        DictionaryAdd(demoDictionary, testData[i][0], testData[i][1]);
+
+        double loadFactor = static_cast<double>(demoDictionary->HashTable->Count) / demoDictionary->HashTable->Capacity;
+        cout << "Коэффициент заполнения: " << loadFactor << endl;
+
+        if (loadFactor > 0.75)
         {
-            return;
+            ConsoleService::PrintMessage("Внимание", "Превышен порог 0.75 - требуется перехеширование");
         }
+
+        ConsoleService::PrintHashTableState(demoDictionary);
     }
 
-    // Добавление нескольких элементов
-    cout << "\n2. Добавляем несколько элементов..." << endl;
-    DictionaryAdd(dictionary, "name", "John");
-    DictionaryAdd(dictionary, "age", "25");
-    DictionaryAdd(dictionary, "city", "Moscow");
-    DictionaryAdd(dictionary, "country", "Russia");
-    PrintDictionaryInfo(dictionary);
-    PrintHashTableInfo(dictionary);
-
-    // Демонстрация дубликатов
-    cout << "3. Пытаемся добавить дублирующий ключ 'name'..." << endl;
-    if (!DictionaryAdd(dictionary, "name", "Duplicate"))
-    {
-        cout << "Дубликат отклонен - корректно!" << endl;
-    }
-
-    // Поиск элементов
-    cout << "\n4. Поиск элементов..." << endl;
-    cout << "Поиск 'name': " << DictionaryFind(dictionary, "name") << endl;
-    cout << "Поиск 'age': " << DictionaryFind(dictionary, "age") << endl;
-
-    // Удаление элемента
-    cout << "\n5. Удаляем элемент 'city'..." << endl;
-    DictionaryRemove(dictionary, "city");
-    PrintDictionaryInfo(dictionary);
-
-    // Добавление до перехеширования
-    cout << "6. Добавляем элементы до перехеширования..." << endl;
-    DictionaryAdd(dictionary, "job", "Developer");
-    DictionaryAdd(dictionary, "language", "C++");
-    DictionaryAdd(dictionary, "hobby", "Programming");
-    PrintHashTableInfo(dictionary);
-
-    cout << "=== ДЕМОНСТРАЦИЯ ЗАВЕРШЕНА ===" << endl;
+    DeleteDictionary(demoDictionary);
 }
 
 int main()
@@ -287,7 +181,7 @@ int main()
     do
     {
         ShowMainMenu();
-        choice = GetValidatedInputInRange(0, 8);
+        choice = GetValidatedInputInRange(0, 4);
 
         switch (choice)
         {
@@ -300,12 +194,10 @@ int main()
         {
             if (myDictionary != nullptr)
             {
-                cout << "Словарь уже существует! Удалите сначала." << endl;
+                ConsoleService::PrintMessage("Информация", "Удаляем существующий словарь");
+                DeleteDictionary(myDictionary);
             }
-            else
-            {
-                myDictionary = CreateDictionaryMenu();
-            }
+            myDictionary = CreateDictionaryMenu();
             break;
         }
         case 2:
@@ -321,30 +213,45 @@ int main()
         case 4:
         {
             FindElementMenu(myDictionary);
+
+            // Дополнительная демонстрация поиска нескольких элементов
+            if (myDictionary != nullptr)
+            {
+                ConsoleService::PrintTitle("Демонстрация поиска нескольких элементов:");
+                string testKeys[] = { "name", "age", "nonexistent" };
+                for (const string& key : testKeys)
+                {
+                    string value = DictionaryFind(myDictionary, key);
+                    if (!value.empty())
+                    {
+                        ConsoleService::PrintMessage("Найдено", key + " -> " + value);
+                    }
+                    else
+                    {
+                        ConsoleService::PrintMessage("Не найдено", key);
+                    }
+                }
+            }
             break;
         }
-        case 5:
+        }
+
+        // После КАЖДОЙ операции (кроме выхода) демонстрируем перехеширование если нужно
+        if (choice != 0 && myDictionary != nullptr && NeedsRehash(myDictionary->HashTable))
         {
-            PrintDictionaryInfo(myDictionary);
-            break;
+            ConsoleService::PrintTitle("АВТОМАТИЧЕСКОЕ ПЕРЕХЕШИРОВАНИЕ");
+            Rehash(myDictionary->HashTable);
+            ConsoleService::PrintMessage("Информация", "Новая вместимость: " + to_string(myDictionary->HashTable->Capacity));
+            ConsoleService::PrintHashTableState(myDictionary);
         }
-        case 6:
-        {
-            PrintHashTableInfo(myDictionary);
-            break;
-        }
-        case 7:
-        {
-            DemoAllFeatures(myDictionary);
-            break;
-        }
-        case 8:
-        {
-            DemoRehashing(myDictionary);
-            break;
-        }
-        }
+
     } while (choice != 0);
+
+    // Финальная демонстрация перехеширования
+    if (myDictionary == nullptr)
+    {
+        DemoRehashingScenario();
+    }
 
     if (myDictionary != nullptr)
     {

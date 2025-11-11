@@ -22,7 +22,6 @@ HashTable* CreateHashTable(int capacity)
 
 int PearsonHash(const string& key, int capacity)
 {
-    // Классическая таблица перестановок Пирсена
     const unsigned char permutation[256] = {
         98, 6, 85, 150, 36, 23, 112, 164, 135, 207, 169, 5, 26, 64, 165, 219,
         61, 20, 68, 89, 130, 63, 52, 102, 24, 229, 132, 245, 80, 216, 195, 115,
@@ -43,19 +42,25 @@ int PearsonHash(const string& key, int capacity)
     };
 
     unsigned char hash = 0;
-    for (char c : key)
+
+    for (int i = 0; i < key.length(); i++)
     {
-        hash = permutation[hash ^ static_cast<unsigned char>(c)];
+        unsigned char character = key[i]; 
+        hash = permutation[hash ^ character];
     }
     return hash % capacity;
 }
-
-bool Add(HashTable* table, const string& key, const string& value)
+template<typename Type>
+bool IsEmpty(Type* table, const string& key)
 {
-    if (table == nullptr || key.empty())
+    if (table == nullptr || !key.size())
     {
         return false;
     }
+}
+bool Add(HashTable* table, const string& key, const string& value)
+{
+    IsEmpty(table, key);
 
     int index = PearsonHash(key, table->Capacity);
 
@@ -83,10 +88,7 @@ bool Add(HashTable* table, const string& key, const string& value)
 
 bool Remove(HashTable* table, const string& key)
 {
-    if (table == nullptr || key.empty())
-    {
-        return false;
-    }
+    IsEmpty(table, key);
 
     int index = PearsonHash(key, table->Capacity);
     KeyValuePair* current = table->Buckets[index];
@@ -116,7 +118,7 @@ bool Remove(HashTable* table, const string& key)
 
 string Find(const HashTable* table, const string& key)
 {
-    if (table == nullptr || key.empty())
+    if (table == nullptr || !key.size())
     {
         return "";
     }
@@ -188,12 +190,11 @@ void DeleteHashTable(HashTable* table)
 
 bool NeedsRehash(const HashTable* table)
 {
-    if (table == nullptr)
+    if (table == nullptr) 
     {
         return false;
     }
-    double loadFactor = static_cast<double>(table->Count) / table->Capacity;
-    return loadFactor > 0.75;
+    return table->Count > (4 * table->Capacity) / 3;
 }
 
 Dictionary* CreateDictionary(int initialCapacity)
@@ -212,13 +213,9 @@ Dictionary* CreateDictionary(int initialCapacity)
     }
     return dictionary;
 }
-
 bool DictionaryAdd(Dictionary* dictionary, const string& key, const string& value)
 {
-    if (dictionary == nullptr || key.empty())
-    {
-        return false;
-    }
+    IsEmpty(dictionary, key);
 
     if (NeedsRehash(dictionary->HashTable))
     {
@@ -230,16 +227,13 @@ bool DictionaryAdd(Dictionary* dictionary, const string& key, const string& valu
 
 bool DictionaryRemove(Dictionary* dictionary, const string& key)
 {
-    if (dictionary == nullptr || key.empty())
-    {
-        return false;
-    }
+    IsEmpty(dictionary, key);
     return Remove(dictionary->HashTable, key);
 }
 
 string DictionaryFind(const Dictionary* dictionary, const string& key)
 {
-    if (dictionary == nullptr || key.empty())
+    if (dictionary == nullptr || !key.size())
     {
         return "";
     }
