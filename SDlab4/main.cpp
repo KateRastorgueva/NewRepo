@@ -12,6 +12,23 @@ void SetRussianEncoding()
     SetConsoleOutputCP(1251);
 }
 
+// Общие функции для устранения дублирования
+bool ValidateDictionary(const Dictionary* dictionary)
+{
+    if (dictionary == nullptr)
+    {
+        ConsoleService::PrintMessage("Ошибка", "Словарь не создан");
+        return false;
+    }
+    return true;
+}
+
+void PrintFullDictionaryState(const Dictionary* dictionary)
+{
+    ConsoleService::PrintDictionaryState(dictionary);
+    ConsoleService::PrintHashTableState(dictionary);
+}
+
 void ShowMainMenu()
 {
     cout << "\nГЛАВНОЕ МЕНЮ ХЕШ-ТАБЛИЦЫ" << endl;
@@ -45,9 +62,8 @@ Dictionary* CreateDictionaryMenu()
 
 void AddElementMenu(Dictionary* dictionary)
 {
-    if (dictionary == nullptr)
+    if (!ValidateDictionary(dictionary))
     {
-        ConsoleService::PrintMessage("Ошибка", "Словарь не создан");
         return;
     }
 
@@ -61,7 +77,6 @@ void AddElementMenu(Dictionary* dictionary)
     {
         ConsoleService::PrintMessage("Успешно", "Элемент добавлен");
 
-        // Демонстрация дубликатов
         ConsoleService::PrintTitle("Попытка добавления дубликата:");
         if (!DictionaryAdd(dictionary, key, value))
         {
@@ -73,16 +88,13 @@ void AddElementMenu(Dictionary* dictionary)
         ConsoleService::PrintMessage("Ошибка", "Ключ уже существует");
     }
 
-    // Автоматический вывод состояния после операции
-    ConsoleService::PrintDictionaryState(dictionary);
-    ConsoleService::PrintHashTableState(dictionary);
+    PrintFullDictionaryState(dictionary);
 }
 
 void RemoveElementMenu(Dictionary* dictionary)
 {
-    if (dictionary == nullptr)
+    if (!ValidateDictionary(dictionary))
     {
-        ConsoleService::PrintMessage("Ошибка", "Словарь не создан");
         return;
     }
 
@@ -99,16 +111,13 @@ void RemoveElementMenu(Dictionary* dictionary)
         ConsoleService::PrintMessage("Ошибка", "Элемент не найден");
     }
 
-    // Автоматический вывод состояния после операции
-    ConsoleService::PrintDictionaryState(dictionary);
-    ConsoleService::PrintHashTableState(dictionary);
+    PrintFullDictionaryState(dictionary);
 }
 
 void FindElementMenu(const Dictionary* dictionary)
 {
-    if (dictionary == nullptr)
+    if (!ValidateDictionary(dictionary))
     {
-        ConsoleService::PrintMessage("Ошибка", "Словарь не создан");
         return;
     }
 
@@ -137,7 +146,6 @@ void DemoRehashingScenario()
         return;
     }
 
-    // Добавление нескольких наборов key-value
     string testData[][2] = {
         {"name", "John"},
         {"age", "25"},
@@ -214,7 +222,6 @@ int main()
         {
             FindElementMenu(myDictionary);
 
-            // Дополнительная демонстрация поиска нескольких элементов
             if (myDictionary != nullptr)
             {
                 ConsoleService::PrintTitle("Демонстрация поиска нескольких элементов:");
@@ -236,7 +243,6 @@ int main()
         }
         }
 
-        // После КАЖДОЙ операции (кроме выхода) демонстрируем перехеширование если нужно
         if (choice != 0 && myDictionary != nullptr && NeedsRehash(myDictionary->HashTable))
         {
             ConsoleService::PrintTitle("АВТОМАТИЧЕСКОЕ ПЕРЕХЕШИРОВАНИЕ");
@@ -247,7 +253,6 @@ int main()
 
     } while (choice != 0);
 
-    // Финальная демонстрация перехеширования
     if (myDictionary == nullptr)
     {
         DemoRehashingScenario();

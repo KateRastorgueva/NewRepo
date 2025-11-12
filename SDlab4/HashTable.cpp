@@ -194,11 +194,11 @@ void DeleteHashTable(HashTable* table)
 
 bool NeedsRehash(const HashTable* table)
 {
-    if (table == nullptr) 
+    if (table == nullptr)
     {
         return false;
     }
-    return table->Count > (4 * table->Capacity) / 3;
+    return table->Count > (3 * table->Capacity) / 4;
 }
 
 Dictionary* CreateDictionary(int initialCapacity)

@@ -12,16 +12,14 @@ void ConsoleService::PrintMessage(const string& prefix, const string& message)
     cout << prefix << ": " << message << endl;
 }
 
-void ConsoleService::PrintKeyValue(const string& key, const string& value)
+void PrintKeyValue(const string& key, const string& value)
 {
     cout << "   " << key << " -> " << value << endl;
 }
-
-void ConsoleService::PrintEmptyLine()
+void CountElements(const Dictionary* dictionary)
 {
-    cout << endl;
+    cout << "Количество элементов: " << dictionary->HashTable->Count << endl;
 }
-
 void ConsoleService::PrintDictionaryState(const Dictionary* dictionary)
 {
     if (dictionary == nullptr || dictionary->HashTable == nullptr)
@@ -31,8 +29,7 @@ void ConsoleService::PrintDictionaryState(const Dictionary* dictionary)
     }
 
     PrintTitle("СОСТОЯНИЕ СЛОВАРЯ");
-    cout << "Количество элементов: " << dictionary->HashTable->Count << endl;
-
+    CountElements(dictionary);
     bool isEmpty = true;
     for (int i = 0; i < dictionary->HashTable->Capacity; i++)
     {
@@ -61,7 +58,7 @@ void ConsoleService::PrintHashTableState(const Dictionary* dictionary)
 
     PrintTitle("СОСТОЯНИЕ ХЕШ-ТАБЛИЦЫ");
     cout << "Вместимость: " << dictionary->HashTable->Capacity << endl;
-    cout << "Количество элементов: " << dictionary->HashTable->Count << endl;
+    CountElements(dictionary);
     cout << "Коэффициент заполнения: "
         << (double)(dictionary->HashTable->Count) / dictionary->HashTable->Capacity << endl;
 
