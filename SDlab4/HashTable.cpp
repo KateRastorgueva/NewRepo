@@ -17,7 +17,7 @@ HashTable* CreateHashTable(int capacity)
     }
     table->Capacity = capacity;
     table->Count = 0;
-    return table; 
+    return table;
 }
 
 int PearsonHash(const string& key, int capacity)
