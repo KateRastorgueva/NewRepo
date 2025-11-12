@@ -6,6 +6,9 @@
 
 using namespace std;
 
+/// <summary>
+/// Устанавливает русскую кодировку для консоли
+/// </summary>
 void SetRussianEncoding()
 {
     SetConsoleCP(1251);
@@ -13,6 +16,12 @@ void SetRussianEncoding()
 }
 
 // Общие функции для устранения дублирования
+
+/// <summary>
+/// Проверяет валидность словаря
+/// </summary>
+/// <param name="dictionary">Словарь для проверки</param>
+/// <returns>true если словарь валиден, false если nullptr</returns>
 bool ValidateDictionary(const Dictionary* dictionary)
 {
     if (dictionary == nullptr)
@@ -23,12 +32,19 @@ bool ValidateDictionary(const Dictionary* dictionary)
     return true;
 }
 
+/// <summary>
+/// Выводит полное состояние словаря и хеш-таблицы
+/// </summary>
+/// <param name="dictionary">Словарь для отображения</param>
 void PrintFullDictionaryState(const Dictionary* dictionary)
 {
     ConsoleService::PrintDictionaryState(dictionary);
     ConsoleService::PrintHashTableState(dictionary);
 }
 
+/// <summary>
+/// Отображает главное меню программы
+/// </summary>
 void ShowMainMenu()
 {
     cout << "\nГЛАВНОЕ МЕНЮ ХЕШ-ТАБЛИЦЫ" << endl;
@@ -39,6 +55,10 @@ void ShowMainMenu()
     cout << "4 - Найти элемент по ключу" << endl;
 }
 
+/// <summary>
+/// Создает словарь через пользовательский интерфейс
+/// </summary>
+/// <returns>Указатель на созданный словарь или nullptr при ошибке</returns>
 Dictionary* CreateDictionaryMenu()
 {
     int capacity = GetValidatedCapacity("словаря");
@@ -60,6 +80,10 @@ Dictionary* CreateDictionaryMenu()
     return dictionary;
 }
 
+/// <summary>
+/// Меню для добавления элемента в словарь
+/// </summary>
+/// <param name="dictionary">Словарь для добавления элемента</param>
 void AddElementMenu(Dictionary* dictionary)
 {
     if (!ValidateDictionary(dictionary))
@@ -76,12 +100,6 @@ void AddElementMenu(Dictionary* dictionary)
     if (DictionaryAdd(dictionary, key, value))
     {
         ConsoleService::PrintMessage("Успешно", "Элемент добавлен");
-
-        ConsoleService::PrintTitle("Попытка добавления дубликата:");
-        if (!DictionaryAdd(dictionary, key, value))
-        {
-            ConsoleService::PrintMessage("Информация", "Дубликат отклонен - метод устранения коллизий работает");
-        }
     }
     else
     {
@@ -91,6 +109,10 @@ void AddElementMenu(Dictionary* dictionary)
     PrintFullDictionaryState(dictionary);
 }
 
+/// <summary>
+/// Меню для удаления элемента из словаря
+/// </summary>
+/// <param name="dictionary">Словарь для удаления элемента</param>
 void RemoveElementMenu(Dictionary* dictionary)
 {
     if (!ValidateDictionary(dictionary))
@@ -114,6 +136,10 @@ void RemoveElementMenu(Dictionary* dictionary)
     PrintFullDictionaryState(dictionary);
 }
 
+/// <summary>
+/// Меню для поиска элемента в словаре
+/// </summary>
+/// <param name="dictionary">Словарь для поиска элемента</param>
 void FindElementMenu(const Dictionary* dictionary)
 {
     if (!ValidateDictionary(dictionary))
@@ -136,6 +162,9 @@ void FindElementMenu(const Dictionary* dictionary)
     }
 }
 
+/// <summary>
+/// Демонстрирует процесс перехеширования таблицы
+/// </summary>
 void DemoRehashingScenario()
 {
     ConsoleService::PrintTitle("ДЕМОНСТРАЦИЯ ПЕРЕХЕШИРОВАНИЯ");
@@ -177,6 +206,10 @@ void DemoRehashingScenario()
     DeleteDictionary(demoDictionary);
 }
 
+/// <summary>
+/// Главная функция программы
+/// </summary>
+/// <returns>Код завершения программы</returns>
 int main()
 {
     SetRussianEncoding();
@@ -202,8 +235,8 @@ int main()
         {
             if (myDictionary != nullptr)
             {
-                ConsoleService::PrintMessage("Информация", "Удаляем существующий словарь");
-                DeleteDictionary(myDictionary);
+                ConsoleService::PrintMessage("Ошибка", "Словарь уже создан. Удалите его сначала через выход из программы.");
+                break;
             }
             myDictionary = CreateDictionaryMenu();
             break;
@@ -221,24 +254,6 @@ int main()
         case 4:
         {
             FindElementMenu(myDictionary);
-
-            if (myDictionary != nullptr)
-            {
-                ConsoleService::PrintTitle("Демонстрация поиска нескольких элементов:");
-                string testKeys[] = { "name", "age", "nonexistent" };
-                for (const string& key : testKeys)
-                {
-                    string value = DictionaryFind(myDictionary, key);
-                    if (!value.empty())
-                    {
-                        ConsoleService::PrintMessage("Найдено", key + " -> " + value);
-                    }
-                    else
-                    {
-                        ConsoleService::PrintMessage("Не найдено", key);
-                    }
-                }
-            }
             break;
         }
         }

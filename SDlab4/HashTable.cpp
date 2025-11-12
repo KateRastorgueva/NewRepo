@@ -57,19 +57,12 @@ bool IsEmptyBool(Type* table, const string& key)
     {
         return false;
     }
-}
-template<typename Type>
-string IsEmptyString(Type* table, const string& key)
-{
-    if (dictionary == nullptr || !key.size())
-    {
-        return "";
-    }
+    return true;
 }
 template<typename Type>
 void IsEmptyNothing(Type*& table)
 {
-    if (dictionary == nullptr)
+    if (table == nullptr)
     {
         return;
     }
@@ -142,18 +135,6 @@ bool Remove(HashTable* table, const string& key)
     return false;
 }
 
-string Find(const HashTable* table, const string& key)
-{
-    IsEmptyString(table, key);
-    int index = PearsonHash(key, table->Capacity);
-    if (!DuplicateCheck(table->Buckets[index], key))
-    {
-        // Ключ уже существует
-        return false;
-    }
-
-    return "";
-}
 void TransferElements(HashTable*& table, HashTable** newTable, bool needAdd)
 {
     for (int i = 0; i < table->Capacity; i++)
@@ -237,8 +218,25 @@ bool DictionaryRemove(Dictionary* dictionary, const string& key)
 
 string DictionaryFind(const Dictionary* dictionary, const string& key)
 {
-    IsEmptyString(dictionary, key);
-    return Find(dictionary->HashTable, key);
+    if (dictionary == nullptr || dictionary->HashTable == nullptr || !key.size())
+    {
+        return "";
+    }
+
+    HashTable* table = dictionary->HashTable;
+    int index = PearsonHash(key, table->Capacity);
+    KeyValuePair* current = table->Buckets[index];
+
+    while (current != nullptr)
+    {
+        if (current->Key == key)
+        {
+            return current->Value;
+        }
+        current = current->Next;
+    }
+
+    return "";
 }
 
 void DeleteDictionary(Dictionary* dictionary)
