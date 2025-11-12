@@ -51,30 +51,56 @@ int PearsonHash(const string& key, int capacity)
     return hash % capacity;
 }
 template<typename Type>
-bool IsEmpty(Type* table, const string& key)
+bool IsEmptyBool(Type* table, const string& key)
 {
     if (table == nullptr || !key.size())
     {
         return false;
     }
 }
+template<typename Type>
+string IsEmptyString(Type* table, const string& key)
+{
+    if (dictionary == nullptr || !key.size())
+    {
+        return "";
+    }
+}
+template<typename Type>
+void IsEmptyNothing(Type*& table)
+{
+    if (dictionary == nullptr)
+    {
+        return;
+    }
+}
+bool DuplicateCheck(KeyValuePair* bucket, const string& searchKey)
+{
+    KeyValuePair* currentElement = bucket;
+    while (currentElement != nullptr)
+    {
+        if (currentElement->Key == searchKey)
+        {
+            // Ключ найден
+            return false;
+        }
+        currentElement = currentElement->Next;
+    }
+    return true;
+}
 bool Add(HashTable* table, const string& key, const string& value)
 {
-    IsEmpty(table, key);
+    IsEmptyBool(table, key);
 
     int index = PearsonHash(key, table->Capacity);
 
     // Проверка на дубликат
-    KeyValuePair* current = table->Buckets[index];
-    while (current != nullptr)
+    if (!DuplicateCheck(table->Buckets[index], key))
     {
-        if (current->Key == key)
-        {
-            return false;
-        }
-        current = current->Next;
+        // Ключ уже существует
+        return false;
     }
-
+    
     // Добавление в начало цепочки
     KeyValuePair* newPair = new KeyValuePair;
     newPair->Key = key;
@@ -88,7 +114,7 @@ bool Add(HashTable* table, const string& key, const string& value)
 
 bool Remove(HashTable* table, const string& key)
 {
-    IsEmpty(table, key);
+    IsEmptyBool(table, key);
 
     int index = PearsonHash(key, table->Capacity);
     KeyValuePair* current = table->Buckets[index];
@@ -118,42 +144,27 @@ bool Remove(HashTable* table, const string& key)
 
 string Find(const HashTable* table, const string& key)
 {
-    if (table == nullptr || !key.size())
-    {
-        return "";
-    }
-
+    IsEmptyString(table, key);
     int index = PearsonHash(key, table->Capacity);
-    KeyValuePair* current = table->Buckets[index];
-
-    while (current != nullptr)
+    if (!DuplicateCheck(table->Buckets[index], key))
     {
-        if (current->Key == key)
-        {
-            return current->Value;
-        }
-        current = current->Next;
+        // Ключ уже существует
+        return false;
     }
+
     return "";
 }
-
-void Rehash(HashTable*& table)
+void TransferElements(HashTable*& table, HashTable** newTable, bool needAdd)
 {
-    if (table == nullptr)
-    {
-        return;
-    }
-
-    int newCapacity = table->Capacity * 2;
-    HashTable* newTable = CreateHashTable(newCapacity);
-
-    // Перенос элементов
     for (int i = 0; i < table->Capacity; i++)
     {
         KeyValuePair* current = table->Buckets[i];
         while (current != nullptr)
         {
-            Add(newTable, current->Key, current->Value);
+            if (needAdd && newTable != nullptr)
+            {
+                Add(*newTable, current->Key, current->Value);
+            }
             KeyValuePair* temp = current;
             current = current->Next;
             delete temp;
@@ -161,6 +172,13 @@ void Rehash(HashTable*& table)
     }
 
     delete[] table->Buckets;
+}
+void Rehash(HashTable*& table)
+{
+    IsEmptyNothing(table);
+    int newCapacity = table->Capacity * 2;
+    HashTable* newTable = CreateHashTable(newCapacity);
+    TransferElements(table, &newTable, true);
     table->Buckets = newTable->Buckets;
     table->Capacity = newTable->Capacity;
     table->Count = newTable->Count;
@@ -169,22 +187,8 @@ void Rehash(HashTable*& table)
 
 void DeleteHashTable(HashTable* table)
 {
-    if (table == nullptr)
-    {
-        return;
-    }
-
-    for (int i = 0; i < table->Capacity; i++)
-    {
-        KeyValuePair* current = table->Buckets[i];
-        while (current != nullptr)
-        {
-            KeyValuePair* temp = current;
-            current = current->Next;
-            delete temp;
-        }
-    }
-    delete[] table->Buckets;
+    IsEmptyNothing(table);
+    TransferElements(table, nullptr, false);
     delete table;
 }
 
@@ -215,7 +219,7 @@ Dictionary* CreateDictionary(int initialCapacity)
 }
 bool DictionaryAdd(Dictionary* dictionary, const string& key, const string& value)
 {
-    IsEmpty(dictionary, key);
+    IsEmptyBool(dictionary, key);
 
     if (NeedsRehash(dictionary->HashTable))
     {
@@ -227,25 +231,19 @@ bool DictionaryAdd(Dictionary* dictionary, const string& key, const string& valu
 
 bool DictionaryRemove(Dictionary* dictionary, const string& key)
 {
-    IsEmpty(dictionary, key);
+    IsEmptyBool(dictionary, key);
     return Remove(dictionary->HashTable, key);
 }
 
 string DictionaryFind(const Dictionary* dictionary, const string& key)
 {
-    if (dictionary == nullptr || !key.size())
-    {
-        return "";
-    }
+    IsEmptyString(dictionary, key);
     return Find(dictionary->HashTable, key);
 }
 
 void DeleteDictionary(Dictionary* dictionary)
 {
-    if (dictionary == nullptr)
-    {
-        return;
-    }
+    IsEmptyNothing(dictionary);
     DeleteHashTable(dictionary->HashTable);
     delete dictionary;
 }
