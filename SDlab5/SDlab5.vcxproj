@@ -127,7 +127,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="SDlab5.cpp" />
+    <ClCompile Include="..\SDlab4\Validator.cpp" />
+    <ClCompile Include="BinarySearchTree.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="CartesianTree.cpp" />
+    <ClCompile Include="TreeConsoleService.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="BinarySearchTree.h" />
+    <ClInclude Include="CartesianTree.h" />
+    <ClInclude Include="TreeConsoleService.h" />
+    <ClInclude Include="Validator.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
