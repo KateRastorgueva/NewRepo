@@ -4,6 +4,9 @@
 #include <iostream>
 using namespace std;
 
+/// <summary>
+/// Отображает меню операций со стеком
+/// </summary>
 void ShowStackStructureMenu()
 {
     cout << "0 - Назад в главное меню" << endl;
@@ -13,7 +16,11 @@ void ShowStackStructureMenu()
     cout << "4 - Изменить размер" << endl;
     cout << "5 - Удалить стек" << endl;
 }
-
+/// <summary>
+/// Выводит подробную информацию о состоянии стека
+/// </summary>
+/// <param name="stack">Указатель на стек</param>
+/// <param name="name">Название для отображения в заголовке</param>
 void PrintStackInfo(Stack* stack, const string& name)
 {
     if (!CheckAndPrintHeader(stack, name))
@@ -54,6 +61,10 @@ void PrintStackInfo(Stack* stack, const string& name)
     cout << endl << endl;
 }
 
+/// <summary>
+/// Создает новый стек с запросом параметров у пользователя
+/// </summary>
+/// <returns>Указатель на созданный стек или nullptr при отмене</returns>
 Stack* CreateStackMenu()
 {
     int capacity = GetValidatedCapacity("стек");
@@ -73,7 +84,10 @@ Stack* CreateStackMenu()
     }
     return stack;
 }
-
+/// <summary>
+/// Добавляет элемент в стек с запросом значения у пользователя
+/// </summary>
+/// <param name="stack">Ссылка на указатель стека</param>
 void AddElementToStack(Stack* stack)
 {
     if (!CheckStructureExists(stack, "Стек"))
@@ -91,7 +105,10 @@ void AddElementToStack(Stack* stack)
         ShowAddError("Стек");
     }
 }
-
+/// <summary>
+/// Извлекает элемент из стека с отображением результата
+/// </summary>
+/// <param name="stack">Ссылка на указатель стека</param>
 void ExtractElementFromStack(Stack* stack)
 {
     if (!CheckStructureExists(stack, "Стек"))
@@ -107,7 +124,10 @@ void ExtractElementFromStack(Stack* stack)
     int value = Pop(stack);
     ShowExtractedElement(value);
 }
-
+/// <summary>
+/// Изменяет размер стека с запросом нового размера у пользователя
+/// </summary>
+/// <param name="stack">Ссылка на указатель стека</param>
 void ResizeStackMenu(Stack*& stack)
 {
     if (!CheckStructureExists(stack, "Стек"))
@@ -125,7 +145,10 @@ void ResizeStackMenu(Stack*& stack)
         ShowResizeError("стека");
     }
 }
-
+/// <summary>
+/// Удаляет стек с освобождением памяти
+/// </summary>
+/// <param name="stack">Ссылка на указатель стека</param>
 void DeleteStackMenu(Stack*& stack)
 {
     bool wasDeleted = (stack != nullptr);
@@ -136,7 +159,10 @@ void DeleteStackMenu(Stack*& stack)
     }
     ShowDeleteMessage(wasDeleted, "Стек");
 }
-
+/// <summary>
+/// Обрабатывает главное меню работы со стеком
+/// </summary>
+/// <param name="stack">Ссылка на указатель стека</param>
 void HandleStackMenu(Stack*& stack)
 {
     int choice;

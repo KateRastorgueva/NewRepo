@@ -4,6 +4,9 @@
 #include <iostream>
 using namespace std;
 
+/// <summary>
+/// Отображает меню операций с кольцевым буфером
+/// </summary>
 void ShowCircularBufferStructureMenu()
 {
     cout << "0 - Назад в главное меню" << endl;
@@ -13,7 +16,11 @@ void ShowCircularBufferStructureMenu()
     cout << "4 - Изменить размер" << endl;
     cout << "5 - Удалить кольцевой буфер" << endl;
 }
-
+/// <summary>
+/// Выводит подробную информацию о состоянии кольцевого буфера
+/// </summary>
+/// <param name="circularBuffer">Указатель на кольцевой буфер</param>
+/// <param name="name">Название для отображения в заголовке</param>
 void PrintCircularBufferInfo(CircularBuffer* circularBuffer, const string& name)
 {
     if (!CheckAndPrintHeader(circularBuffer, name))
@@ -41,7 +48,10 @@ void PrintCircularBufferInfo(CircularBuffer* circularBuffer, const string& name)
     }
     cout << endl << endl;
 }
-
+/// <summary>
+/// Создает новый кольцевой буфер с запросом параметров у пользователя
+/// </summary>
+/// <returns>Указатель на созданный буфер или nullptr при отмене</returns>
 CircularBuffer* CreateCircularBufferMenu()
 {
     int capacity = GetValidatedCapacity("кольцевого буфера");
@@ -61,7 +71,12 @@ CircularBuffer* CreateCircularBufferMenu()
     }
     return circularBuffer;
 }
+CircularBuffer* CreateCircularBufferMenu();
 
+/// <summary>
+/// Добавляет элемент в кольцевой буфер с запросом значения у пользователя
+/// </summary>
+/// <param name="circularBuffer">Указатель на кольцевой буфер</param>
 void AddElementToCircularBuffer(CircularBuffer* circularBuffer)
 {
     if (!CheckStructureExists(circularBuffer, "Кольцевой буфер"))
@@ -79,7 +94,10 @@ void AddElementToCircularBuffer(CircularBuffer* circularBuffer)
         ShowAddError("Кольцевой буфер");
     }
 }
-
+/// <summary>
+/// Извлекает элемент из кольцевого буфера с отображением результата
+/// </summary>
+/// <param name="circularBuffer">Указатель на кольцевой буфер</param>
 void ExtractElementFromCircularBuffer(CircularBuffer* circularBuffer)
 {
     if (!CheckStructureExists(circularBuffer, "Кольцевой буфер"))
@@ -95,7 +113,10 @@ void ExtractElementFromCircularBuffer(CircularBuffer* circularBuffer)
     int value = DequeueCircularBuffer(circularBuffer);
     ShowExtractedElement(value);
 }
-
+/// <summary>
+/// Изменяет размер кольцевого буфера с запросом нового размера у пользователя
+/// </summary>
+/// <param name="circularBuffer">Ссылка на указатель кольцевого буфера</param>
 void ResizeCircularBufferMenu(CircularBuffer*& circularBuffer)
 {
     if (!CheckStructureExists(circularBuffer, "Кольцевой буфер"))
@@ -113,7 +134,10 @@ void ResizeCircularBufferMenu(CircularBuffer*& circularBuffer)
         ShowResizeError("кольцевого буфера");
     }
 }
-
+/// <summary>
+/// Удаляет кольцевой буфер с освобождением памяти
+/// </summary>
+/// <param name="circularBuffer">Ссылка на указатель кольцевого буфера</param>
 void DeleteCircularBufferMenu(CircularBuffer*& circularBuffer)
 {
     bool wasDeleted = (circularBuffer != nullptr);
@@ -124,7 +148,10 @@ void DeleteCircularBufferMenu(CircularBuffer*& circularBuffer)
     }
     ShowDeleteMessage(wasDeleted, "Кольцевой буфер");
 }
-
+/// <summary>
+/// Обрабатывает главное меню работы с кольцевым буфером
+/// </summary>
+/// <param name="circularBuffer">Ссылка на указатель кольцевого буфера</param>
 void HandleCircularBufferMenu(CircularBuffer*& circularBuffer)
 {
     int choice;

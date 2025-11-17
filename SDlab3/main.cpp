@@ -13,12 +13,18 @@
 
 using namespace std;
 
+/// <summary>
+/// Устанавливает русскую кодировку консоли
+/// </summary>
 void SetRussianEncoding()
 {
     SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
 }
 
+/// <summary>
+/// Отображает главное меню программы
+/// </summary>
 void ShowMainMenu()
 {
     cout << "\nГЛАВНОЕ МЕНЮ" << endl;
@@ -30,6 +36,13 @@ void ShowMainMenu()
     cout << "5 - Показать все структуры" << endl;
 }
 
+/// <summary>
+/// Отображает информацию о всех структурах данных
+/// </summary>
+/// <param name="stack">Указатель на стек</param>
+/// <param name="circularBuffer">Указатель на кольцевой буфер</param>
+/// <param name="queue">Указатель на очередь</param>
+/// <param name="queueTwoStacks">Указатель на очередь из двух стеков</param>
 void ShowAllStructures(Stack* stack, CircularBuffer* circularBuffer, Queue* queue, QueueTwoStacks* queueTwoStacks)
 {
     cout << "\nВСЕ СТРУКТУРЫ ДАННЫХ" << endl;
@@ -37,9 +50,15 @@ void ShowAllStructures(Stack* stack, CircularBuffer* circularBuffer, Queue* queu
     PrintCircularBufferInfo(circularBuffer, "КОЛЬЦЕВОЙ БУФЕР");
     PrintQueueInfo(queue, "ОЧЕРЕДЬ (КОЛЬЦЕВОЙ БУФЕР)");
     PrintQueueTwoStacksInfo(queueTwoStacks, "ОЧЕРЕДЬ (ДВА СТЕКА)");
- 
 }
 
+/// <summary>
+/// Очищает все структуры данных и освобождает память
+/// </summary>
+/// <param name="stack">Ссылка на указатель стека</param>
+/// <param name="circularBuffer">Ссылка на указатель кольцевого буфера</param>
+/// <param name="queue">Ссылка на указатель очереди</param>
+/// <param name="queueTwoStacks">Ссылка на указатель очереди из двух стеков</param>
 void CleanupStructures(Stack*& stack, CircularBuffer*& circularBuffer, Queue*& queue, QueueTwoStacks*& queueTwoStacks)
 {
     if (stack)
@@ -64,6 +83,10 @@ void CleanupStructures(Stack*& stack, CircularBuffer*& circularBuffer, Queue*& q
     }
 }
 
+/// <summary>
+/// Главная функция программы
+/// </summary>
+/// <returns>Код завершения программы</returns>
 int main()
 {
     SetRussianEncoding();

@@ -1,15 +1,18 @@
 #include "Stack.h"
 
-// Функция создания стека
+/// <summary>
+/// Создает новый экземпляр стека с указанной вместимостью
+/// </summary>
+/// <param name="capacity">Вместимость создаваемого стека</param>
+/// <returns>Указатель на созданный стек или nullptr при ошибке выделения памяти</returns>
 Stack* CreateStack(int capacity)
 {
-    // Проверка валидности capacity
     if (capacity <= 0)
     {
         return nullptr;
     }
 
-    // Выделение памяти для структуры стека
+    // Выделение памяти для структуры
     Stack* stack = new Stack;
     if (stack == nullptr)
     {
@@ -31,27 +34,31 @@ Stack* CreateStack(int capacity)
     return stack;
 }
 
-// Функция проверки, пуст ли стек
+/// <summary>
+/// Проверяет, является ли стек пустым
+/// </summary>
+/// <param name="stack">Указатель на стек</param>
+/// <returns>true если стек пуст, иначе false</returns>
 bool IsEmpty(Stack* stack)
 {
-    if (stack == nullptr) 
-    {
-        return true;
-    }
-    return stack->Top == -1;
+    return stack == nullptr || stack->Top == -1;
 }
 
-// Функция проверки, полон ли стек
+/// <summary>
+/// Проверяет, является ли стек полным
+/// </summary>
+/// <param name="stack">Указатель на стек</param>
+/// <returns>true если стек полон, иначе false</returns>
 bool IsFull(Stack* stack)
 {
-    if (stack == nullptr)
-    {
-        return true;
-    }
-    return stack->Top == stack->Capacity - 1;
+    return stack == nullptr || stack->Top == stack->Capacity - 1;
 }
-
-// Функция помещения элемента в стек
+/// <summary>
+/// Добавляет элемент на вершину стека
+/// </summary>
+/// <param name="stack">Указатель на стек</param>
+/// <param name="value">Значение для добавления</param>
+/// <returns>true если элемент успешно добавлен, false если стек полон</returns>
 bool Push(Stack* stack, int value)
 {
     if (stack == nullptr || IsFull(stack))
@@ -64,7 +71,11 @@ bool Push(Stack* stack, int value)
     return true;
 }
 
-// Функция извлечения элемента из стека
+/// <summary>
+/// Извлекает элемент с вершины стека
+/// </summary>
+/// <param name="stack">Указатель на стек</param>
+/// <returns>Извлеченный элемент или -1 если стек пуст</returns>
 int Pop(Stack* stack)
 {
     if (stack == nullptr || IsEmpty(stack))
@@ -77,7 +88,10 @@ int Pop(Stack* stack)
     return value;
 }
 
-
+/// <summary>
+/// Освобождает память, занятую стеком
+/// </summary>
+/// <param name="stack">Указатель на стек для удаления</param>
 void DeleteStack(Stack* stack)
 {
     if (stack == nullptr)
@@ -91,19 +105,18 @@ void DeleteStack(Stack* stack)
     }
     delete stack;
 }
-
+/// <summary>
+/// Изменяет размер стека, сохраняя существующие элементы
+/// </summary>
+/// <param name="stack">Указатель на стек</param>
+/// <param name="newCapacity">Новая вместимость стека</param>
+/// <returns>true если изменение размера успешно, false при ошибке</returns>
 bool ResizeStack(Stack* stack, int newCapacity)
 {
-    if (stack == nullptr || newCapacity <= 0)
+    if (stack == nullptr || newCapacity <= 0 || newCapacity <= stack->Top)
     {
         return false;
     }
-
-    if (newCapacity <= stack->Top)
-    {
-        return false;
-    }
-
     int* newBuffer = new int[newCapacity];
     if (newBuffer == nullptr)
     {

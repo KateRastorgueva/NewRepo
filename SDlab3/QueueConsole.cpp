@@ -3,7 +3,9 @@
 #include "ConsoleService.h"
 #include <iostream>
 using namespace std;
-
+/// <summary>
+/// Отображает меню операций с очередью на кольцевом буфере
+/// </summary>
 void ShowQueueStructureMenu()
 {
     cout << "0 - Назад в главное меню" << endl;
@@ -13,7 +15,11 @@ void ShowQueueStructureMenu()
     cout << "4 - Изменить размер" << endl;
     cout << "5 - Удалить очередь" << endl;
 }
-
+/// <summary>
+/// Выводит подробную информацию о состоянии очереди
+/// </summary>
+/// <param name="queue">Указатель на очередь</param>
+/// <param name="name">Название для отображения в заголовке</param>
 void PrintQueueInfo(Queue* queue, const string& name)
 {
     if (!CheckAndPrintHeader(queue, name))
@@ -52,7 +58,10 @@ void PrintQueueInfo(Queue* queue, const string& name)
     }
     cout << endl;
 }
-
+/// <summary>
+/// Создает новую очередь с запросом параметров у пользователя
+/// </summary>
+/// <returns>Указатель на созданную очередь или nullptr при отмене</returns>
 Queue* CreateQueueMenu()
 {
     int capacity = GetValidatedCapacity("очередь");
@@ -72,7 +81,10 @@ Queue* CreateQueueMenu()
     }
     return queue;
 }
-
+/// <summary>
+/// Добавляет элемент в очередь с запросом значения у пользователя
+/// </summary>
+/// <param name="queue">Ссылка на указатель очереди</param>
 void AddElementToQueue(Queue* queue)
 {
     if (!CheckStructureExists(queue, "Очередь"))
@@ -90,7 +102,10 @@ void AddElementToQueue(Queue* queue)
         ShowAddError("Очередь");
     }
 }
-
+/// <summary>
+/// Извлекает элемент из очереди с отображением результата
+/// </summary>
+/// <param name="queue">Ссылка на указатель очереди</param>
 void ExtractElementFromQueue(Queue* queue)
 {
     if (!CheckStructureExists(queue, "Очередь"))
@@ -106,7 +121,10 @@ void ExtractElementFromQueue(Queue* queue)
     int value = Dequeue(queue);
     ShowExtractedElement(value);
 }
-
+/// <summary>
+/// Изменяет размер очереди с запросом нового размера у пользователя
+/// </summary>
+/// <param name="queue">Ссылка на указатель очереди</param>
 void ResizeQueueMenu(Queue*& queue)
 {
     if (!CheckStructureExists(queue, "Очередь"))
@@ -124,7 +142,10 @@ void ResizeQueueMenu(Queue*& queue)
         ShowResizeError("очереди");
     }
 }
-
+/// <summary>
+/// Удаляет очередь с освобождением памяти
+/// </summary>
+/// <param name="queue">Ссылка на указатель очереди</param>
 void DeleteQueueMenu(Queue*& queue)
 {
     bool wasDeleted = (queue != nullptr);
@@ -135,7 +156,10 @@ void DeleteQueueMenu(Queue*& queue)
     }
     ShowDeleteMessage(wasDeleted, "Очередь");
 }
-
+/// <summary>
+/// Обрабатывает главное меню работы с очередью
+/// </summary>
+/// <param name="queue">Ссылка на указатель очереди</param>
 void HandleQueueMenu(Queue*& queue)
 {
     int choice;
