@@ -55,7 +55,6 @@ void PrintQueueTwoStacksInfo(QueueTwoStacks* queue, const string& name)
     {
         int capacity = queue->InputStack->Capacity;
         QueueTwoStacks* tempQueue = CreateQueueTwoStacks(capacity);
-
         while (!IsQueueTwoStacksEmpty(queue))
         {
             int value = DequeueTwoStacks(queue);
@@ -193,23 +192,33 @@ void HandleQueueTwoStacksMenu(QueueTwoStacks*& queue)
         switch (choice)
         {
         case 1:
+        {
             if (CheckStructureNotExists(queue, "Очередь"))
             {
                 queue = CreateQueueTwoStacksMenu();
             }
             break;
+        }
         case 2:
+        {
             AddElementToQueueTwoStacks(queue);
             break;
+        }
         case 3:
+        {
             ExtractElementFromQueueTwoStacks(queue);
             break;
+        }
         case 4:
+        {
             ResizeQueueTwoStacksMenu(queue);
             break;
+        }   
         case 5:
+        {
             DeleteQueueTwoStacksMenu(queue);
             break;
+        }   
         }
     } while (choice != 0);
 }

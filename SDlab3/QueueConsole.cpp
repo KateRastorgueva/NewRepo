@@ -36,7 +36,6 @@ void PrintQueueInfo(Queue* queue, const string& name)
     {
         int capacity = GetUsedSpace(queue->CircularBuffer) + GetFreeSpaceQueue(queue);
         Queue* tempQueue = CreateQueue(capacity);
-
         while (!IsQueueEmpty(queue))
         {
             int value = Dequeue(queue);
@@ -171,23 +170,33 @@ void HandleQueueMenu(Queue*& queue)
         switch (choice)
         {
         case 1:
+        {
             if (CheckStructureNotExists(queue, "Очередь"))
             {
                 queue = CreateQueueMenu();
             }
             break;
+        }  
         case 2:
+        {
             AddElementToQueue(queue);
             break;
+        } 
         case 3:
+        {
             ExtractElementFromQueue(queue);
             break;
+        }  
         case 4:
+        {
             ResizeQueueMenu(queue);
             break;
+        }     
         case 5:
+        {
             DeleteQueueMenu(queue);
             break;
+        }
         }
     } while (choice != 0);
 }

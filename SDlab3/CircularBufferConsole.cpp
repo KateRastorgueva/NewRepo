@@ -165,23 +165,34 @@ void HandleCircularBufferMenu(CircularBuffer*& circularBuffer)
         switch (choice)
         {
         case 1:
+        {
             if (CheckStructureNotExists(circularBuffer, "Кольцевой буфер"))
             {
                 circularBuffer = CreateCircularBufferMenu();
             }
             break;
+        } 
         case 2:
+        {
             AddElementToCircularBuffer(circularBuffer);
             break;
+        }
         case 3:
+        {
             ExtractElementFromCircularBuffer(circularBuffer);
             break;
+        }
         case 4:
+        {
             ResizeCircularBufferMenu(circularBuffer);
             break;
+        }  
         case 5:
+        {
             DeleteCircularBufferMenu(circularBuffer);
             break;
+        }
+            
         }
     } while (choice != 0);
 }

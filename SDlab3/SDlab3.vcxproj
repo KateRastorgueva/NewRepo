@@ -128,15 +128,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CircularBufferConsole.cpp" />
-    <ClCompile Include="CircularBufferFunctions.cpp" />
+    <ClCompile Include="CircularBuffer.cpp" />
     <ClCompile Include="ConsoleService.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="QueueConsole.cpp" />
-    <ClCompile Include="QueueFunctions.cpp" />
+    <ClCompile Include="Queue.cpp" />
     <ClCompile Include="QueueTwoStacksConsole.cpp" />
-    <ClCompile Include="QueueTwoStacksFunctions.cpp" />
+    <ClCompile Include="QueueTwoStacks.cpp" />
     <ClCompile Include="StackConsole.cpp" />
-    <ClCompile Include="StackFunctions.cpp" />
+    <ClCompile Include="Stack.cpp" />
     <ClCompile Include="Validator.cpp" />
   </ItemGroup>
   <ItemGroup>

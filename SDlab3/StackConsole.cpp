@@ -175,24 +175,34 @@ void HandleStackMenu(Stack*& stack)
 
         switch (choice)
         {
-        case 1:
+        case 1: 
+        {
             if (CheckStructureNotExists(stack, "Стек"))
             {
                 stack = CreateStackMenu();
             }
             break;
+        } 
         case 2:
+        {
             AddElementToStack(stack);
             break;
+        }  
         case 3:
+        {
             ExtractElementFromStack(stack);
             break;
+        }   
         case 4:
+        {
             ResizeStackMenu(stack);
             break;
-        case 5:
+        }
+        case 5: 
+        {
             DeleteStackMenu(stack);
             break;
+        } 
         }
     } while (choice != 0);
 }

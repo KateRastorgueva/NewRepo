@@ -108,23 +108,35 @@ int main()
         switch (mainChoice)
         {
         case 0:
+        {
             cout << "Выход из программы..." << endl;
             break;
+        }    
         case 1:
+        {
             HandleStackMenu(myStack);
             break;
+        }
         case 2:
+        {
             HandleCircularBufferMenu(myCircularBuffer);
             break;
+        }  
         case 3:
+        {
             HandleQueueMenu(myQueue);
             break;
+        } 
         case 4:
+        {
             HandleQueueTwoStacksMenu(myQueueTwoStacks);
             break;
+        }
         case 5:
+        {
             ShowAllStructures(myStack, myCircularBuffer, myQueue, myQueueTwoStacks);
             break;
+        }   
         }
     } while (mainChoice != 0);
 
