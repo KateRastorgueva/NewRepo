@@ -14,7 +14,7 @@ struct CartesianTreeNode
     CartesianTreeNode* Left;
     CartesianTreeNode* Right;
 };
-
+ 
 /// <summary>
 /// Декартово дерево
 /// </summary>
