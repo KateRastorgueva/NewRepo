@@ -64,14 +64,6 @@ bool Add(HashTable* table, const string& key, const string& value);
 bool Remove(HashTable* table, const string& key);
 
 /// <summary>
-/// Находит значение по ключу в хеш-таблице
-/// </summary>
-/// <param name="table">Хеш-таблица для поиска</param>
-/// <param name="key">Ключ для поиска</param>
-/// <returns>Значение элемента или пустая строка если элемент не найден</returns>
-string Find(const HashTable* table, const string& key);
-
-/// <summary>
 /// Выполняет перехеширование таблицы с увеличением вместимости
 /// </summary>
 /// <param name="table">Ссылка на указатель хеш-таблицы для перехеширования</param>

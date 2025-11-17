@@ -71,6 +71,7 @@ Dictionary* CreateDictionaryMenu()
     if (dictionary != nullptr)
     {
         ConsoleService::PrintMessage("Успешно", "Словарь создан");
+        ConsoleService::PrintDictionaryState(dictionary);
         ConsoleService::PrintHashTableState(dictionary);
     }
     else
@@ -90,12 +91,27 @@ void AddElementMenu(Dictionary* dictionary)
     {
         return;
     }
-
     string key, value;
     cout << "Введите ключ: ";
     getline(cin, key);
     cout << "Введите значение: ";
     getline(cin, value);
+
+    if (!ValidateStringLength(key, "Ключ", 100))
+    {
+        return;
+    }
+    if (!ValidateStringLength(value, "Значение", 1000))
+    {
+        return;
+    }
+    double currentLoadFactor = (double)(dictionary->HashTable->Count) / dictionary->HashTable->Capacity;
+    cout << "Текущий коэффициент заполнения: " << currentLoadFactor << endl;
+
+    if (currentLoadFactor > 0.75)
+    {
+        ConsoleService::PrintMessage("Внимание", "Коэффициент заполнения превышает 0.75 - возможно перехеширование");
+    }
 
     if (DictionaryAdd(dictionary, key, value))
     {
@@ -108,7 +124,6 @@ void AddElementMenu(Dictionary* dictionary)
 
     PrintFullDictionaryState(dictionary);
 }
-
 /// <summary>
 /// Меню для удаления элемента из словаря
 /// </summary>
@@ -160,50 +175,7 @@ void FindElementMenu(const Dictionary* dictionary)
     {
         ConsoleService::PrintMessage("Информация", "Элемент не найден");
     }
-}
-
-/// <summary>
-/// Демонстрирует процесс перехеширования таблицы
-/// </summary>
-void DemoRehashingScenario()
-{
-    ConsoleService::PrintTitle("ДЕМОНСТРАЦИЯ ПЕРЕХЕШИРОВАНИЯ");
-
-    Dictionary* demoDictionary = CreateDictionary(3);
-    if (demoDictionary == nullptr)
-    {
-        return;
-    }
-
-    string testData[][2] = {
-        {"name", "John"},
-        {"age", "25"},
-        {"city", "Moscow"},
-        {"country", "Russia"},
-        {"job", "Developer"},
-        {"language", "C++"},
-        {"email", "test@mail.com"},
-        {"phone", "123456789"}
-    };
-
-    for (int i = 0; i < 8; i++)
-    {
-        ConsoleService::PrintTitle("Шаг " + to_string(i + 1) + ": Добавление '" + testData[i][0] + "'");
-
-        DictionaryAdd(demoDictionary, testData[i][0], testData[i][1]);
-
-        double loadFactor = static_cast<double>(demoDictionary->HashTable->Count) / demoDictionary->HashTable->Capacity;
-        cout << "Коэффициент заполнения: " << loadFactor << endl;
-
-        if (loadFactor > 0.75)
-        {
-            ConsoleService::PrintMessage("Внимание", "Превышен порог 0.75 - требуется перехеширование");
-        }
-
-        ConsoleService::PrintHashTableState(demoDictionary);
-    }
-
-    DeleteDictionary(demoDictionary);
+    PrintFullDictionaryState(dictionary);
 }
 
 /// <summary>
@@ -257,21 +229,15 @@ int main()
             break;
         }
         }
-
-        if (choice != 0 && myDictionary != nullptr && NeedsRehash(myDictionary->HashTable))
+        if (choice != 0 && myDictionary != nullptr && choice != 4 && NeedsRehash(myDictionary->HashTable))
         {
             ConsoleService::PrintTitle("АВТОМАТИЧЕСКОЕ ПЕРЕХЕШИРОВАНИЕ");
             Rehash(myDictionary->HashTable);
             ConsoleService::PrintMessage("Информация", "Новая вместимость: " + to_string(myDictionary->HashTable->Capacity));
-            ConsoleService::PrintHashTableState(myDictionary);
+            PrintFullDictionaryState(myDictionary);
         }
 
     } while (choice != 0);
-
-    if (myDictionary == nullptr)
-    {
-        DemoRehashingScenario();
-    }
 
     if (myDictionary != nullptr)
     {

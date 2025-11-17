@@ -43,3 +43,11 @@ int GetValueForAddition();
 /// <param name="capacity">Проверяемое значение вместимости</param>
 /// <returns>true если вместимость положительна, иначе false</returns>
 bool ValidateCapacity(int capacity);
+/// <summary>
+/// Универсальная проверка длины строки
+/// </summary>
+/// <param name="str">Строка для проверки</param>
+/// <param name="fieldName">Название поля для сообщения об ошибке</param>
+/// <param name="maxLength">Максимальная допустимая длина</param>
+/// <returns>true если длина допустима</returns>
+bool ValidateStringLength(const string& str, const string& fieldName, int maxLength);

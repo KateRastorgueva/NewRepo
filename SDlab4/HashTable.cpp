@@ -87,7 +87,6 @@ bool Add(HashTable* table, const string& key, const string& value)
 
     int index = PearsonHash(key, table->Capacity);
 
-    // Проверка на дубликат
     if (!DuplicateCheck(table->Buckets[index], key))
     {
         // Ключ уже существует
