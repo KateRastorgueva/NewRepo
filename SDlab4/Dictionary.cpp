@@ -64,20 +64,7 @@ string DictionaryFind(const Dictionary* dictionary, const string& key)
         return "";
     }
 
-    HashTable* table = dictionary->HashTable;
-    int index = PearsonHash(key, table->Capacity);
-    KeyValuePair* current = table->Buckets[index];
-
-    while (current != nullptr)
-    {
-        if (current->Key == key)
-        {
-            return current->Value;
-        }
-        current = current->Next;
-    }
-
-    return "";
+    return Find(dictionary->HashTable, key);
 }
 
 /// <summary>
