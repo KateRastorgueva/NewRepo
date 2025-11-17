@@ -1,5 +1,8 @@
-#include "TreeConsoleService.h"
+ï»¿#include "TreeConsoleService.h"
 #include <iostream>
+#include <queue>
+
+using namespace std;
 
 void TreeConsoleService::PrintTitle(const string& title)
 {
@@ -11,19 +14,19 @@ void TreeConsoleService::PrintBinarySearchTreeState(const BinarySearchTree* tree
 {
     if (tree == nullptr)
     {
-        cout << "Îøèáêà: Äåðåâî íå ñîçäàíî" << endl;
+        cout << "ÐžÑˆÐ¸Ð±ÐºÐ°: Ð”ÐµÑ€ÐµÐ²Ð¾ Ð½Ðµ ÑÐ¾Ð·Ð´Ð°Ð½Ð¾" << endl;
         return;
     }
 
-    PrintTitle("ÑÎÑÒÎßÍÈÅ ÁÈÍÀÐÍÎÃÎ ÄÅÐÅÂÀ ÏÎÈÑÊÀ");
+    PrintTitle("Ð¡ÐžÐ¡Ð¢ÐžÐ¯ÐÐ˜Ð• Ð‘Ð˜ÐÐÐ ÐÐžÐ“Ðž Ð”Ð•Ð Ð•Ð’Ð ÐŸÐžÐ˜Ð¡ÐšÐ");
 
     if (tree->Root == nullptr)
     {
-        cout << "Èíôîðìàöèÿ: Äåðåâî ïóñòîå" << endl;
+        cout << "Ð˜Ð½Ñ„Ð¾Ñ€Ð¼Ð°Ñ†Ð¸Ñ: Ð”ÐµÑ€ÐµÐ²Ð¾ Ð¿ÑƒÑÑ‚Ð¾Ðµ" << endl;
         return;
     }
 
-    PrintBinarySearchTreeNode(tree->Root);
+    PrintBSTLevelOrder(tree->Root);
     cout << endl;
 }
 
@@ -31,50 +34,72 @@ void TreeConsoleService::PrintCartesianTreeState(const CartesianTree* tree)
 {
     if (tree == nullptr)
     {
-        cout << "Îøèáêà: Äåðåâî íå ñîçäàíî" << endl;
+        cout << "ÐžÑˆÐ¸Ð±ÐºÐ°: Ð”ÐµÑ€ÐµÐ²Ð¾ Ð½Ðµ ÑÐ¾Ð·Ð´Ð°Ð½Ð¾" << endl;
         return;
     }
 
-    PrintTitle("ÑÎÑÒÎßÍÈÅ ÄÅÊÀÐÒÎÂÀ ÄÅÐÅÂÀ");
+    PrintTitle("Ð¡ÐžÐ¡Ð¢ÐžÐ¯ÐÐ˜Ð• Ð”Ð•ÐšÐÐ Ð¢ÐžÐ’Ð Ð”Ð•Ð Ð•Ð’Ð");
 
     if (tree->Root == nullptr)
     {
-        cout << "Èíôîðìàöèÿ: Äåðåâî ïóñòîå" << endl;
+        cout << "Ð˜Ð½Ñ„Ð¾Ñ€Ð¼Ð°Ñ†Ð¸Ñ: Ð”ÐµÑ€ÐµÐ²Ð¾ Ð¿ÑƒÑÑ‚Ð¾Ðµ" << endl;
         return;
     }
 
-    PrintCartesianTreeNode(tree->Root);
+    PrintCartesianLevelOrder(tree->Root);
     cout << endl;
 }
 
-void TreeConsoleService::PrintBinarySearchTreeNode(const BinarySearchTreeNode* node, const string& prefix, bool isLeft)
+void TreeConsoleService::PrintBSTLevelOrder(const BinarySearchTreeNode* root)
 {
-    if (node == nullptr)
+    if (root == nullptr) return;
+
+    queue<const BinarySearchTreeNode*> nodeQueue;
+    nodeQueue.push(root);
+
+    while (!nodeQueue.empty())
     {
-        return;
+        int levelSize = nodeQueue.size();
+
+        for (int i = 0; i < levelSize; i++)
+        {
+            const BinarySearchTreeNode* currentNode = nodeQueue.front();
+            nodeQueue.pop();
+
+            cout << currentNode->Key << "[" << currentNode->Value << "] ";
+
+            if (currentNode->Left != nullptr)
+                nodeQueue.push(currentNode->Left);
+            if (currentNode->Right != nullptr)
+                nodeQueue.push(currentNode->Right);
+        }
+        cout << endl;
     }
-
-    cout << prefix;
-    cout << (isLeft ? "??? " : "??? ");
-    cout << node->Key << " [" << node->Value << "]" << endl;
-
-    string newPrefix = prefix + (isLeft ? "?   " : "    ");
-    PrintBinarySearchTreeNode(node->Left, newPrefix, true);
-    PrintBinarySearchTreeNode(node->Right, newPrefix, false);
 }
 
-void TreeConsoleService::PrintCartesianTreeNode(const CartesianTreeNode* node, const string& prefix, bool isLeft)
+void TreeConsoleService::PrintCartesianLevelOrder(const CartesianTreeNode* root)
 {
-    if (node == nullptr)
+    if (root == nullptr) return;
+
+    queue<const CartesianTreeNode*> nodeQueue;
+    nodeQueue.push(root);
+
+    while (!nodeQueue.empty())
     {
-        return;
+        int levelSize = nodeQueue.size();
+
+        for (int i = 0; i < levelSize; i++)
+        {
+            const CartesianTreeNode* currentNode = nodeQueue.front();
+            nodeQueue.pop();
+
+            cout << currentNode->Key << "[" << currentNode->Value << "](p:" << currentNode->Priority << ") ";
+
+            if (currentNode->Left != nullptr)
+                nodeQueue.push(currentNode->Left);
+            if (currentNode->Right != nullptr)
+                nodeQueue.push(currentNode->Right);
+        }
+        cout << endl;
     }
-
-    cout << prefix;
-    cout << (isLeft ? "??? " : "??? ");
-    cout << node->Key << " [" << node->Value << "] (ïðèîðèòåò: " << node->Priority << ")" << endl;
-
-    string newPrefix = prefix + (isLeft ? "?   " : "    ");
-    PrintCartesianTreeNode(node->Left, newPrefix, true);
-    PrintCartesianTreeNode(node->Right, newPrefix, false);
 }

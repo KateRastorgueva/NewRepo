@@ -77,27 +77,34 @@ bool BinarySearchTreeRemove(BinarySearchTree* tree, int key)
             if (nodeToDelete->Left == nullptr)
             {
                 *current = nodeToDelete->Right;
+                delete nodeToDelete;
             }
             else if (nodeToDelete->Right == nullptr)
             {
                 *current = nodeToDelete->Left;
+                delete nodeToDelete;
             }
             else
             {
-                BinarySearchTreeNode* minNode = FindMinNode(nodeToDelete->Right);
+                BinarySearchTreeNode* minNodeParent = nodeToDelete;
+                BinarySearchTreeNode* minNode = nodeToDelete->Right;
+
+                while (minNode->Left != nullptr)
+                {
+                    minNodeParent = minNode;
+                    minNode = minNode->Left;
+                }
+
                 nodeToDelete->Key = minNode->Key;
                 nodeToDelete->Value = minNode->Value;
 
-                BinarySearchTreeNode** temp = &(nodeToDelete->Right);
-                while ((*temp)->Key != minNode->Key)
-                {
-                    temp = &((*temp)->Left);
-                }
-                *temp = minNode->Right;
-                nodeToDelete = minNode;
-            }
+                if (minNodeParent == nodeToDelete)
+                    minNodeParent->Right = minNode->Right;
+                else
+                    minNodeParent->Left = minNode->Right;
 
-            delete nodeToDelete;
+                delete minNode;
+            }
             return true;
         }
     }

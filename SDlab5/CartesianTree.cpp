@@ -61,6 +61,11 @@ bool CartesianTreeAddUnoptimized(CartesianTree* tree, int key, const string& val
         return false;
     }
 
+    if (!CartesianTreeFind(tree, key).empty())
+    {
+        return false;
+    }
+
     CartesianTreeNode* left = nullptr;
     CartesianTreeNode* right = nullptr;
     CartesianTreeSplit(tree->Root, key, left, right);
@@ -81,6 +86,11 @@ bool CartesianTreeAddUnoptimized(CartesianTree* tree, int key, const string& val
 bool CartesianTreeAddOptimized(CartesianTree* tree, int key, const string& value, int priority)
 {
     if (tree == nullptr)
+    {
+        return false;
+    }
+
+    if (!CartesianTreeFind(tree, key).empty())
     {
         return false;
     }

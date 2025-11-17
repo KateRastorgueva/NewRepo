@@ -7,18 +7,12 @@
 
 using namespace std;
 
-/// <summary>
-/// Устанавливает русскую кодировку для консоли
-/// </summary>
 void SetRussianEncoding()
 {
     SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
 }
 
-/// <summary>
-/// Отображает главное меню программы
-/// </summary>
 void ShowMainMenu()
 {
     cout << "\nГЛАВНОЕ МЕНЮ ДЕРЕВЬЕВ ПОИСКА" << endl;
@@ -27,9 +21,6 @@ void ShowMainMenu()
     cout << "2 - Работа с декартовым деревом" << endl;
 }
 
-/// <summary>
-/// Отображает меню для бинарного дерева поиска
-/// </summary>
 void ShowBinarySearchTreeMenu()
 {
     cout << "\nМЕНЮ БИНАРНОГО ДЕРЕВА ПОИСКА" << endl;
@@ -40,12 +31,8 @@ void ShowBinarySearchTreeMenu()
     cout << "4 - Найти элемент" << endl;
     cout << "5 - Найти минимальный элемент" << endl;
     cout << "6 - Найти максимальный элемент" << endl;
-    cout << "7 - Показать состояние дерева" << endl;
 }
 
-/// <summary>
-/// Отображает меню для декартова дерева
-/// </summary>
 void ShowCartesianTreeMenu()
 {
     cout << "\nМЕНЮ ДЕКАРТОВА ДЕРЕВА" << endl;
@@ -56,12 +43,8 @@ void ShowCartesianTreeMenu()
     cout << "4 - Удалить элемент (неоптимизированный)" << endl;
     cout << "5 - Удалить элемент (оптимизированный)" << endl;
     cout << "6 - Найти элемент" << endl;
-    cout << "7 - Показать состояние дерева" << endl;
 }
 
-/// <summary>
-/// Меню для работы с бинарным деревом поиска
-/// </summary>
 void BinarySearchTreeMenu()
 {
     BinarySearchTree* bst = nullptr;
@@ -70,7 +53,7 @@ void BinarySearchTreeMenu()
     do
     {
         ShowBinarySearchTreeMenu();
-        choice = GetValidatedInputInRange(0, 7);
+        choice = GetValidatedInputInRange(0, 6);
 
         switch (choice)
         {
@@ -91,6 +74,7 @@ void BinarySearchTreeMenu()
             }
             bst = CreateBinarySearchTree();
             cout << "Бинарное дерево поиска создано" << endl;
+            TreeConsoleService::PrintBinarySearchTreeState(bst);
             break;
 
         case 2:
@@ -108,6 +92,7 @@ void BinarySearchTreeMenu()
                 if (BinarySearchTreeAdd(bst, key, value))
                 {
                     cout << "Элемент добавлен" << endl;
+                    TreeConsoleService::PrintBinarySearchTreeState(bst);
                 }
                 else
                 {
@@ -127,6 +112,7 @@ void BinarySearchTreeMenu()
                 if (BinarySearchTreeRemove(bst, key))
                 {
                     cout << "Элемент удален" << endl;
+                    TreeConsoleService::PrintBinarySearchTreeState(bst);
                 }
                 else
                 {
@@ -192,51 +178,45 @@ void BinarySearchTreeMenu()
                 }
             }
             break;
-
-        case 7:
-            TreeConsoleService::PrintBinarySearchTreeState(bst);
-            break;
         }
 
     } while (choice != 0);
 }
 
-/// <summary>
-/// Меню для работы с декартовым деревом
-/// </summary>
 void CartesianTreeMenu()
 {
-    CartesianTree* ct = nullptr;
+    CartesianTree* cartesianTree = nullptr;
     int choice;
 
     do
     {
         ShowCartesianTreeMenu();
-        choice = GetValidatedInputInRange(0, 7);
+        choice = GetValidatedInputInRange(0, 6);
 
         switch (choice)
         {
         case 0:
-            if (ct != nullptr)
+            if (cartesianTree != nullptr)
             {
-                DeleteCartesianTree(ct);
-                ct = nullptr;
+                DeleteCartesianTree(cartesianTree);
+                cartesianTree = nullptr;
                 cout << "Декартово дерево удалено" << endl;
             }
             break;
 
         case 1:
-            if (ct != nullptr)
+            if (cartesianTree != nullptr)
             {
                 cout << "Ошибка: Дерево уже создано" << endl;
                 break;
             }
-            ct = CreateCartesianTree();
+            cartesianTree = CreateCartesianTree();
             cout << "Декартово дерево создано" << endl;
+            TreeConsoleService::PrintCartesianTreeState(cartesianTree);
             break;
 
         case 2:
-            if (ct == nullptr)
+            if (cartesianTree == nullptr)
             {
                 cout << "Ошибка: Сначала создайте дерево" << endl;
                 break;
@@ -248,19 +228,20 @@ void CartesianTreeMenu()
                 getline(cin, value);
                 int priority = GetValidatedInput("Введите приоритет: ");
 
-                if (CartesianTreeAddUnoptimized(ct, key, value, priority))
+                if (CartesianTreeAddUnoptimized(cartesianTree, key, value, priority))
                 {
                     cout << "Элемент добавлен (неоптимизированный метод)" << endl;
+                    TreeConsoleService::PrintCartesianTreeState(cartesianTree);
                 }
                 else
                 {
-                    cout << "Ошибка при добавлении" << endl;
+                    cout << "Ошибка: Ключ уже существует" << endl;
                 }
             }
             break;
 
         case 3:
-            if (ct == nullptr)
+            if (cartesianTree == nullptr)
             {
                 cout << "Ошибка: Сначала создайте дерево" << endl;
                 break;
@@ -272,9 +253,10 @@ void CartesianTreeMenu()
                 getline(cin, value);
                 int priority = GetValidatedInput("Введите приоритет: ");
 
-                if (CartesianTreeAddOptimized(ct, key, value, priority))
+                if (CartesianTreeAddOptimized(cartesianTree, key, value, priority))
                 {
                     cout << "Элемент добавлен (оптимизированный метод)" << endl;
+                    TreeConsoleService::PrintCartesianTreeState(cartesianTree);
                 }
                 else
                 {
@@ -284,16 +266,17 @@ void CartesianTreeMenu()
             break;
 
         case 4:
-            if (ct == nullptr)
+            if (cartesianTree == nullptr)
             {
                 cout << "Ошибка: Сначала создайте дерево" << endl;
                 break;
             }
             {
                 int key = GetValidatedInput("Введите ключ для удаления: ");
-                if (CartesianTreeRemoveUnoptimized(ct, key))
+                if (CartesianTreeRemoveUnoptimized(cartesianTree, key))
                 {
                     cout << "Элемент удален (неоптимизированный метод)" << endl;
+                    TreeConsoleService::PrintCartesianTreeState(cartesianTree);
                 }
                 else
                 {
@@ -303,16 +286,17 @@ void CartesianTreeMenu()
             break;
 
         case 5:
-            if (ct == nullptr)
+            if (cartesianTree == nullptr)
             {
                 cout << "Ошибка: Сначала создайте дерево" << endl;
                 break;
             }
             {
                 int key = GetValidatedInput("Введите ключ для удаления: ");
-                if (CartesianTreeRemoveOptimized(ct, key))
+                if (CartesianTreeRemoveOptimized(cartesianTree, key))
                 {
                     cout << "Элемент удален (оптимизированный метод)" << endl;
+                    TreeConsoleService::PrintCartesianTreeState(cartesianTree);
                 }
                 else
                 {
@@ -322,14 +306,14 @@ void CartesianTreeMenu()
             break;
 
         case 6:
-            if (ct == nullptr)
+            if (cartesianTree == nullptr)
             {
                 cout << "Ошибка: Сначала создайте дерево" << endl;
                 break;
             }
             {
                 int key = GetValidatedInput("Введите ключ для поиска: ");
-                string result = CartesianTreeFind(ct, key);
+                string result = CartesianTreeFind(cartesianTree, key);
                 if (!result.empty())
                 {
                     cout << "Найдено: " << result << endl;
@@ -340,26 +324,18 @@ void CartesianTreeMenu()
                 }
             }
             break;
-
-        case 7:
-            TreeConsoleService::PrintCartesianTreeState(ct);
-            break;
         }
 
     } while (choice != 0);
 }
 
-/// <summary>
-/// Главная функция программы
-/// </summary>
-/// <returns>Код завершения программы</returns>
 int main()
 {
     SetRussianEncoding();
 
     int choice;
 
-    cout << "ЛАБОРАТОРНАЯ РАБОТА 5. ДЕРЕВЬЯ ПОИСКА" << endl;
+    cout << "ДЕРЕВЬЯ ПОИСКА" << endl;
 
     do
     {
