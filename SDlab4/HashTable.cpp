@@ -1,13 +1,14 @@
-#pragma once
 #include "HashTable.h"
 #include <iostream>
 
+/// <summary>
+/// Создает новую хеш-таблицу указанной вместимости
+/// </summary>
+/// <param name="capacity">Вместимость создаваемой хеш-таблицы</param>
+/// <returns>Указатель на созданную хеш-таблицу или nullptr при ошибке</returns>
 HashTable* CreateHashTable(int capacity)
 {
-    if (capacity <= 0)
-    {
-        return nullptr;
-    }
+    if (capacity <= 0) return nullptr;
 
     HashTable* table = new HashTable;
     table->Buckets = new KeyValuePair * [capacity];
@@ -20,6 +21,12 @@ HashTable* CreateHashTable(int capacity)
     return table;
 }
 
+/// <summary>
+/// Вычисляет хеш-код для ключа using метод Пирсона
+/// </summary>
+/// <param name="key">Ключ для вычисления хеша</param>
+/// <param name="capacity">Вместимость хеш-таблицы</param>
+/// <returns>Индекс ячейки в хеш-таблице</returns>
 int PearsonHash(const string& key, int capacity)
 {
     const unsigned char permutation[256] = {
@@ -42,31 +49,20 @@ int PearsonHash(const string& key, int capacity)
     };
 
     unsigned char hash = 0;
-
     for (int i = 0; i < key.length(); i++)
     {
-        unsigned char character = key[i]; 
+        unsigned char character = key[i];
         hash = permutation[hash ^ character];
     }
     return hash % capacity;
 }
-template<typename Type>
-bool IsEmptyBool(Type* table, const string& key)
-{
-    if (table == nullptr || !key.size())
-    {
-        return false;
-    }
-    return true;
-}
-template<typename Type>
-void IsEmptyNothing(Type*& table)
-{
-    if (table == nullptr)
-    {
-        return;
-    }
-}
+
+/// <summary>
+/// Проверяет наличие дубликатов ключа в цепочке
+/// </summary>
+/// <param name="bucket">Начало цепочки</param>
+/// <param name="searchKey">Ключ для поиска</param>
+/// <returns>true если дубликат не найден, false если ключ уже существует</returns>
 bool DuplicateCheck(KeyValuePair* bucket, const string& searchKey)
 {
     KeyValuePair* currentElement = bucket;
@@ -74,26 +70,31 @@ bool DuplicateCheck(KeyValuePair* bucket, const string& searchKey)
     {
         if (currentElement->Key == searchKey)
         {
-            // Ключ найден
             return false;
         }
         currentElement = currentElement->Next;
     }
     return true;
 }
+
+/// <summary>
+/// Добавляет пару ключ-значение в хеш-таблицу
+/// </summary>
+/// <param name="table">Хеш-таблица для добавления</param>
+/// <param name="key">Ключ добавляемого элемента</param>
+/// <param name="value">Значение добавляемого элемента</param>
+/// <returns>true если элемент добавлен, false если ключ уже существует</returns>
 bool Add(HashTable* table, const string& key, const string& value)
 {
-    IsEmptyBool(table, key);
+    if (table == nullptr || key.empty()) return false;
 
     int index = PearsonHash(key, table->Capacity);
 
     if (!DuplicateCheck(table->Buckets[index], key))
     {
-        // Ключ уже существует
         return false;
     }
-    
-    // Добавление в начало цепочки
+
     KeyValuePair* newPair = new KeyValuePair;
     newPair->Key = key;
     newPair->Value = value;
@@ -104,9 +105,15 @@ bool Add(HashTable* table, const string& key, const string& value)
     return true;
 }
 
+/// <summary>
+/// Удаляет элемент с указанным ключом из хеш-таблицы
+/// </summary>
+/// <param name="table">Хеш-таблица для удаления</param>
+/// <param name="key">Ключ удаляемого элемента</param>
+/// <returns>true если элемент удален, false если элемент не найден</returns>
 bool Remove(HashTable* table, const string& key)
 {
-    IsEmptyBool(table, key);
+    if (table == nullptr || key.empty()) return false;
 
     int index = PearsonHash(key, table->Capacity);
     KeyValuePair* current = table->Buckets[index];
@@ -134,6 +141,12 @@ bool Remove(HashTable* table, const string& key)
     return false;
 }
 
+/// <summary>
+/// Переносит элементы из старой таблицы в новую
+/// </summary>
+/// <param name="table">Исходная таблица</param>
+/// <param name="newTable">Новая таблица</param>
+/// <param name="needAdd">Флаг необходимости добавления элементов</param>
 void TransferElements(HashTable*& table, HashTable** newTable, bool needAdd)
 {
     for (int i = 0; i < table->Capacity; i++)
@@ -150,12 +163,17 @@ void TransferElements(HashTable*& table, HashTable** newTable, bool needAdd)
             delete temp;
         }
     }
-
     delete[] table->Buckets;
 }
+
+/// <summary>
+/// Выполняет перехеширование таблицы с увеличением вместимости
+/// </summary>
+/// <param name="table">Ссылка на указатель хеш-таблицы для перехеширования</param>
 void Rehash(HashTable*& table)
 {
-    IsEmptyNothing(table);
+    if (table == nullptr) return;
+
     int newCapacity = table->Capacity * 2;
     HashTable* newTable = CreateHashTable(newCapacity);
     TransferElements(table, &newTable, true);
@@ -165,82 +183,45 @@ void Rehash(HashTable*& table)
     delete newTable;
 }
 
+/// <summary>
+/// Удаляет хеш-таблицу и освобождает всю занятую память
+/// </summary>
+/// <param name="table">Хеш-таблица для удаления</param>
 void DeleteHashTable(HashTable* table)
 {
-    IsEmptyNothing(table);
+    if (table == nullptr) return;
+
     TransferElements(table, nullptr, false);
     delete table;
 }
 
+/// <summary>
+/// Проверяет необходимость перехеширования таблицы
+/// </summary>
+/// <param name="table">Хеш-таблица для проверки</param>
+/// <returns>true если требуется перехеширование, false в противном случае</returns>
 bool NeedsRehash(const HashTable* table)
 {
-    if (table == nullptr)
-    {
-        return false;
-    }
+    if (table == nullptr) return false;
     return table->Count > (3 * table->Capacity) / 4;
 }
-
-Dictionary* CreateDictionary(int initialCapacity)
+/// <summary>
+/// Находит значение по ключу в хеш-таблице
+/// </summary>
+/// <param name="table">Хеш-таблица для поиска</param>
+/// <param name="key">Ключ для поиска</param>
+/// <returns>Значение элемента или пустая строка если элемент не найден</returns>
+string Find(const HashTable* table, const string& key)
 {
-    if (initialCapacity <= 0)
-    {
-        return nullptr;
-    }
+    if (table == nullptr || key.empty()) return "";
 
-    Dictionary* dictionary = new Dictionary;
-    dictionary->HashTable = CreateHashTable(initialCapacity);
-    if (dictionary->HashTable == nullptr)
-    {
-        delete dictionary;
-        return nullptr;
-    }
-    return dictionary;
-}
-bool DictionaryAdd(Dictionary* dictionary, const string& key, const string& value)
-{
-    IsEmptyBool(dictionary, key);
-
-    if (NeedsRehash(dictionary->HashTable))
-    {
-        Rehash(dictionary->HashTable);
-    }
-
-    return Add(dictionary->HashTable, key, value);
-}
-
-bool DictionaryRemove(Dictionary* dictionary, const string& key)
-{
-    IsEmptyBool(dictionary, key);
-    return Remove(dictionary->HashTable, key);
-}
-
-string DictionaryFind(const Dictionary* dictionary, const string& key)
-{
-    if (dictionary == nullptr || dictionary->HashTable == nullptr || !key.size())
-    {
-        return "";
-    }
-
-    HashTable* table = dictionary->HashTable;
     int index = PearsonHash(key, table->Capacity);
     KeyValuePair* current = table->Buckets[index];
 
     while (current != nullptr)
     {
-        if (current->Key == key)
-        {
-            return current->Value;
-        }
+        if (current->Key == key) return current->Value;
         current = current->Next;
     }
-
     return "";
-}
-
-void DeleteDictionary(Dictionary* dictionary)
-{
-    IsEmptyNothing(dictionary);
-    DeleteHashTable(dictionary->HashTable);
-    delete dictionary;
 }

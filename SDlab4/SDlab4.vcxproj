@@ -128,13 +128,19 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ConsoleService.cpp" />
+    <ClCompile Include="Dictionary.cpp" />
     <ClCompile Include="HashTable.cpp" />
+    <ClCompile Include="HashTableMenu.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="DictionaryMenu.cpp" />
     <ClCompile Include="Validator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ConsoleService.h" />
+    <ClInclude Include="Dictionary.h" />
+    <ClInclude Include="DictionaryMenu.h" />
     <ClInclude Include="HashTable.h" />
+    <ClInclude Include="HashTableMenu.h" />
     <ClInclude Include="Validator.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

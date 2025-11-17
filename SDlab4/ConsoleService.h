@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <string>
+#include "Dictionary.h"
 #include "HashTable.h"
 
 using namespace std;

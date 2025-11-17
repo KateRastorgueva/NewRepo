@@ -1,4 +1,5 @@
 #include "ConsoleService.h"
+#include "Dictionary.h"
 #include <iomanip>
 /// <summary>
 /// Выводит заголовок в консоль
