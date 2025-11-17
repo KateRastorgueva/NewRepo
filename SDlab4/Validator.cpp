@@ -10,8 +10,10 @@ using namespace std;
 /// <returns>true если строка содержит только цифры, иначе false</returns>
 bool IsValidIntegerString(const string& value)
 {
-    if (value.empty()) return false;
-
+    if (value.empty())
+    {
+        return false;
+    }
     for (int i = 0; i < value.length(); i++)
     {
         if (value[i] < '0' || value[i] > '9')
@@ -26,6 +28,15 @@ bool IsValidIntegerString(const string& value)
     }
     return true;
 }
+
+/// <summary>
+/// Вывод, что число очень большое
+/// </summary>
+void NumberIsBig()
+{
+    cout << "Число слишком большое! Введите меньшее число: ";
+}
+
 /// <summary>
 /// Получает валидированный числовой ввод от пользователя
 /// </summary>
@@ -47,7 +58,7 @@ int GetValidatedInput(const string& message)
 
         if (input.length() > 10)
         {
-            cout << "Число слишком большое! Введите меньшее число: ";
+            NumberIsBig();
             continue;
         }
 
@@ -55,9 +66,9 @@ int GetValidatedInput(const string& message)
         for (int i = 0; i < input.length(); i++)
         {
             int digit = input[i] - '0';
-            if (result > (2147483647 - digit) / 10)
+            if (result > (INT_MAX - digit) / 10)
             {
-                cout << "Число слишком большое! Введите меньшее число: ";
+                NumberIsBig();
                 break;
             }
             result = result * 10 + digit;
@@ -69,6 +80,7 @@ int GetValidatedInput(const string& message)
         }
     }
 }
+
 /// <summary>
 /// Получает валидированный числовой ввод в указанном диапазоне
 /// </summary>
@@ -88,6 +100,7 @@ int GetValidatedInputInRange(int min, int max)
         cout << "Ошибка! Введите число от " << min << " до " << max << ": ";
     }
 }
+
 /// <summary>
 /// Получает валидированную вместимость для структуры данных
 /// </summary>
@@ -97,6 +110,7 @@ int GetValidatedCapacity(const string& structureName)
 {
     return GetValidatedInput("Введите вместимость " + structureName + ": ");
 }
+
 /// <summary>
 /// Получает значение для добавления в структуру данных
 /// </summary>

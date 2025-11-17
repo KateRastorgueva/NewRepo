@@ -10,36 +10,24 @@ using namespace std;
 Dictionary* globalDictionary = nullptr;
 
 /// <summary>
+/// Возвращает значение ключа или значения
+/// </summary>
+/// <param name="valueLine">значение строки для вывода</param>
+/// <returns>ключ или значение</returns>
+string GetKeyOrValue(string valueLine)
+{
+    string keyOrValue;
+    cout << "Введите "<< valueLine<<": ";
+    getline(cin, keyOrValue);
+    return keyOrValue;
+}
+/// <summary>
 /// Устанавливает русскую кодировку для консоли
 /// </summary>
 void SetRussianEncoding()
 {
     SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
-}
-
-/// <summary>
-/// Получает ключ от пользователя
-/// </summary>
-/// <returns>Введенный ключ</returns>
-string GetKeyFromUser()
-{
-    string key;
-    cout << "Введите ключ: ";
-    getline(cin, key);
-    return key;
-}
-
-/// <summary>
-/// Получает значение от пользователя
-/// </summary>
-/// <returns>Введенное значение</returns>
-string GetValueFromUser()
-{
-    string value;
-    cout << "Введите значение: ";
-    getline(cin, value);
-    return value;
 }
 
 /// <summary>
@@ -64,7 +52,6 @@ void CreateDictionaryMenu()
     if (globalDictionary != nullptr)
     {
         ConsoleService::PrintMessage("Успешно", "Словарь создан");
-        // Показываем оба состояния после создания
         ConsoleService::PrintDictionaryState(globalDictionary);
         ConsoleService::PrintHashTableState(globalDictionary);
     }
@@ -79,14 +66,14 @@ void CreateDictionaryMenu()
 /// </summary>
 void AddToDictionaryMenu()
 {
-    if (globalDictionary == nullptr)
+    if (!globalDictionary)
     {
         ConsoleService::PrintMessage("Ошибка", "Сначала создайте словарь");
         return;
     }
 
-    string key = GetKeyFromUser();
-    string value = GetValueFromUser();
+    string key = GetKeyOrValue("ключ");
+    string value = GetKeyOrValue("значение");
 
     if (!ValidateStringLength(key, "Ключ", 50) || !ValidateStringLength(value, "Значение", 100))
     {
@@ -96,7 +83,6 @@ void AddToDictionaryMenu()
     if (DictionaryAdd(globalDictionary, key, value))
     {
         ConsoleService::PrintMessage("Успешно", "Элемент добавлен в словарь");
-        // Показываем оба состояния после операции
         ConsoleService::PrintDictionaryState(globalDictionary);
         ConsoleService::PrintHashTableState(globalDictionary);
     }
@@ -111,13 +97,13 @@ void AddToDictionaryMenu()
 /// </summary>
 void RemoveFromDictionaryMenu()
 {
-    if (globalDictionary == nullptr)
+    if (!globalDictionary)
     {
         ConsoleService::PrintMessage("Ошибка", "Сначала создайте словарь");
         return;
     }
 
-    string key = GetKeyFromUser();
+    string key = GetKeyOrValue("ключ");
 
     if (!ValidateStringLength(key, "Ключ", 50))
     {
@@ -127,7 +113,6 @@ void RemoveFromDictionaryMenu()
     if (DictionaryRemove(globalDictionary, key))
     {
         ConsoleService::PrintMessage("Успешно", "Элемент удален из словаря");
-        // Показываем оба состояния после операции
         ConsoleService::PrintDictionaryState(globalDictionary);
         ConsoleService::PrintHashTableState(globalDictionary);
     }
@@ -142,13 +127,13 @@ void RemoveFromDictionaryMenu()
 /// </summary>
 void FindInDictionaryMenu()
 {
-    if (globalDictionary == nullptr)
+    if (!globalDictionary)
     {
         ConsoleService::PrintMessage("Ошибка", "Сначала создайте словарь");
         return;
     }
 
-    string key = GetKeyFromUser();
+    string key = GetKeyOrValue("ключ");
 
     if (!ValidateStringLength(key, "Ключ", 50))
     {
@@ -199,21 +184,32 @@ int main()
         switch (choice)
         {
         case 0:
+        {
             cout << "Выход из программы..." << endl;
             break;
+        }   
         case 1:
+        {
             CreateDictionaryMenu();
             break;
+        }    
         case 2:
+        {
             AddToDictionaryMenu();
             break;
+        }   
         case 3:
+        {
             RemoveFromDictionaryMenu();
             break;
+        }     
         case 4:
+        {
             FindInDictionaryMenu();
             break;
+        }   
         case 5:
+        {
             if (globalDictionary != nullptr)
             {
                 ConsoleService::PrintDictionaryState(globalDictionary);
@@ -224,11 +220,11 @@ int main()
                 ConsoleService::PrintMessage("Информация", "Словарь не создан");
             }
             break;
+        } 
         }
 
     } while (choice != 0);
 
-    // Очистка памяти
     if (globalDictionary != nullptr)
     {
         DeleteDictionary(globalDictionary);

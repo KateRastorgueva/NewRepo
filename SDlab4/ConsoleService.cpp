@@ -42,7 +42,7 @@ void CountElements(const Dictionary* dictionary)
 /// <param name="dictionary">Словарь для отображения</param>
 void ConsoleService::PrintDictionaryState(const Dictionary* dictionary)
 {
-    if (dictionary == nullptr || dictionary->HashTable == nullptr)
+    if (!dictionary || dictionary->HashTable == nullptr)
     {
         PrintMessage("Ошибка", "Словарь не создан или удален");
         return;
@@ -74,7 +74,7 @@ void ConsoleService::PrintDictionaryState(const Dictionary* dictionary)
 /// <param name="dictionary">Словарь с хеш-таблицей для отображения</param>
 void ConsoleService::PrintHashTableState(const Dictionary* dictionary)
 {
-    if (dictionary == nullptr || dictionary->HashTable == nullptr)
+    if (!dictionary || dictionary->HashTable == nullptr)
     {
         PrintMessage("Ошибка", "Хеш-таблица не создана или удалена");
         return;
@@ -101,7 +101,7 @@ void ConsoleService::PrintHashTableState(const Dictionary* dictionary)
 /// <param name="current">Указатель на первый элемент цепочки</param>
 void ConsoleService::PrintBucketChain(KeyValuePair* current)
 {
-    if (current == nullptr)
+    if (!current)
     {
         cout << "пусто";
         return;

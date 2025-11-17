@@ -8,7 +8,10 @@
 /// <returns>”казатель на созданную хеш-таблицу или nullptr при ошибке</returns>
 HashTable* CreateHashTable(int capacity)
 {
-    if (capacity <= 0) return nullptr;
+    if (capacity <= 0)
+    {
+        return nullptr;
+    }
 
     HashTable* table = new HashTable;
     table->Buckets = new KeyValuePair * [capacity];
@@ -29,7 +32,8 @@ HashTable* CreateHashTable(int capacity)
 /// <returns>»ндекс €чейки в хеш-таблице</returns>
 int PearsonHash(const string& key, int capacity)
 {
-    const unsigned char permutation[256] = {
+    const unsigned char permutation[256] =
+    {
         98, 6, 85, 150, 36, 23, 112, 164, 135, 207, 169, 5, 26, 64, 165, 219,
         61, 20, 68, 89, 130, 63, 52, 102, 24, 229, 132, 245, 80, 216, 195, 115,
         90, 168, 156, 203, 177, 120, 2, 190, 188, 7, 100, 185, 174, 243, 162, 10,
@@ -86,7 +90,10 @@ bool DuplicateCheck(KeyValuePair* bucket, const string& searchKey)
 /// <returns>true если элемент добавлен, false если ключ уже существует</returns>
 bool Add(HashTable* table, const string& key, const string& value)
 {
-    if (table == nullptr || key.empty()) return false;
+    if (!table || key.empty()) 
+    {
+        return false;
+    }
 
     int index = PearsonHash(key, table->Capacity);
 
@@ -113,8 +120,10 @@ bool Add(HashTable* table, const string& key, const string& value)
 /// <returns>true если элемент удален, false если элемент не найден</returns>
 bool Remove(HashTable* table, const string& key)
 {
-    if (table == nullptr || key.empty()) return false;
-
+    if (!table || key.empty())
+    {
+        return false;
+    }
     int index = PearsonHash(key, table->Capacity);
     KeyValuePair* current = table->Buckets[index];
     KeyValuePair* previous = nullptr;
@@ -123,7 +132,7 @@ bool Remove(HashTable* table, const string& key)
     {
         if (current->Key == key)
         {
-            if (previous == nullptr)
+            if (!previous)
             {
                 table->Buckets[index] = current->Next;
             }
@@ -172,8 +181,10 @@ void TransferElements(HashTable*& table, HashTable** newTable, bool needAdd)
 /// <param name="table">—сылка на указатель хеш-таблицы дл€ перехешировани€</param>
 void Rehash(HashTable*& table)
 {
-    if (table == nullptr) return;
-
+    if (!table)
+    {
+        return;
+    }
     int newCapacity = table->Capacity * 2;
     HashTable* newTable = CreateHashTable(newCapacity);
     TransferElements(table, &newTable, true);
@@ -189,7 +200,10 @@ void Rehash(HashTable*& table)
 /// <param name="table">’еш-таблица дл€ удалени€</param>
 void DeleteHashTable(HashTable* table)
 {
-    if (table == nullptr) return;
+    if (!table)
+    {
+        return;
+    }
 
     TransferElements(table, nullptr, false);
     delete table;
@@ -202,7 +216,10 @@ void DeleteHashTable(HashTable* table)
 /// <returns>true если требуетс€ перехеширование, false в противном случае</returns>
 bool NeedsRehash(const HashTable* table)
 {
-    if (table == nullptr) return false;
+    if (!table)
+    {
+        return false;
+    }
     return table->Count >= (3 * table->Capacity) / 4;
 }
 /// <summary>
@@ -213,7 +230,10 @@ bool NeedsRehash(const HashTable* table)
 /// <returns>«начение элемента или пуста€ строка если элемент не найден</returns>
 string Find(const HashTable* table, const string& key)
 {
-    if (table == nullptr || key.empty()) return "";
+    if (!table || key.empty())
+    {
+        return "";
+    } 
 
     int index = PearsonHash(key, table->Capacity);
     KeyValuePair* current = table->Buckets[index];

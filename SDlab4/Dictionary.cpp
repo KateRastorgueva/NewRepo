@@ -8,7 +8,10 @@
 /// <returns>Указатель на созданный словарь или nullptr при ошибке</returns>
 Dictionary* CreateDictionary(int initialCapacity)
 {
-    if (initialCapacity <= 0) return nullptr;
+    if (initialCapacity <= 0)
+    {
+        return nullptr;
+    }
 
     Dictionary* dictionary = new Dictionary;
     dictionary->HashTable = CreateHashTable(initialCapacity);
@@ -29,7 +32,10 @@ Dictionary* CreateDictionary(int initialCapacity)
 /// <returns>true если элемент добавлен, false если ключ уже существует</returns>
 bool DictionaryAdd(Dictionary* dictionary, const string& key, const string& value)
 {
-    if (dictionary == nullptr || key.empty()) return false;
+    if (!dictionary || key.empty())
+    {
+        return false;
+    }
 
     if (NeedsRehash(dictionary->HashTable))
     {
@@ -47,7 +53,10 @@ bool DictionaryAdd(Dictionary* dictionary, const string& key, const string& valu
 /// <returns>true если элемент удален, false если элемент не найден</returns>
 bool DictionaryRemove(Dictionary* dictionary, const string& key)
 {
-    if (dictionary == nullptr || key.empty()) return false;
+    if (!dictionary || key.empty())
+    {
+        return false;
+    }
     return Remove(dictionary->HashTable, key);
 }
 
@@ -59,7 +68,7 @@ bool DictionaryRemove(Dictionary* dictionary, const string& key)
 /// <returns>Значение элемента или пустая строка если элемент не найден</returns>
 string DictionaryFind(const Dictionary* dictionary, const string& key)
 {
-    if (dictionary == nullptr || dictionary->HashTable == nullptr || key.empty())
+    if (!dictionary || dictionary->HashTable == nullptr || key.empty())
     {
         return "";
     }
@@ -73,7 +82,10 @@ string DictionaryFind(const Dictionary* dictionary, const string& key)
 /// <param name="dictionary">Словарь для удаления</param>
 void DeleteDictionary(Dictionary* dictionary)
 {
-    if (dictionary == nullptr) return;
+    if (!dictionary)
+    {
+        return;
+    }
 
     DeleteHashTable(dictionary->HashTable);
     delete dictionary;
