@@ -47,11 +47,9 @@ void PrintQueueInfo(Queue* queue, const string& name)
             }
             Enqueue(tempQueue, value);
         }
-
         while (!IsQueueEmpty(tempQueue))
         {
-            int value = Dequeue(tempQueue);
-            Enqueue(queue, value);
+            Enqueue(queue, Dequeue(tempQueue));
         }
 
         DeleteQueue(tempQueue);

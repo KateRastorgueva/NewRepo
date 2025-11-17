@@ -155,10 +155,14 @@ bool ResizeCircularBuffer(CircularBuffer* circularBuffer, int newCapacity)
     circularBuffer->Buffer = newBuffer;
     circularBuffer->Capacity = newCapacity;
     circularBuffer->Head = 0;
-    circularBuffer->Tail = circularBuffer->Count;
-    if (circularBuffer->Tail == circularBuffer->Capacity)
+
+    if (circularBuffer->Count == circularBuffer->Capacity)
     {
         circularBuffer->Tail = 0;
+    }
+    else
+    {
+        circularBuffer->Tail = circularBuffer->Count;
     }
 
     return true;
