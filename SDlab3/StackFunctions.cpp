@@ -12,14 +12,13 @@ Stack* CreateStack(int capacity)
         return nullptr;
     }
 
-    // Выделение памяти для структуры
+    // Выделение памяти
     Stack* stack = new Stack;
     if (stack == nullptr)
     {
         return nullptr;
     }
 
-    // Выделение памяти для буфера
     stack->Buffer = new int[capacity];
     if (stack->Buffer == nullptr)
     {
@@ -27,7 +26,6 @@ Stack* CreateStack(int capacity)
         return nullptr;
     }
 
-    // Инициализация полей стека
     stack->Capacity = capacity;
     stack->Top = -1;
 

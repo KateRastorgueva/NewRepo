@@ -59,7 +59,7 @@ void ShowAllStructures(Stack* stack, CircularBuffer* circularBuffer, Queue* queu
 /// <param name="circularBuffer">—сылка на указатель кольцевого буфера</param>
 /// <param name="queue">—сылка на указатель очереди</param>
 /// <param name="queueTwoStacks">—сылка на указатель очереди из двух стеков</param>
-void CleanupStructures(Stack*& stack, CircularBuffer*& circularBuffer, Queue*& queue, QueueTwoStacks*& queueTwoStacks)
+void CleanUpStructures(Stack*& stack, CircularBuffer*& circularBuffer, Queue*& queue, QueueTwoStacks*& queueTwoStacks)
 {
     if (stack)
     {
@@ -128,6 +128,6 @@ int main()
         }
     } while (mainChoice != 0);
 
-    CleanupStructures(myStack, myCircularBuffer, myQueue, myQueueTwoStacks);
+    CleanUpStructures(myStack, myCircularBuffer, myQueue, myQueueTwoStacks);
     return 0;
 }
