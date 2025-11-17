@@ -10,39 +10,20 @@ void DictionaryMenu::ShowDictionaryMenu(Dictionary*& dictionary)
     {
         cout << "\nМЕНЮ СЛОВАРЯ" << endl;
         cout << "0 - Вернуться в главное меню" << endl;
-        cout << "1 - Создать словарь" << endl;
-        cout << "2 - Добавить элемент (key-value)" << endl;
-        cout << "3 - Удалить элемент по ключу" << endl;
-        cout << "4 - Найти элемент по ключу" << endl;
-        cout << "5 - Показать состояние словаря" << endl;
+        cout << "1 - Добавить элемент (key-value)" << endl;
+        cout << "2 - Удалить элемент по ключу" << endl;
+        cout << "3 - Найти элемент по ключу" << endl;
+        cout << "4 - Показать состояние словаря" << endl;
 
-        choice = GetValidatedInputInRange(0, 5);
-
+        choice = GetValidatedInputInRange(0, 4);
         switch (choice)
         {
         case 0:
+        {
             cout << "Возврат в главное меню..." << endl;
             break;
-
+        }  
         case 1:
-        {
-            if (dictionary != nullptr)
-            {
-                DeleteDictionary(dictionary);
-                dictionary = nullptr;
-            }
-            int capacity = GetValidatedCapacity("словаря");
-            dictionary = CreateDictionary(capacity);
-            if (dictionary != nullptr)
-            {
-                ConsoleService::PrintMessage("Успешно", "Словарь создан");
-                ConsoleService::PrintDictionaryState(dictionary);
-                ConsoleService::PrintHashTableState(dictionary);
-            }
-            break;
-        }
-
-        case 2:
         {
             if (dictionary == nullptr)
             {
@@ -55,9 +36,14 @@ void DictionaryMenu::ShowDictionaryMenu(Dictionary*& dictionary)
             cout << "Введите значение: ";
             getline(cin, value);
 
-            if (!ValidateStringLength(key, "Ключ", 100)) break;
-            if (!ValidateStringLength(value, "Значение", 1000)) break;
-
+            if (!ValidateStringLength(key, "Ключ", 100))
+            {
+                break;
+            }
+            if (!ValidateStringLength(value, "Значение", 1000))
+            {
+                break;
+            }
             double currentLoadFactor = (double)(dictionary->HashTable->Count) / dictionary->HashTable->Capacity;
             cout << "Текущий коэффициент заполнения: " << currentLoadFactor << endl;
 
@@ -74,12 +60,13 @@ void DictionaryMenu::ShowDictionaryMenu(Dictionary*& dictionary)
             {
                 ConsoleService::PrintMessage("Ошибка", "Ключ уже существует в словаре");
             }
+
             ConsoleService::PrintDictionaryState(dictionary);
             ConsoleService::PrintHashTableState(dictionary);
             break;
         }
 
-        case 3:
+        case 2:
         {
             if (dictionary == nullptr)
             {
@@ -103,7 +90,7 @@ void DictionaryMenu::ShowDictionaryMenu(Dictionary*& dictionary)
             break;
         }
 
-        case 4:
+        case 3:
         {
             if (dictionary == nullptr)
             {
@@ -123,12 +110,13 @@ void DictionaryMenu::ShowDictionaryMenu(Dictionary*& dictionary)
             {
                 ConsoleService::PrintMessage("Информация", "Элемент не найден в словаре");
             }
+
             ConsoleService::PrintDictionaryState(dictionary);
             ConsoleService::PrintHashTableState(dictionary);
             break;
         }
 
-        case 5:
+        case 4:
             if (dictionary != nullptr)
             {
                 ConsoleService::PrintDictionaryState(dictionary);
@@ -140,10 +128,8 @@ void DictionaryMenu::ShowDictionaryMenu(Dictionary*& dictionary)
             }
             break;
         }
-
-        // Автоматическое перехеширование для словаря
         if (dictionary != nullptr && dictionary->HashTable != nullptr &&
-            choice >= 2 && choice <= 3 && NeedsRehash(dictionary->HashTable))
+            choice >= 1 && choice <= 2 && NeedsRehash(dictionary->HashTable))
         {
             ConsoleService::PrintTitle("АВТОМАТИЧЕСКОЕ ПЕРЕХЕШИРОВАНИЕ");
             Rehash(dictionary->HashTable);

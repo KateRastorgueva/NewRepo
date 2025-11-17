@@ -3,31 +3,6 @@
 
 using namespace std;
 
-/// <summary>
-/// Показывает состояние хеш-таблицы
-/// </summary>
-void ShowHashTableState(const HashTable* table)
-{
-    if (table == nullptr)
-    {
-        ConsoleService::PrintMessage("Ошибка", "Хеш-таблица не создана");
-        return;
-    }
-
-    ConsoleService::PrintTitle("СОСТОЯНИЕ ХЕШ-ТАБЛИЦЫ");
-    cout << "Вместимость: " << table->Capacity << endl;
-    cout << "Количество элементов: " << table->Count << endl;
-    cout << "Коэффициент заполнения: " << (double)table->Count / table->Capacity << endl;
-
-    for (int i = 0; i < table->Capacity; i++)
-    {
-        cout << "Ячейка " << i << ": ";
-        KeyValuePair* current = table->Buckets[i];
-        ConsoleService::PrintBucketChain(current);
-        cout << endl;
-    }
-}
-
 void HashTableMenu::ShowHashTableMenu(HashTable*& hashTable)
 {
     int choice;
@@ -35,14 +10,13 @@ void HashTableMenu::ShowHashTableMenu(HashTable*& hashTable)
     {
         cout << "\nМЕНЮ ХЕШ-ТАБЛИЦЫ" << endl;
         cout << "0 - Вернуться в главное меню" << endl;
-        cout << "1 - Создать хеш-таблицу" << endl;
-        cout << "2 - Добавить элемент (key-value)" << endl;
-        cout << "3 - Удалить элемент по ключу" << endl;
-        cout << "4 - Найти элемент по ключу" << endl;
-        cout << "5 - Выполнить перехеширование" << endl;
-        cout << "6 - Показать состояние хеш-таблицы" << endl;
+        cout << "1 - Добавить элемент (key-value)" << endl;
+        cout << "2 - Удалить элемент по ключу" << endl;
+        cout << "3 - Найти элемент по ключу" << endl;
+        cout << "4 - Выполнить перехеширование" << endl;
+        cout << "5 - Показать состояние хеш-таблицы" << endl;
 
-        choice = GetValidatedInputInRange(0, 6);
+        choice = GetValidatedInputInRange(0, 5);
 
         switch (choice)
         {
@@ -51,23 +25,6 @@ void HashTableMenu::ShowHashTableMenu(HashTable*& hashTable)
             break;
 
         case 1:
-        {
-            if (hashTable != nullptr)
-            {
-                DeleteHashTable(hashTable);
-                hashTable = nullptr;
-            }
-            int capacity = GetValidatedCapacity("хеш-таблицы");
-            hashTable = CreateHashTable(capacity);
-            if (hashTable != nullptr)
-            {
-                ConsoleService::PrintMessage("Успешно", "Хеш-таблица создана");
-                ShowHashTableState(hashTable);
-            }
-            break;
-        }
-
-        case 2:
         {
             if (hashTable == nullptr)
             {
@@ -80,8 +37,14 @@ void HashTableMenu::ShowHashTableMenu(HashTable*& hashTable)
             cout << "Введите значение: ";
             getline(cin, value);
 
-            if (!ValidateStringLength(key, "Ключ", 100)) break;
-            if (!ValidateStringLength(value, "Значение", 1000)) break;
+            if (!ValidateStringLength(key, "Ключ", 100))
+            {
+                break;
+            }
+            if (!ValidateStringLength(value, "Значение", 1000))
+            {
+                break;
+            }
 
             double currentLoadFactor = (double)hashTable->Count / hashTable->Capacity;
             cout << "Текущий коэффициент заполнения: " << currentLoadFactor << endl;
@@ -99,11 +62,22 @@ void HashTableMenu::ShowHashTableMenu(HashTable*& hashTable)
             {
                 ConsoleService::PrintMessage("Ошибка", "Ключ уже существует в хеш-таблице");
             }
-            ShowHashTableState(hashTable);
+
+            ConsoleService::PrintTitle("СОСТОЯНИЕ ХЕШ-ТАБЛИЦЫ");
+            cout << "Вместимость: " << hashTable->Capacity << endl;
+            cout << "Количество элементов: " << hashTable->Count << endl;
+            cout << "Коэффициент заполнения: " << (double)hashTable->Count / hashTable->Capacity << endl;
+            for (int i = 0; i < hashTable->Capacity; i++)
+            {
+                cout << "Ячейка " << i << ": ";
+                KeyValuePair* current = hashTable->Buckets[i];
+                ConsoleService::PrintBucketChain(current);
+                cout << endl;
+            }
             break;
         }
 
-        case 3:
+        case 2:
         {
             if (hashTable == nullptr)
             {
@@ -122,11 +96,22 @@ void HashTableMenu::ShowHashTableMenu(HashTable*& hashTable)
             {
                 ConsoleService::PrintMessage("Ошибка", "Элемент не найден в хеш-таблице");
             }
-            ShowHashTableState(hashTable);
+
+            ConsoleService::PrintTitle("СОСТОЯНИЕ ХЕШ-ТАБЛИЦЫ");
+            cout << "Вместимость: " << hashTable->Capacity << endl;
+            cout << "Количество элементов: " << hashTable->Count << endl;
+            cout << "Коэффициент заполнения: " << (double)hashTable->Count / hashTable->Capacity << endl;
+            for (int i = 0; i < hashTable->Capacity; i++)
+            {
+                cout << "Ячейка " << i << ": ";
+                KeyValuePair* current = hashTable->Buckets[i];
+                ConsoleService::PrintBucketChain(current);
+                cout << endl;
+            }
             break;
         }
 
-        case 4:
+        case 3:
         {
             if (hashTable == nullptr)
             {
@@ -146,11 +131,21 @@ void HashTableMenu::ShowHashTableMenu(HashTable*& hashTable)
             {
                 ConsoleService::PrintMessage("Информация", "Элемент не найден в хеш-таблице");
             }
-            ShowHashTableState(hashTable);
+            ConsoleService::PrintTitle("СОСТОЯНИЕ ХЕШ-ТАБЛИЦЫ");
+            cout << "Вместимость: " << hashTable->Capacity << endl;
+            cout << "Количество элементов: " << hashTable->Count << endl;
+            cout << "Коэффициент заполнения: " << (double)hashTable->Count / hashTable->Capacity << endl;
+            for (int i = 0; i < hashTable->Capacity; i++)
+            {
+                cout << "Ячейка " << i << ": ";
+                KeyValuePair* current = hashTable->Buckets[i];
+                ConsoleService::PrintBucketChain(current);
+                cout << endl;
+            }
             break;
         }
 
-        case 5:
+        case 4:
         {
             if (hashTable == nullptr)
             {
@@ -165,14 +160,36 @@ void HashTableMenu::ShowHashTableMenu(HashTable*& hashTable)
             Rehash(hashTable);
             ConsoleService::PrintMessage("Успешно", "Перехеширование выполнено");
             ConsoleService::PrintMessage("Информация", "Новая вместимость: " + to_string(hashTable->Capacity));
-            ShowHashTableState(hashTable);
+
+            ConsoleService::PrintTitle("СОСТОЯНИЕ ХЕШ-ТАБЛИЦЫ");
+            cout << "Вместимость: " << hashTable->Capacity << endl;
+            cout << "Количество элементов: " << hashTable->Count << endl;
+            cout << "Коэффициент заполнения: " << (double)hashTable->Count / hashTable->Capacity << endl;
+            for (int i = 0; i < hashTable->Capacity; i++)
+            {
+                cout << "Ячейка " << i << ": ";
+                KeyValuePair* current = hashTable->Buckets[i];
+                ConsoleService::PrintBucketChain(current);
+                cout << endl;
+            }
             break;
         }
 
-        case 6:
+        case 5:
             if (hashTable != nullptr)
             {
-                ShowHashTableState(hashTable);
+                // ВЫВОД СОСТОЯНИЯ ХЕШ-ТАБЛИЦЫ
+                ConsoleService::PrintTitle("СОСТОЯНИЕ ХЕШ-ТАБЛИЦЫ");
+                cout << "Вместимость: " << hashTable->Capacity << endl;
+                cout << "Количество элементов: " << hashTable->Count << endl;
+                cout << "Коэффициент заполнения: " << (double)hashTable->Count / hashTable->Capacity << endl;
+                for (int i = 0; i < hashTable->Capacity; i++)
+                {
+                    cout << "Ячейка " << i << ": ";
+                    KeyValuePair* current = hashTable->Buckets[i];
+                    ConsoleService::PrintBucketChain(current);
+                    cout << endl;
+                }
             }
             else
             {
@@ -181,13 +198,23 @@ void HashTableMenu::ShowHashTableMenu(HashTable*& hashTable)
             break;
         }
 
-        // Автоматическое перехеширование для хеш-таблицы
-        if (hashTable != nullptr && choice >= 2 && choice <= 3 && NeedsRehash(hashTable))
+        if (hashTable != nullptr && choice >= 1 && choice <= 2 && NeedsRehash(hashTable))
         {
             ConsoleService::PrintTitle("АВТОМАТИЧЕСКОЕ ПЕРЕХЕШИРОВАНИЕ");
             Rehash(hashTable);
             ConsoleService::PrintMessage("Информация", "Новая вместимость: " + to_string(hashTable->Capacity));
-            ShowHashTableState(hashTable);
+
+            ConsoleService::PrintTitle("СОСТОЯНИЕ ХЕШ-ТАБЛИЦЫ");
+            cout << "Вместимость: " << hashTable->Capacity << endl;
+            cout << "Количество элементов: " << hashTable->Count << endl;
+            cout << "Коэффициент заполнения: " << (double)hashTable->Count / hashTable->Capacity << endl;
+            for (int i = 0; i < hashTable->Capacity; i++)
+            {
+                cout << "Ячейка " << i << ": ";
+                KeyValuePair* current = hashTable->Buckets[i];
+                ConsoleService::PrintBucketChain(current);
+                cout << endl;
+            }
         }
 
     } while (choice != 0);

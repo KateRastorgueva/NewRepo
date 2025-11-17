@@ -203,7 +203,7 @@ void DeleteHashTable(HashTable* table)
 bool NeedsRehash(const HashTable* table)
 {
     if (table == nullptr) return false;
-    return table->Count > (3 * table->Capacity) / 4;
+    return table->Count >= (3 * table->Capacity) / 4;
 }
 /// <summary>
 /// Находит значение по ключу в хеш-таблице
