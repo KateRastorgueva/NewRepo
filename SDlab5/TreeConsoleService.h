@@ -2,6 +2,7 @@
 #include <string>
 #include "BinarySearchTree.h"
 #include "CartesianTree.h"
+#include <vector>
 
 using namespace std;
 
@@ -15,8 +16,10 @@ public:
 private:
     static void PrintBSTLevelOrder(const BinarySearchTreeNode* root);
     static void PrintCartesianLevelOrder(const CartesianTreeNode* root);
-    static int GetBSTHeight(const BinarySearchTreeNode* node);
+    static int GetBinarySearchTreeHeight(const BinarySearchTreeNode* node);
     static int GetCartesianHeight(const CartesianTreeNode* node);
-    static void PrintBSTLevel(const BinarySearchTreeNode* node, int level);
-    static void PrintCartesianLevel(const CartesianTreeNode* node, int level);
+    static void GetBinarySearchTreeLine(const BinarySearchTreeNode* root, int depth, vector<int>& vals, vector<string>& dataVals);
+    static void GetCartesianLine(const CartesianTreeNode* root, int depth, vector<int>& vals, vector<string>& dataVals, vector<int>& priorities);
+    static void DisplayBinarySearchTree(const BinarySearchTreeNode* root);
+    static void DisplayCartesianTree(const CartesianTreeNode* root);
 };
