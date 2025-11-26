@@ -1,4 +1,5 @@
 #include "TreeGenerator.h"
+#include "TreeConstants.h"
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
@@ -11,8 +12,6 @@ void GenerateUniqueRandomKeys(int* keys, int count, int minKey, int maxKey)
     {
         return;
     }
-
-    // Инициализация генератора случайных чисел
     srand(static_cast<unsigned int>(time(nullptr)));
 
     for (int i = 0; i < count; i++)
@@ -24,8 +23,6 @@ void GenerateUniqueRandomKeys(int* keys, int count, int minKey, int maxKey)
         {
             unique = true;
             key = minKey + rand() % (maxKey - minKey + 1);
-
-            // Проверка на уникальность
             for (int j = 0; j < i; j++)
             {
                 if (keys[j] == key)
@@ -47,7 +44,7 @@ void GenerateRandomPriorities(int* priorities, int count, int minPriority, int m
         return;
     }
 
-    srand(static_cast<unsigned int>(time(nullptr) + 1)); // Разное seed для приоритетов
+    srand(static_cast<unsigned int>(time(nullptr) + 1));
 
     for (int i = 0; i < count; i++)
     {
@@ -67,12 +64,18 @@ void GenerateRandomBinarySearchTree(BinarySearchTree* tree, int elementCount)
         return;
     }
 
+    if (tree->Size + elementCount > maxBinaryTreeSize) {
+        return;
+    }
+
+    int maxKey = elementCount * 3;
     int* keys = new int[elementCount];
-    GenerateUniqueRandomKeys(keys, elementCount, 1, elementCount * 10);
+    GenerateUniqueRandomKeys(keys, elementCount, 1, maxKey);
 
     for (int i = 0; i < elementCount; i++)
     {
-        BinarySearchTreeAdd(tree, keys[i], GenerateRandomValue(i + 1));
+        string value = "V" + to_string(i + 1);
+        BinarySearchTreeAdd(tree, keys[i], value);
     }
 
     delete[] keys;
@@ -85,15 +88,23 @@ void GenerateRandomCartesianTree(CartesianTree* tree, int elementCount)
         return;
     }
 
+    if (tree->Size + elementCount > maxCartesianTreeSize) {
+        return;
+    }
+
+    int maxKey = elementCount * 5;
+    int maxPriority = elementCount * 3;
+
     int* keys = new int[elementCount];
     int* priorities = new int[elementCount];
 
-    GenerateUniqueRandomKeys(keys, elementCount, 1, elementCount * 10);
-    GenerateRandomPriorities(priorities, elementCount, 1, elementCount * 5);
+    GenerateUniqueRandomKeys(keys, elementCount, 1, maxKey);
+    GenerateRandomPriorities(priorities, elementCount, 1, maxPriority);
 
     for (int i = 0; i < elementCount; i++)
     {
-        CartesianTreeAddOptimized(tree, keys[i], GenerateRandomValue(i + 1), priorities[i]);
+        string value = "V" + to_string(i + 1);
+        CartesianTreeAddOptimized(tree, keys[i], value, priorities[i]);
     }
 
     delete[] keys;

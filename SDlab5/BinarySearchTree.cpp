@@ -1,10 +1,26 @@
 #include "BinarySearchTree.h"
+#include "TreeConstants.h"
 #include <iostream>
+
+using namespace std;
+
+void DeleteBinarySearchTreeNodes(BinarySearchTreeNode* node)
+{
+    if (node == nullptr)
+    {
+        return;
+    }
+
+    DeleteBinarySearchTreeNodes(node->Left);
+    DeleteBinarySearchTreeNodes(node->Right);
+    delete node;
+}
 
 BinarySearchTree* CreateBinarySearchTree()
 {
     BinarySearchTree* tree = new BinarySearchTree;
     tree->Root = nullptr;
+    tree->Size = 0;
     return tree;
 }
 
@@ -12,6 +28,10 @@ bool BinarySearchTreeAdd(BinarySearchTree* tree, int key, const string& value)
 {
     if (tree == nullptr)
     {
+        return false;
+    }
+
+    if (tree->Size >= maxBinaryTreeSize) {
         return false;
     }
 
@@ -39,6 +59,7 @@ bool BinarySearchTreeAdd(BinarySearchTree* tree, int key, const string& value)
     (*current)->Left = nullptr;
     (*current)->Right = nullptr;
 
+    tree->Size++;
     return true;
 }
 
@@ -105,6 +126,7 @@ bool BinarySearchTreeRemove(BinarySearchTree* tree, int key)
 
                 delete minNode;
             }
+            tree->Size--;
             return true;
         }
     }
@@ -153,7 +175,7 @@ string BinarySearchTreeFindMin(const BinarySearchTree* tree)
         current = current->Left;
     }
 
-    return current->Value;
+    return to_string(current->Key) + "[" + current->Value + "]";
 }
 
 string BinarySearchTreeFindMax(const BinarySearchTree* tree)
@@ -169,20 +191,9 @@ string BinarySearchTreeFindMax(const BinarySearchTree* tree)
         current = current->Right;
     }
 
-    return current->Value;
+    return to_string(current->Key) + "[" + current->Value + "]";
 }
 
-void DeleteBinarySearchTreeNodes(BinarySearchTreeNode* node)
-{
-    if (node == nullptr)
-    {
-        return;
-    }
-
-    DeleteBinarySearchTreeNodes(node->Left);
-    DeleteBinarySearchTreeNodes(node->Right);
-    delete node;
-}
 
 void DeleteBinarySearchTree(BinarySearchTree* tree)
 {
@@ -192,5 +203,6 @@ void DeleteBinarySearchTree(BinarySearchTree* tree)
     }
 
     DeleteBinarySearchTreeNodes(tree->Root);
+    tree->Size = 0;
     delete tree;
 }

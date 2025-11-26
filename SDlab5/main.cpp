@@ -50,7 +50,7 @@ void ShowCartesianTreeMenu()
 
 void BinarySearchTreeMenu()
 {
-    BinarySearchTree* bst = nullptr;
+    BinarySearchTree* binarySearchTree = nullptr;
     int choice;
 
     do
@@ -61,27 +61,27 @@ void BinarySearchTreeMenu()
         switch (choice)
         {
         case 0:
-            if (bst != nullptr)
+            if (binarySearchTree != nullptr)
             {
-                DeleteBinarySearchTree(bst);
-                bst = nullptr;
+                DeleteBinarySearchTree(binarySearchTree);
+                binarySearchTree = nullptr;
                 cout << "Бинарное дерево поиска удалено" << endl;
             }
             break;
 
         case 1:
-            if (bst != nullptr)
+            if (binarySearchTree != nullptr)
             {
                 cout << "Ошибка: Дерево уже создано" << endl;
                 break;
             }
-            bst = CreateBinarySearchTree();
+            binarySearchTree = CreateBinarySearchTree();
             cout << "Бинарное дерево поиска создано" << endl;
-            TreeConsoleService::PrintBinarySearchTreeState(bst);
+            TreeConsoleService::PrintBinarySearchTreeState(binarySearchTree);
             break;
 
         case 2:
-            if (bst == nullptr)
+            if (binarySearchTree == nullptr)
             {
                 cout << "Ошибка: Сначала создайте дерево" << endl;
                 break;
@@ -92,30 +92,35 @@ void BinarySearchTreeMenu()
                 cout << "Введите значение: ";
                 getline(cin, value);
 
-                if (BinarySearchTreeAdd(bst, key, value))
+                if (BinarySearchTreeAdd(binarySearchTree, key, value))
                 {
                     cout << "Элемент добавлен" << endl;
-                    TreeConsoleService::PrintBinarySearchTreeState(bst);
+                    TreeConsoleService::PrintBinarySearchTreeState(binarySearchTree);
                 }
                 else
                 {
-                    cout << "Ошибка: Ключ уже существует" << endl;
+                    if (binarySearchTree->Size >= maxBinaryTreeSize) {
+                        cout << "Ошибка: Достигнут максимальный размер дерева (" << maxBinaryTreeSize << " элементов)" << endl;
+                    }
+                    else {
+                        cout << "Ошибка: Ключ уже существует" << endl;
+                    }
                 }
             }
             break;
 
         case 3:
-            if (bst == nullptr)
+            if (binarySearchTree == nullptr)
             {
                 cout << "Ошибка: Сначала создайте дерево" << endl;
                 break;
             }
             {
                 int key = GetValidatedInput("Введите ключ для удаления: ");
-                if (BinarySearchTreeRemove(bst, key))
+                if (BinarySearchTreeRemove(binarySearchTree, key))
                 {
                     cout << "Элемент удален" << endl;
-                    TreeConsoleService::PrintBinarySearchTreeState(bst);
+                    TreeConsoleService::PrintBinarySearchTreeState(binarySearchTree);
                 }
                 else
                 {
@@ -125,14 +130,14 @@ void BinarySearchTreeMenu()
             break;
 
         case 4:
-            if (bst == nullptr)
+            if (binarySearchTree == nullptr)
             {
                 cout << "Ошибка: Сначала создайте дерево" << endl;
                 break;
             }
             {
                 int key = GetValidatedInput("Введите ключ для поиска: ");
-                string result = BinarySearchTreeFind(bst, key);
+                string result = BinarySearchTreeFind(binarySearchTree, key);
                 if (!result.empty())
                 {
                     cout << "Найдено: " << result << endl;
@@ -145,13 +150,13 @@ void BinarySearchTreeMenu()
             break;
 
         case 5:
-            if (bst == nullptr)
+            if (binarySearchTree == nullptr)
             {
                 cout << "Ошибка: Сначала создайте дерево" << endl;
                 break;
             }
             {
-                string result = BinarySearchTreeFindMin(bst);
+                string result = BinarySearchTreeFindMin(binarySearchTree);
                 if (!result.empty())
                 {
                     cout << "Минимальный элемент: " << result << endl;
@@ -164,13 +169,13 @@ void BinarySearchTreeMenu()
             break;
 
         case 6:
-            if (bst == nullptr)
+            if (binarySearchTree == nullptr)
             {
                 cout << "Ошибка: Сначала создайте дерево" << endl;
                 break;
             }
             {
-                string result = BinarySearchTreeFindMax(bst);
+                string result = BinarySearchTreeFindMax(binarySearchTree);
                 if (!result.empty())
                 {
                     cout << "Максимальный элемент: " << result << endl;
@@ -183,27 +188,34 @@ void BinarySearchTreeMenu()
             break;
 
         case 7:
-            if (bst == nullptr)
+            if (binarySearchTree == nullptr)
             {
                 cout << "Ошибка: Сначала создайте дерево" << endl;
                 break;
             }
             {
-                int elementCount = GetValidatedInput("Введите количество элементов для генерации: ");
-                if (elementCount > 0)
-                {
-                    GenerateRandomBinarySearchTree(bst, elementCount);
-                    cout << "Сгенерировано случайное бинарное дерево поиска с " << elementCount << " элементами" << endl;
-                    TreeConsoleService::PrintBinarySearchTreeState(bst);
+                int elementCount = GetValidatedInput("Введите количество элементов для генерации (1-10): ");
+
+                if (elementCount < 1 || elementCount > maxBinaryTreeSize) {
+                    cout << "Ошибка: Количество элементов должно быть от 1 до " << maxBinaryTreeSize << endl;
+                    break;
                 }
-                else
-                {
-                    cout << "Ошибка: Количество элементов должно быть положительным" << endl;
+
+                int oldSize = binarySearchTree->Size;
+                GenerateRandomBinarySearchTree(binarySearchTree, elementCount);
+
+                if (binarySearchTree->Size == oldSize) {
+                    cout << "Ошибка: Не удалось сгенерировать дерево. Возможно, достигнут максимальный размер ("
+                        << maxBinaryTreeSize << " элементов) или недостаточно уникальных ключей" << endl;
+                }
+                else {
+                    cout << "Сгенерировано случайное бинарное дерево поиска с "
+                        << (binarySearchTree->Size - oldSize) << " элементами" << endl;
+                    TreeConsoleService::PrintBinarySearchTreeState(binarySearchTree);
                 }
             }
             break;
         }
-
     } while (choice != 0);
 }
 
@@ -356,21 +368,28 @@ void CartesianTreeMenu()
                 break;
             }
             {
-                int elementCount = GetValidatedInput("Введите количество элементов для генерации: ");
-                if (elementCount > 0)
-                {
-                    GenerateRandomCartesianTree(cartesianTree, elementCount);
-                    cout << "Сгенерировано случайное декартово дерево с " << elementCount << " элементами" << endl;
-                    TreeConsoleService::PrintCartesianTreeState(cartesianTree);
+                int elementCount = GetValidatedInput("Введите количество элементов для генерации (1-6): ");
+
+                if (elementCount < 1 || elementCount > maxCartesianTreeSize) {
+                    cout << "Ошибка: Количество элементов должно быть от 1 до " << maxCartesianTreeSize << endl;
+                    break;
                 }
-                else
-                {
-                    cout << "Ошибка: Количество элементов должно быть положительным" << endl;
+
+                int oldSize = cartesianTree->Size;
+                GenerateRandomCartesianTree(cartesianTree, elementCount);
+
+                if (cartesianTree->Size == oldSize) {
+                    cout << "Ошибка: Не удалось сгенерировать дерево. Возможно, достигнут максимальный размер ("
+                        << maxCartesianTreeSize << " элементов) или недостаточно уникальных ключей" << endl;
+                }
+                else {
+                    cout << "Сгенерировано случайное декартово дерево с "
+                        << (cartesianTree->Size - oldSize) << " элементами" << endl;
+                    TreeConsoleService::PrintCartesianTreeState(cartesianTree);
                 }
             }
             break;
         }
-
     } while (choice != 0);
 }
 

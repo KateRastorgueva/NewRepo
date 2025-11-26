@@ -132,12 +132,14 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="CartesianTree.cpp" />
     <ClCompile Include="TreeConsoleService.cpp" />
+    <ClCompile Include="TreeConstants.cpp" />
     <ClCompile Include="TreeGenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BinarySearchTree.h" />
     <ClInclude Include="CartesianTree.h" />
     <ClInclude Include="TreeConsoleService.h" />
+    <ClInclude Include="TreeConstants.h" />
     <ClInclude Include="TreeGenerator.h" />
     <ClInclude Include="Validator.h" />
   </ItemGroup>

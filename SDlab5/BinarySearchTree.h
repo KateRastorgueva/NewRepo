@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-
+#include "TreeConstants.h" 
 using namespace std;
 
 /// <summary>
@@ -20,8 +20,8 @@ struct BinarySearchTreeNode
 struct BinarySearchTree
 {
     BinarySearchTreeNode* Root;
+    int Size;
 };
-
 /// <summary>
 /// Создает пустое бинарное дерево поиска
 /// </summary>
@@ -72,3 +72,4 @@ string BinarySearchTreeFindMax(const BinarySearchTree* tree);
 /// </summary>
 /// <param name="tree">Дерево для удаления</param>
 void DeleteBinarySearchTree(BinarySearchTree* tree);
+void DeleteBinarySearchTreeNodes(BinarySearchTreeNode* node);

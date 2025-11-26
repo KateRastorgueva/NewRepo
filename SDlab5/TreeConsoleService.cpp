@@ -8,7 +8,6 @@
 
 using namespace std;
 
-// https://stackoverflow.com/questions/36802354/print-binary-tree-in-a-pretty-way-using-c
 void TreeConsoleService::PrintTitle(const string& title)
 {
     cout << endl;
@@ -32,7 +31,6 @@ void TreeConsoleService::PrintBinarySearchTreeState(const BinarySearchTree* tree
     }
 
     DisplayBinarySearchTree(tree->Root);
-    cout << endl;
 }
 
 void TreeConsoleService::PrintCartesianTreeState(const CartesianTree* tree)
@@ -51,322 +49,334 @@ void TreeConsoleService::PrintCartesianTreeState(const CartesianTree* tree)
         return;
     }
     DisplayCartesianTree(tree->Root);
-    cout << endl;
 }
 
-void TreeConsoleService::PrintBSTLevelOrder(const BinarySearchTreeNode* root)
-{
-    if (root == nullptr) return;
-
-    queue<const BinarySearchTreeNode*> nodeQueue;
-    nodeQueue.push(root);
-
-    while (!nodeQueue.empty())
-    {
-        int levelSize = nodeQueue.size();
-
-        for (int i = 0; i < levelSize; i++)
-        {
-            const BinarySearchTreeNode* currentNode = nodeQueue.front();
-            nodeQueue.pop();
-
-            cout << currentNode->Key << "[" << currentNode->Value << "] ";
-
-            if (currentNode->Left != nullptr)
-                nodeQueue.push(currentNode->Left);
-            if (currentNode->Right != nullptr)
-                nodeQueue.push(currentNode->Right);
-        }
-        cout << endl;
-    }
-}
-
-void TreeConsoleService::PrintCartesianLevelOrder(const CartesianTreeNode* root)
-{
-    if (root == nullptr) return;
-
-    queue<const CartesianTreeNode*> nodeQueue;
-    nodeQueue.push(root);
-
-    while (!nodeQueue.empty())
-    {
-        int levelSize = nodeQueue.size();
-
-        for (int i = 0; i < levelSize; i++)
-        {
-            const CartesianTreeNode* currentNode = nodeQueue.front();
-            nodeQueue.pop();
-
-            cout << currentNode->Key << "[" << currentNode->Value << "](p:" << currentNode->Priority << ") ";
-
-            if (currentNode->Left != nullptr)
-                nodeQueue.push(currentNode->Left);
-            if (currentNode->Right != nullptr)
-                nodeQueue.push(currentNode->Right);
-        }
-        cout << endl;
-    }
-}
-
-int TreeConsoleService::GetBinarySearchTreeHeight(const BinarySearchTreeNode* node) {
+int TreeConsoleService::GetBSTMaxDepth(const BinarySearchTreeNode* node) {
     if (node == nullptr) return 0;
-    return 1 + max(GetBinarySearchTreeHeight(node->Left), GetBinarySearchTreeHeight(node->Right));
+    const int left_depth = GetBSTMaxDepth(node->Left);
+    const int right_depth = GetBSTMaxDepth(node->Right);
+    return (left_depth > right_depth ? left_depth : right_depth) + 1;
 }
 
-void TreeConsoleService::GetBinarySearchTreeLine(const BinarySearchTreeNode* root, int depth, vector<int>& vals, vector<string>& dataVals) {
-    const int PLACEHOLDER = -999999;
-    if (depth <= 0 && root != nullptr) {
-        vals.push_back(root->Key);
-        dataVals.push_back(root->Value);
+int TreeConsoleService::GetCartesianMaxDepth(const CartesianTreeNode* node) {
+    if (node == nullptr) return 0;
+    const int left_depth = GetCartesianMaxDepth(node->Left);
+    const int right_depth = GetCartesianMaxDepth(node->Right);
+    return (left_depth > right_depth ? left_depth : right_depth) + 1;
+}
+
+TreeConsoleService::DisplayRows TreeConsoleService::GetBSTRowDisplay(const BinarySearchTreeNode* root) {
+    vector<const BinarySearchTreeNode*> traversal_stack;
+    vector<vector<const BinarySearchTreeNode*>> rows;
+
+    if (!root) return DisplayRows();
+
+    const BinarySearchTreeNode* p = root;
+    const int max_depth = GetBSTMaxDepth(root);
+    rows.resize(max_depth);
+    int depth = 0;
+
+    for (;;) {
+        if (depth == max_depth - 1) {
+            rows[depth].push_back(p);
+            if (depth == 0) break;
+            --depth;
+            continue;
+        }
+
+        if (traversal_stack.size() == depth) {
+            rows[depth].push_back(p);
+            traversal_stack.push_back(p);
+            if (p) p = p->Left;
+            ++depth;
+            continue;
+        }
+
+        if (rows[depth + 1].size() % 2) {
+            p = traversal_stack.back();
+            if (p) p = p->Right;
+            ++depth;
+            continue;
+        }
+
+        if (depth == 0) break;
+
+        traversal_stack.pop_back();
+        p = traversal_stack.back();
+        --depth;
+    }
+
+    DisplayRows rows_disp;
+    stringstream ss;
+    for (const auto& row : rows) {
+        rows_disp.emplace_back();
+        for (const BinarySearchTreeNode* pn : row) {
+            if (pn) {
+                ss << pn->Key << "[" << pn->Value << "]";
+                rows_disp.back().push_back(CellDisplay(ss.str()));
+                ss = stringstream();
+            }
+            else {
+                rows_disp.back().push_back(CellDisplay());
+            }
+        }
+    }
+    return rows_disp;
+}
+
+TreeConsoleService::DisplayRows TreeConsoleService::GetCartesianRowDisplay(const CartesianTreeNode* root) {
+    vector<const CartesianTreeNode*> traversal_stack;
+    vector<vector<const CartesianTreeNode*>> rows;
+
+    if (!root) return DisplayRows();
+
+    const CartesianTreeNode* p = root;
+    const int max_depth = GetCartesianMaxDepth(root);
+    rows.resize(max_depth);
+    int depth = 0;
+
+    for (;;) {
+        if (depth == max_depth - 1) {
+            rows[depth].push_back(p);
+            if (depth == 0) break;
+            --depth;
+            continue;
+        }
+
+        if (traversal_stack.size() == depth) {
+            rows[depth].push_back(p);
+            traversal_stack.push_back(p);
+            if (p) p = p->Left;
+            ++depth;
+            continue;
+        }
+
+        if (rows[depth + 1].size() % 2) {
+            p = traversal_stack.back();
+            if (p) p = p->Right;
+            ++depth;
+            continue;
+        }
+
+        if (depth == 0) break;
+
+        traversal_stack.pop_back();
+        p = traversal_stack.back();
+        --depth;
+    }
+
+    DisplayRows rows_disp;
+    stringstream ss;
+    for (const auto& row : rows) {
+        rows_disp.emplace_back();
+        for (const CartesianTreeNode* pn : row) {
+            if (pn) {
+                ss << pn->Key << "[" << pn->Value << "](p:" << pn->Priority << ")";
+                rows_disp.back().push_back(CellDisplay(ss.str()));
+                ss = stringstream();
+            }
+            else {
+                rows_disp.back().push_back(CellDisplay());
+            }
+        }
+    }
+    return rows_disp;
+}
+
+vector<string> TreeConsoleService::BSTRowFormatter(const DisplayRows& rows_disp) {
+    using s_t = string::size_type;
+
+    s_t cell_width = 0;
+    for (const auto& row_disp : rows_disp) {
+        for (const auto& cd : row_disp) {
+            if (cd.present && cd.valstr.length() > cell_width) {
+                cell_width = cd.valstr.length();
+            }
+        }
+    }
+
+    if (cell_width % 2 == 0) ++cell_width;
+    if (cell_width < 3) cell_width = 3;
+
+    vector<string> formatted_rows;
+    s_t row_count = rows_disp.size();
+    s_t row_elem_count = 1 << (row_count - 1);
+    s_t left_pad = 0;
+
+    for (s_t r = 0; r < row_count; ++r) {
+        const auto& cd_row = rows_disp[row_count - r - 1];
+        s_t space = (s_t(1) << r) * (cell_width + 1) / 2 - 1;
+        string row;
+
+        for (s_t c = 0; c < row_elem_count; ++c) {
+            row += string(c ? left_pad * 2 + 1 : left_pad, ' ');
+            if (cd_row[c].present) {
+                const string& valstr = cd_row[c].valstr;
+                s_t long_padding = cell_width - valstr.length();
+                s_t short_padding = long_padding / 2;
+                long_padding -= short_padding;
+                row += string(c % 2 ? short_padding : long_padding, ' ');
+                row += valstr;
+                row += string(c % 2 ? long_padding : short_padding, ' ');
+            }
+            else {
+                row += string(cell_width, ' ');
+            }
+        }
+        formatted_rows.push_back(row);
+
+        if (row_elem_count == 1) break;
+
+        s_t left_space = space + 1;
+        s_t right_space = space - 1;
+        for (s_t sr = 0; sr < space; ++sr) {
+            string row;
+            for (s_t c = 0; c < row_elem_count; ++c) {
+                if (c % 2 == 0) {
+                    row += string(c ? left_space * 2 + 1 : left_space, ' ');
+                    row += cd_row[c].present ? '/' : ' ';
+                    row += string(right_space + 1, ' ');
+                }
+                else {
+                    row += string(right_space, ' ');
+                    row += cd_row[c].present ? '\\' : ' ';
+                }
+            }
+            formatted_rows.push_back(row);
+            ++left_space;
+            --right_space;
+        }
+        left_pad += space + 1;
+        row_elem_count /= 2;
+    }
+
+    reverse(formatted_rows.begin(), formatted_rows.end());
+    return formatted_rows;
+}
+
+vector<string> TreeConsoleService::CartesianRowFormatter(const DisplayRows& rows_disp) {
+    using s_t = string::size_type;
+
+    s_t cell_width = 0;
+    for (const auto& row_disp : rows_disp) {
+        for (const auto& cd : row_disp) {
+            if (cd.present && cd.valstr.length() > cell_width) {
+                cell_width = cd.valstr.length();
+            }
+        }
+    }
+
+    if (cell_width % 2 == 0) ++cell_width;
+    if (cell_width < 3) cell_width = 3;
+
+    vector<string> formatted_rows;
+    s_t row_count = rows_disp.size();
+    s_t row_elem_count = 1 << (row_count - 1);
+    s_t left_pad = 0;
+
+    for (s_t r = 0; r < row_count; ++r) {
+        const auto& cd_row = rows_disp[row_count - r - 1];
+        s_t space = (s_t(1) << r) * (cell_width + 1) / 2 - 1;
+        string row;
+
+        for (s_t c = 0; c < row_elem_count; ++c) {
+            row += string(c ? left_pad * 2 + 1 : left_pad, ' ');
+            if (cd_row[c].present) {
+                const string& valstr = cd_row[c].valstr;
+                s_t long_padding = cell_width - valstr.length();
+                s_t short_padding = long_padding / 2;
+                long_padding -= short_padding;
+                row += string(c % 2 ? short_padding : long_padding, ' ');
+                row += valstr;
+                row += string(c % 2 ? long_padding : short_padding, ' ');
+            }
+            else {
+                row += string(cell_width, ' ');
+            }
+        }
+        formatted_rows.push_back(row);
+
+        if (row_elem_count == 1) break;
+
+        s_t left_space = space + 1;
+        s_t right_space = space - 1;
+        for (s_t sr = 0; sr < space; ++sr) {
+            string row;
+            for (s_t c = 0; c < row_elem_count; ++c) {
+                if (c % 2 == 0) {
+                    row += string(c ? left_space * 2 + 1 : left_space, ' ');
+                    row += cd_row[c].present ? '/' : ' ';
+                    row += string(right_space + 1, ' ');
+                }
+                else {
+                    row += string(right_space, ' ');
+                    row += cd_row[c].present ? '\\' : ' ';
+                }
+            }
+            formatted_rows.push_back(row);
+            ++left_space;
+            --right_space;
+        }
+        left_pad += space + 1;
+        row_elem_count /= 2;
+    }
+
+    reverse(formatted_rows.begin(), formatted_rows.end());
+    return formatted_rows;
+}
+
+void TreeConsoleService::TrimRowsLeft(vector<string>& rows) {
+    if (!rows.size()) return;
+    auto min_space = rows.front().length();
+    for (const auto& row : rows) {
+        auto i = row.find_first_not_of(' ');
+        if (i == string::npos) i = row.length();
+        if (i == 0) return;
+        if (i < min_space) min_space = i;
+    }
+    for (auto& row : rows) {
+        row.erase(0, min_space);
+    }
+}
+
+void TreeConsoleService::PrintFormattedBST(const BinarySearchTreeNode* root) {
+    const int d = GetBSTMaxDepth(root);
+
+    if (d == 0) {
+        cout << " <empty tree>\n";
         return;
     }
-    if (root->Left != nullptr)
-        GetBinarySearchTreeLine(root->Left, depth - 1, vals, dataVals);
-    else if (depth - 1 <= 0) {
-        vals.push_back(PLACEHOLDER);
-        dataVals.push_back("");
+
+    const auto rows_disp = GetBSTRowDisplay(root);
+    auto formatted_rows = BSTRowFormatter(rows_disp);
+    TrimRowsLeft(formatted_rows);
+
+    for (const auto& row : formatted_rows) {
+        cout << ' ' << row << '\n';
     }
-    if (root->Right != nullptr)
-        GetBinarySearchTreeLine(root->Right, depth - 1, vals, dataVals);
-    else if (depth - 1 <= 0) {
-        vals.push_back(PLACEHOLDER);
-        dataVals.push_back("");
+}
+
+void TreeConsoleService::PrintFormattedCartesian(const CartesianTreeNode* root) {
+    const int d = GetCartesianMaxDepth(root);
+
+    if (d == 0) {
+        cout << " <empty tree>\n";
+        return;
+    }
+
+    const auto rows_disp = GetCartesianRowDisplay(root);
+    auto formatted_rows = CartesianRowFormatter(rows_disp);
+    TrimRowsLeft(formatted_rows);
+
+    for (const auto& row : formatted_rows) {
+        cout << ' ' << row << '\n';
     }
 }
 
 void TreeConsoleService::DisplayBinarySearchTree(const BinarySearchTreeNode* root) {
-    if (root == nullptr) {
-        cout << "<empty tree>" << endl;
-        return;
-    }
-
-    int height = GetBinarySearchTreeHeight(root);
-    if (height == 0) {
-        cout << "<empty tree>" << endl;
-        return;
-    }
-
-    vector<vector<string>> lines;
-
-    for (int i = 0; i < height; i++) {
-        vector<int> keys;
-        vector<string> values;
-        GetBinarySearchTreeLine(root, i, keys, values);
-
-        vector<string> line;
-        for (size_t j = 0; j < keys.size(); j++) {
-            if (keys[j] != -999999) {
-                stringstream ss;
-                ss << keys[j] << "[" << values[j] << "]";
-                line.push_back(ss.str());
-            }
-            else {
-                line.push_back("");
-            }
-        }
-        lines.push_back(line);
-    }
-
-    int maxWidth = 0;
-    for (const auto& line : lines) {
-        for (const auto& item : line) {
-            if (item.length() > maxWidth) {
-                maxWidth = item.length();
-            }
-        }
-    }
-
-    if (maxWidth % 2 == 0) maxWidth += 1;
-
-    for (int i = 0; i < height; i++) {
-        int spacesBefore = (1 << (height - i - 1)) - 1;
-        int spacesBetween = (1 << (height - i)) - 1;
-        for (int s = 0; s < spacesBefore * (maxWidth / 2 + 1); s++)
-            cout << " ";
-        for (size_t j = 0; j < lines[i].size(); j++) {
-            if (!lines[i][j].empty()) {
-                cout << lines[i][j];
-                int padding = maxWidth - lines[i][j].length();
-                for (int p = 0; p < padding; p++) cout << " ";
-            }
-            else {
-                for (int p = 0; p < maxWidth; p++) cout << " ";
-            }
-
-            if (j < lines[i].size() - 1) {
-                for (int s = 0; s < spacesBetween * (maxWidth / 2 + 1); s++)
-                    cout << " ";
-            }
-        }
-        cout << endl;
-        if (i < height - 1) {
-            for (int s = 0; s < spacesBefore * (maxWidth / 2 + 1); s++)
-                cout << " ";
-
-            for (size_t j = 0; j < lines[i].size(); j++) {
-                if (!lines[i][j].empty()) {
-                    bool hasLeft = (j * 2 < lines[i + 1].size()) && !lines[i + 1][j * 2].empty();
-                    bool hasRight = (j * 2 + 1 < lines[i + 1].size()) && !lines[i + 1][j * 2 + 1].empty();
-
-                    if (hasLeft) {
-                        cout << "/";
-                        for (int p = 1; p < maxWidth / 2; p++) cout << " ";
-                    }
-                    else {
-                        for (int p = 0; p < maxWidth / 2 + 1; p++) cout << " ";
-                    }
-
-                    if (hasRight) {
-                        for (int p = 0; p < maxWidth / 2; p++) cout << " ";
-                        cout << "\\";
-                    }
-                    else {
-                        for (int p = 0; p < maxWidth / 2 + 1; p++) cout << " ";
-                    }
-                }
-                else {
-                    for (int p = 0; p < maxWidth + 1; p++) cout << " ";
-                }
-                if (j < lines[i].size() - 1) {
-                    for (int s = 0; s < spacesBetween * (maxWidth / 2 + 1) - maxWidth - 1; s++)
-                        cout << " ";
-                }
-            }
-            cout << endl;
-        }
-    }
-}
-
-int TreeConsoleService::GetCartesianHeight(const CartesianTreeNode* node) {
-    if (node == nullptr) return 0;
-    return 1 + max(GetCartesianHeight(node->Left), GetCartesianHeight(node->Right));
-}
-
-void TreeConsoleService::GetCartesianLine(const CartesianTreeNode* root, int depth, vector<int>& vals, vector<string>& dataVals, vector<int>& priorities) {
-    const int PLACEHOLDER = -999999;
-    if (depth <= 0 && root != nullptr) {
-        vals.push_back(root->Key);
-        dataVals.push_back(root->Value);
-        priorities.push_back(root->Priority);
-        return;
-    }
-    if (root->Left != nullptr)
-        GetCartesianLine(root->Left, depth - 1, vals, dataVals, priorities);
-    else if (depth - 1 <= 0) {
-        vals.push_back(PLACEHOLDER);
-        dataVals.push_back("");
-        priorities.push_back(PLACEHOLDER);
-    }
-    if (root->Right != nullptr)
-        GetCartesianLine(root->Right, depth - 1, vals, dataVals, priorities);
-    else if (depth - 1 <= 0) {
-        vals.push_back(PLACEHOLDER);
-        dataVals.push_back("");
-        priorities.push_back(PLACEHOLDER);
-    }
+    PrintFormattedBST(root);
 }
 
 void TreeConsoleService::DisplayCartesianTree(const CartesianTreeNode* root) {
-    if (root == nullptr) {
-        cout << "<empty tree>" << endl;
-        return;
-    }
-
-    int height = GetCartesianHeight(root);
-    if (height == 0) {
-        cout << "<empty tree>" << endl;
-        return;
-    }
-
-    vector<vector<string>> lines;
-
-    for (int i = 0; i < height; i++) {
-        vector<int> keys;
-        vector<string> values;
-        vector<int> priorities;
-        GetCartesianLine(root, i, keys, values, priorities);
-
-        vector<string> line;
-        for (size_t j = 0; j < keys.size(); j++) {
-            if (keys[j] != -999999) {
-                stringstream ss;
-                ss << keys[j] << "[" << values[j] << "](p:" << priorities[j] << ")";
-                line.push_back(ss.str());
-            }
-            else {
-                line.push_back("");
-            }
-        }
-        lines.push_back(line);
-    }
-    int maxWidth = 0;
-    for (const auto& line : lines) {
-        for (const auto& item : line) {
-            if (item.length() > maxWidth) {
-                maxWidth = item.length();
-            }
-        }
-    }
-
-    if (maxWidth % 2 == 0) maxWidth += 1;
-    for (int i = 0; i < height; i++) {
-        int spacesBefore = (1 << (height - i - 1)) - 1;
-        int spacesBetween = (1 << (height - i)) - 1;
-
-        for (int s = 0; s < spacesBefore * (maxWidth / 2 + 1); s++)
-            cout << " ";
-
-        for (size_t j = 0; j < lines[i].size(); j++) {
-            if (!lines[i][j].empty()) {
-                cout << lines[i][j];
-                int padding = maxWidth - lines[i][j].length();
-                for (int p = 0; p < padding; p++) cout << " ";
-            }
-            else {
-                for (int p = 0; p < maxWidth; p++) cout << " ";
-            }
-            if (j < lines[i].size() - 1) {
-                for (int s = 0; s < spacesBetween * (maxWidth / 2 + 1); s++)
-                    cout << " ";
-            }
-        }
-        cout << endl;
-
-        if (i < height - 1) {
-            for (int s = 0; s < spacesBefore * (maxWidth / 2 + 1); s++)
-                cout << " ";
-
-            for (size_t j = 0; j < lines[i].size(); j++) {
-                if (!lines[i][j].empty()) {
-                    bool hasLeft = (j * 2 < lines[i + 1].size()) && !lines[i + 1][j * 2].empty();
-                    bool hasRight = (j * 2 + 1 < lines[i + 1].size()) && !lines[i + 1][j * 2 + 1].empty();
-
-                    if (hasLeft) {
-                        cout << "/";
-                        for (int p = 1; p < maxWidth / 2; p++) cout << " ";
-                    }
-                    else {
-                        for (int p = 0; p < maxWidth / 2 + 1; p++) cout << " ";
-                    }
-
-                    if (hasRight) {
-                        for (int p = 0; p < maxWidth / 2; p++) cout << " ";
-                        cout << "\\";
-                    }
-                    else {
-                        for (int p = 0; p < maxWidth / 2 + 1; p++) cout << " ";
-                    }
-                }
-                else {
-                    for (int p = 0; p < maxWidth + 1; p++) cout << " ";
-                }
-
-                if (j < lines[i].size() - 1) {
-                    for (int s = 0; s < spacesBetween * (maxWidth / 2 + 1) - maxWidth - 1; s++)
-                        cout << " ";
-                }
-            }
-            cout << endl;
-        }
-    }
+    PrintFormattedCartesian(root);
 }
