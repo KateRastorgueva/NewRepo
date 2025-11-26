@@ -1,44 +1,57 @@
-#ifndef TREECONSOLESERVICE_H
-#define TREECONSOLESERVICE_H
-
-#include "BinarySearchTree.h"
-#include "CartesianTree.h"
+#pragma once
 #include <string>
 #include <vector>
+#include "BinarySearchTree.h"
+#include "CartesianTree.h"
+
+using namespace std;
 
 class TreeConsoleService
 {
 public:
-    static void PrintTitle(const std::string& title);
-    static void PrintBinarySearchTreeState(const BinarySearchTree* tree);
-    static void PrintCartesianTreeState(const CartesianTree* tree);
-
-private:
+    // Структуры должны быть объявлены перед использованием
     struct CellDisplay {
-        std::string valstr;
+        string valstr;
         bool present;
         CellDisplay() : present(false) {}
-        CellDisplay(std::string valstr) : valstr(valstr), present(true) {}
+        CellDisplay(string valstr) : valstr(valstr), present(true) {}
     };
 
-    using DisplayRows = std::vector<std::vector<CellDisplay>>;
+    using DisplayRows = vector<vector<CellDisplay>>;
 
+    // Существующие функции
+    static void PrintTitle(const string& title);
+    static void PrintBinarySearchTreeState(const BinarySearchTree* tree);
+    static void PrintCartesianTreeState(const CartesianTree* tree);
     static void DisplayBinarySearchTree(const BinarySearchTreeNode* root);
     static void DisplayCartesianTree(const CartesianTreeNode* root);
 
-    // Binary Search Tree display functions
-    static DisplayRows GetBSTRowDisplay(const BinarySearchTreeNode* root);
-    static std::vector<std::string> BSTRowFormatter(const DisplayRows& rows_disp);
-    static void TrimRowsLeft(std::vector<std::string>& rows);
-    static void PrintFormattedBST(const BinarySearchTreeNode* root);
+    // Новые функции для вывода сообщений
+    static void PrintError(const string& message);
+    static void PrintSuccess(const string& message);
+    static void PrintInfo(const string& message);
+    static void PrintWarning(const string& message);
 
-    // Cartesian Tree display functions  
-    static DisplayRows GetCartesianRowDisplay(const CartesianTreeNode* root);
-    static std::vector<std::string> CartesianRowFormatter(const DisplayRows& rows_disp);
-    static void PrintFormattedCartesian(const CartesianTreeNode* root);
+    static void PrintTreeCreated(const string& treeType);
+    static void PrintTreeDeleted(const string& treeType);
+    static void PrintElementAdded(const string& method = "");
+    static void PrintElementRemoved(const string& method = "");
+    static void PrintElementFound(const string& value);
+    static void PrintElementNotFound();
+    static void PrintTreeIsEmpty();
+    static void PrintKeyAlreadyExists();
+    static void PrintMaxSizeReached(int maxSize);
+    static void PrintTreeGenerated(int elementsAdded, const string& treeType);
 
-    static int GetBSTMaxDepth(const BinarySearchTreeNode* node);
-    static int GetCartesianMaxDepth(const CartesianTreeNode* node);
+private:
+    // Вспомогательные функции
+    static int GetBinarySearchTreeMaxDepth(const BinarySearchTreeNode* node);
+    static int GetCartesianTreeMaxDepth(const CartesianTreeNode* node);
+    static DisplayRows GetBinarySearchTreeRowDisplay(const BinarySearchTreeNode* root);
+    static DisplayRows GetCartesianTreeRowDisplay(const CartesianTreeNode* root);
+    static vector<string> BinarySearchTreeRowFormatter(const DisplayRows& rows_disp);
+    static vector<string> CartesianTreeRowFormatter(const DisplayRows& rows_disp);
+    static void TrimRowsLeft(vector<string>& rows);
+    static void PrintFormattedBinarySearchTree(const BinarySearchTreeNode* root);
+    static void PrintFormattedCartesianTree(const CartesianTreeNode* root);
 };
-
-#endif

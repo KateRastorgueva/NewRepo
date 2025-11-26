@@ -1,5 +1,6 @@
 #include "CartesianTree.h"
-#include "TreeConstants.h"
+#include "Validator.h"
+#include "Constants.h"
 #include <iostream>
 
 using namespace std;

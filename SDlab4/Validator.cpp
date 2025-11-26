@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
 #include "Validator.h"
+#include "Constants.h"
+#include <climits> 
 using namespace std;
 
 /// <summary>
@@ -156,4 +158,26 @@ bool ValidateStringLength(const string& str, const string& fieldName, int maxLen
     }
 
     return true;
+}
+bool ValidateKey(int key)
+{
+    return key >= minKeyValue && key <= maxKeyValue;
+}
+
+bool ValidateValue(const string& value)
+{
+    return value.length() <= maxStringLength;
+}
+
+bool ValidatePriority(int priority)
+{
+    return priority >= 1 && priority <= maxPriorityValue;
+}
+
+string TrimValue(const string& value)
+{
+    if (value.length() <= maxStringLength) {
+        return value;
+    }
+    return value.substr(0, maxStringLength);
 }

@@ -1,5 +1,5 @@
 #include "TreeGenerator.h"
-#include "TreeConstants.h"
+#include "Validator.h"
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
@@ -54,7 +54,7 @@ void GenerateRandomPriorities(int* priorities, int count, int minPriority, int m
 
 string GenerateRandomValue(int index)
 {
-    return "Value_" + to_string(index);
+    return "V" + to_string(index);
 }
 
 void GenerateRandomBinarySearchTree(BinarySearchTree* tree, int elementCount)
@@ -68,13 +68,13 @@ void GenerateRandomBinarySearchTree(BinarySearchTree* tree, int elementCount)
         return;
     }
 
-    int maxKey = elementCount * 3;
+    int maxKey = maxKeyValue;
     int* keys = new int[elementCount];
-    GenerateUniqueRandomKeys(keys, elementCount, 1, maxKey);
+    GenerateUniqueRandomKeys(keys, elementCount, minKeyValue, maxKey);
 
     for (int i = 0; i < elementCount; i++)
     {
-        string value = "V" + to_string(i + 1);
+        string value = GenerateRandomValue(i + 1);
         BinarySearchTreeAdd(tree, keys[i], value);
     }
 
@@ -92,18 +92,18 @@ void GenerateRandomCartesianTree(CartesianTree* tree, int elementCount)
         return;
     }
 
-    int maxKey = elementCount * 5;
-    int maxPriority = elementCount * 3;
+    int maxKey = maxKeyValue;
+    int maxPriority = maxPriorityValue;
 
     int* keys = new int[elementCount];
     int* priorities = new int[elementCount];
 
-    GenerateUniqueRandomKeys(keys, elementCount, 1, maxKey);
+    GenerateUniqueRandomKeys(keys, elementCount, minKeyValue, maxKey);
     GenerateRandomPriorities(priorities, elementCount, 1, maxPriority);
 
     for (int i = 0; i < elementCount; i++)
     {
-        string value = "V" + to_string(i + 1);
+        string value = GenerateRandomValue(i + 1);
         CartesianTreeAddOptimized(tree, keys[i], value, priorities[i]);
     }
 

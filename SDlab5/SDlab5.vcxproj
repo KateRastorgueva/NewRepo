@@ -104,6 +104,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalUsingDirectories>C:\Users\rast6\source\repos\NewRepo\SDlab5\SDlab5;%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
+      <AdditionalIncludeDirectories>C:\Users\rast6\source\repos\NewRepo\SDlab5;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -129,17 +131,20 @@
   <ItemGroup>
     <ClCompile Include="..\SDlab4\Validator.cpp" />
     <ClCompile Include="BinarySearchTree.cpp" />
+    <ClCompile Include="BinarySearchTreeMenu.cpp" />
+    <ClCompile Include="CartesianTreeMenu.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="CartesianTree.cpp" />
     <ClCompile Include="TreeConsoleService.cpp" />
-    <ClCompile Include="TreeConstants.cpp" />
     <ClCompile Include="TreeGenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BinarySearchTree.h" />
+    <ClInclude Include="BinarySearchTreeMenu.h" />
     <ClInclude Include="CartesianTree.h" />
+    <ClInclude Include="CartesianTreeMenu.h" />
+    <ClInclude Include="Constants.h" />
     <ClInclude Include="TreeConsoleService.h" />
-    <ClInclude Include="TreeConstants.h" />
     <ClInclude Include="TreeGenerator.h" />
     <ClInclude Include="Validator.h" />
   </ItemGroup>
