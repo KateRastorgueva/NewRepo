@@ -4,6 +4,7 @@
 #include "CartesianTree.h"
 #include "TreeConsoleService.h"
 #include "Validator.h"
+#include "TreeGenerator.h"
 
 using namespace std;
 
@@ -31,6 +32,7 @@ void ShowBinarySearchTreeMenu()
     cout << "4 - Найти элемент" << endl;
     cout << "5 - Найти минимальный элемент" << endl;
     cout << "6 - Найти максимальный элемент" << endl;
+    cout << "7 - Сгенерировать случайное дерево" << endl;
 }
 
 void ShowCartesianTreeMenu()
@@ -43,6 +45,7 @@ void ShowCartesianTreeMenu()
     cout << "4 - Удалить элемент (неоптимизированный)" << endl;
     cout << "5 - Удалить элемент (оптимизированный)" << endl;
     cout << "6 - Найти элемент" << endl;
+    cout << "7 - Сгенерировать случайное дерево" << endl;
 }
 
 void BinarySearchTreeMenu()
@@ -53,7 +56,7 @@ void BinarySearchTreeMenu()
     do
     {
         ShowBinarySearchTreeMenu();
-        choice = GetValidatedInputInRange(0, 6);
+        choice = GetValidatedInputInRange(0, 7);
 
         switch (choice)
         {
@@ -178,6 +181,27 @@ void BinarySearchTreeMenu()
                 }
             }
             break;
+
+        case 7:
+            if (bst == nullptr)
+            {
+                cout << "Ошибка: Сначала создайте дерево" << endl;
+                break;
+            }
+            {
+                int elementCount = GetValidatedInput("Введите количество элементов для генерации: ");
+                if (elementCount > 0)
+                {
+                    GenerateRandomBinarySearchTree(bst, elementCount);
+                    cout << "Сгенерировано случайное бинарное дерево поиска с " << elementCount << " элементами" << endl;
+                    TreeConsoleService::PrintBinarySearchTreeState(bst);
+                }
+                else
+                {
+                    cout << "Ошибка: Количество элементов должно быть положительным" << endl;
+                }
+            }
+            break;
         }
 
     } while (choice != 0);
@@ -191,7 +215,7 @@ void CartesianTreeMenu()
     do
     {
         ShowCartesianTreeMenu();
-        choice = GetValidatedInputInRange(0, 6);
+        choice = GetValidatedInputInRange(0, 7);
 
         switch (choice)
         {
@@ -321,6 +345,27 @@ void CartesianTreeMenu()
                 else
                 {
                     cout << "Элемент не найден" << endl;
+                }
+            }
+            break;
+
+        case 7:
+            if (cartesianTree == nullptr)
+            {
+                cout << "Ошибка: Сначала создайте дерево" << endl;
+                break;
+            }
+            {
+                int elementCount = GetValidatedInput("Введите количество элементов для генерации: ");
+                if (elementCount > 0)
+                {
+                    GenerateRandomCartesianTree(cartesianTree, elementCount);
+                    cout << "Сгенерировано случайное декартово дерево с " << elementCount << " элементами" << endl;
+                    TreeConsoleService::PrintCartesianTreeState(cartesianTree);
+                }
+                else
+                {
+                    cout << "Ошибка: Количество элементов должно быть положительным" << endl;
                 }
             }
             break;
