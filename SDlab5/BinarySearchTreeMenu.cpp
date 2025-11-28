@@ -52,7 +52,7 @@ void BinarySearchTreeMenu()
             break;
 
         case 2:
-            if (binarySearchTree == nullptr)
+            if (!binarySearchTree)
             {
                 TreeConsoleService::PrintError("Сначала создайте дерево");
                 break;
@@ -91,7 +91,7 @@ void BinarySearchTreeMenu()
             break;
 
         case 3:
-            if (binarySearchTree == nullptr)
+            if (!binarySearchTree)
             {
                 TreeConsoleService::PrintError("Сначала создайте дерево");
                 break;
@@ -111,7 +111,7 @@ void BinarySearchTreeMenu()
             break;
 
         case 4:
-            if (binarySearchTree == nullptr)
+            if (!binarySearchTree)
             {
                 TreeConsoleService::PrintError("Сначала создайте дерево");
                 break;
@@ -131,7 +131,7 @@ void BinarySearchTreeMenu()
             break;
 
         case 5:
-            if (binarySearchTree == nullptr)
+            if (!binarySearchTree)
             {
                 TreeConsoleService::PrintError("Сначала создайте дерево");
                 break;
@@ -150,7 +150,7 @@ void BinarySearchTreeMenu()
             break;
 
         case 6:
-            if (binarySearchTree == nullptr)
+            if (!binarySearchTree)
             {
                 TreeConsoleService::PrintError("Сначала создайте дерево");
                 break;
@@ -169,13 +169,13 @@ void BinarySearchTreeMenu()
             break;
 
         case 7:
-            if (binarySearchTree == nullptr)
+            if (!binarySearchTree)
             {
                 TreeConsoleService::PrintError("Сначала создайте дерево");
                 break;
             }
             {
-                int elementCount = GetValidatedInput("Введите количество элементов для генерации (1-10): ");
+                int elementCount = GetValidatedInput("Введите количество элементов для генерации (1-7): ");
 
                 if (elementCount < 1 || elementCount > maxBinaryTreeSize) {
                     TreeConsoleService::PrintError("Количество элементов должно быть от 1 до " + to_string(maxBinaryTreeSize));

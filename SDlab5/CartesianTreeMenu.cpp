@@ -18,7 +18,10 @@ void ShowCartesianTreeMenu()
     cout << "6 - Найти элемент" << endl;
     cout << "7 - Сгенерировать случайное дерево" << endl;
 }
-
+void PrintTreeNotCreatedError()
+{
+    TreeConsoleService::PrintError("Сначала создайте дерево");
+}
 void CartesianTreeMenu()
 {
     CartesianTree* cartesianTree = nullptr;
@@ -52,15 +55,14 @@ void CartesianTreeMenu()
             break;
 
         case 2:
-            if (cartesianTree == nullptr)
+            if (!cartesianTree)
             {
-                TreeConsoleService::PrintError("Сначала создайте дерево");
+                PrintTreeNotCreatedError();
                 break;
             }
             {
                 int key = GetValidatedInput("Введите ключ: ");
 
-                // Валидация ключа
                 if (!ValidateKey(key)) {
                     TreeConsoleService::PrintError("Ключ должен быть от " + to_string(minKeyValue) + " до " + to_string(maxKeyValue));
                     break;
@@ -70,7 +72,6 @@ void CartesianTreeMenu()
                 cout << "Введите значение: ";
                 getline(cin, value);
 
-                // Валидация и обрезка значения
                 if (!ValidateValue(value)) {
                     TreeConsoleService::PrintWarning("Значение обрезано до " + to_string(maxStringLength) + " символов");
                     value = TrimValue(value);
@@ -78,7 +79,6 @@ void CartesianTreeMenu()
 
                 int priority = GetValidatedInput("Введите приоритет: ");
 
-                // Валидация приоритета
                 if (!ValidatePriority(priority)) {
                     TreeConsoleService::PrintError("Приоритет должен быть от 1 до " + to_string(maxPriorityValue));
                     break;
@@ -97,15 +97,14 @@ void CartesianTreeMenu()
             break;
 
         case 3:
-            if (cartesianTree == nullptr)
+            if (!cartesianTree)
             {
-                TreeConsoleService::PrintError("Сначала создайте дерево");
+                PrintTreeNotCreatedError();
                 break;
             }
             {
                 int key = GetValidatedInput("Введите ключ: ");
 
-                // Валидация ключа
                 if (!ValidateKey(key)) {
                     TreeConsoleService::PrintError("Ключ должен быть от " + to_string(minKeyValue) + " до " + to_string(maxKeyValue));
                     break;
@@ -115,7 +114,6 @@ void CartesianTreeMenu()
                 cout << "Введите значение: ";
                 getline(cin, value);
 
-                // Валидация и обрезка значения
                 if (!ValidateValue(value)) {
                     TreeConsoleService::PrintWarning("Значение обрезано до " + to_string(maxStringLength) + " символов");
                     value = TrimValue(value);
@@ -123,7 +121,6 @@ void CartesianTreeMenu()
 
                 int priority = GetValidatedInput("Введите приоритет: ");
 
-                // Валидация приоритета
                 if (!ValidatePriority(priority)) {
                     TreeConsoleService::PrintError("Приоритет должен быть от 1 до " + to_string(maxPriorityValue));
                     break;
@@ -142,9 +139,9 @@ void CartesianTreeMenu()
             break;
 
         case 4:
-            if (cartesianTree == nullptr)
+            if (!cartesianTree)
             {
-                TreeConsoleService::PrintError("Сначала создайте дерево");
+                PrintTreeNotCreatedError();
                 break;
             }
             {
@@ -162,9 +159,9 @@ void CartesianTreeMenu()
             break;
 
         case 5:
-            if (cartesianTree == nullptr)
+            if (!cartesianTree)
             {
-                TreeConsoleService::PrintError("Сначала создайте дерево");
+                PrintTreeNotCreatedError();
                 break;
             }
             {
@@ -182,9 +179,9 @@ void CartesianTreeMenu()
             break;
 
         case 6:
-            if (cartesianTree == nullptr)
+            if (!cartesianTree)
             {
-                TreeConsoleService::PrintError("Сначала создайте дерево");
+                PrintTreeNotCreatedError();
                 break;
             }
             {
@@ -202,9 +199,9 @@ void CartesianTreeMenu()
             break;
 
         case 7:
-            if (cartesianTree == nullptr)
+            if (!cartesianTree)
             {
-                TreeConsoleService::PrintError("Сначала создайте дерево");
+                PrintTreeNotCreatedError();
                 break;
             }
             {

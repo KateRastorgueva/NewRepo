@@ -50,29 +50,24 @@ void TreeConsoleService::PrintCartesianTreeState(const CartesianTree* tree)
     }
     DisplayCartesianTree(tree->Root);
 }
-
-int TreeConsoleService::GetBinarySearchTreeMaxDepth(const BinarySearchTreeNode* node) {
+template<typename TreeNode>
+int GetTreeMaxDepth(const TreeNode* node)
+{
     if (node == nullptr) return 0;
-    const int left_depth = GetBinarySearchTreeMaxDepth(node->Left);
-    const int right_depth = GetBinarySearchTreeMaxDepth(node->Right);
+    const int left_depth = GetTreeMaxDepth(node->Left);
+    const int right_depth = GetTreeMaxDepth(node->Right);
     return (left_depth > right_depth ? left_depth : right_depth) + 1;
 }
 
-int TreeConsoleService::GetCartesianTreeMaxDepth(const CartesianTreeNode* node) {
-    if (node == nullptr) return 0;
-    const int left_depth = GetCartesianTreeMaxDepth(node->Left);
-    const int right_depth = GetCartesianTreeMaxDepth(node->Right);
-    return (left_depth > right_depth ? left_depth : right_depth) + 1;
-}
-
-TreeConsoleService::DisplayRows TreeConsoleService::GetBinarySearchTreeRowDisplay(const BinarySearchTreeNode* root) {
+TreeConsoleService::DisplayRows TreeConsoleService::GetBinarySearchTreeRowDisplay(const BinarySearchTreeNode* root)
+{
     vector<const BinarySearchTreeNode*> traversal_stack;
     vector<vector<const BinarySearchTreeNode*>> rows;
 
     if (!root) return DisplayRows();
 
     const BinarySearchTreeNode* p = root;
-    const int max_depth = GetBinarySearchTreeMaxDepth(root);
+    const int max_depth = GetTreeMaxDepth(root);
     rows.resize(max_depth);
     int depth = 0;
 
@@ -124,14 +119,15 @@ TreeConsoleService::DisplayRows TreeConsoleService::GetBinarySearchTreeRowDispla
     return rows_disp;
 }
 
-TreeConsoleService::DisplayRows TreeConsoleService::GetCartesianTreeRowDisplay(const CartesianTreeNode* root) {
+TreeConsoleService::DisplayRows TreeConsoleService::GetCartesianTreeRowDisplay(const CartesianTreeNode* root)
+{
     vector<const CartesianTreeNode*> traversal_stack;
     vector<vector<const CartesianTreeNode*>> rows;
 
     if (!root) return DisplayRows();
 
     const CartesianTreeNode* p = root;
-    const int max_depth = GetCartesianTreeMaxDepth(root);
+    const int max_depth = GetTreeMaxDepth(root);
     rows.resize(max_depth);
     int depth = 0;
 
@@ -183,7 +179,8 @@ TreeConsoleService::DisplayRows TreeConsoleService::GetCartesianTreeRowDisplay(c
     return rows_disp;
 }
 
-vector<string> TreeConsoleService::BinarySearchTreeRowFormatter(const DisplayRows& rows_disp) {
+vector<string> TreeConsoleService::BinarySearchTreeRowFormatter(const DisplayRows& rows_disp)
+{
     using s_t = string::size_type;
 
     s_t cell_width = 0;
@@ -340,7 +337,7 @@ void TreeConsoleService::TrimRowsLeft(vector<string>& rows) {
 }
 
 void TreeConsoleService::PrintFormattedBinarySearchTree(const BinarySearchTreeNode* root) {
-    const int d = GetBinarySearchTreeMaxDepth(root);
+    const int d = GetTreeMaxDepth(root);
 
     if (d == 0) {
         cout << " <empty tree>\n";
@@ -357,7 +354,7 @@ void TreeConsoleService::PrintFormattedBinarySearchTree(const BinarySearchTreeNo
 }
 
 void TreeConsoleService::PrintFormattedCartesianTree(const CartesianTreeNode* root) {
-    const int d = GetCartesianTreeMaxDepth(root);
+    const int d = GetTreeMaxDepth(root);
 
     if (d == 0) {
         cout << " <empty tree>\n";
@@ -373,11 +370,13 @@ void TreeConsoleService::PrintFormattedCartesianTree(const CartesianTreeNode* ro
     }
 }
 
-void TreeConsoleService::DisplayBinarySearchTree(const BinarySearchTreeNode* root) {
+void TreeConsoleService::DisplayBinarySearchTree(const BinarySearchTreeNode* root)
+{
     PrintFormattedBinarySearchTree(root);
 }
 
-void TreeConsoleService::DisplayCartesianTree(const CartesianTreeNode* root) {
+void TreeConsoleService::DisplayCartesianTree(const CartesianTreeNode* root)
+{
     PrintFormattedCartesianTree(root);
 }
 

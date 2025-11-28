@@ -3,6 +3,10 @@
 #include <iostream>
 
 using namespace std;
+bool IsTreeEmpty(const BinarySearchTree* tree)
+{
+    return tree == nullptr || tree->Root == nullptr;
+}
 
 void DeleteBinarySearchTreeNodes(BinarySearchTreeNode* node)
 {
@@ -26,7 +30,7 @@ BinarySearchTree* CreateBinarySearchTree()
 
 bool BinarySearchTreeAdd(BinarySearchTree* tree, int key, const string& value)
 {
-    if (tree == nullptr)
+    if (!tree)
     {
         return false;
     }
@@ -74,7 +78,7 @@ BinarySearchTreeNode* FindMinNode(BinarySearchTreeNode* node)
 
 bool BinarySearchTreeRemove(BinarySearchTree* tree, int key)
 {
-    if (tree == nullptr || tree->Root == nullptr)
+    if (IsTreeEmpty(tree))
     {
         return false;
     }
@@ -120,10 +124,13 @@ bool BinarySearchTreeRemove(BinarySearchTree* tree, int key)
                 nodeToDelete->Value = minNode->Value;
 
                 if (minNodeParent == nodeToDelete)
+                {
                     minNodeParent->Right = minNode->Right;
+                } 
                 else
+                {
                     minNodeParent->Left = minNode->Right;
-
+                }
                 delete minNode;
             }
             tree->Size--;
@@ -136,7 +143,7 @@ bool BinarySearchTreeRemove(BinarySearchTree* tree, int key)
 
 string BinarySearchTreeFind(const BinarySearchTree* tree, int key)
 {
-    if (tree == nullptr)
+    if (!tree)
     {
         return "";
     }
@@ -162,9 +169,10 @@ string BinarySearchTreeFind(const BinarySearchTree* tree, int key)
     return "";
 }
 
+
 string BinarySearchTreeFindMin(const BinarySearchTree* tree)
 {
-    if (tree == nullptr || tree->Root == nullptr)
+    if (IsTreeEmpty(tree))
     {
         return "";
     }
@@ -180,7 +188,7 @@ string BinarySearchTreeFindMin(const BinarySearchTree* tree)
 
 string BinarySearchTreeFindMax(const BinarySearchTree* tree)
 {
-    if (tree == nullptr || tree->Root == nullptr)
+    if (IsTreeEmpty(tree))
     {
         return "";
     }
@@ -197,7 +205,7 @@ string BinarySearchTreeFindMax(const BinarySearchTree* tree)
 
 void DeleteBinarySearchTree(BinarySearchTree* tree)
 {
-    if (tree == nullptr)
+    if (!tree)
     {
         return;
     }

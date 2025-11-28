@@ -4,9 +4,32 @@
 #include <iostream>
 
 using namespace std;
+bool IsTreeFull(const CartesianTree* tree)
+{
+    return tree->Size >= maxCartesianTreeSize;
+}
+bool IsTreeEmpty(const CartesianTree* tree)
+{
+    return tree == nullptr || tree->Root == nullptr;
+}
+bool KeyExists(const CartesianTree* tree, int key)
+{
+    return !CartesianTreeFind(tree, key).empty();
+}
+CartesianTreeNode* CreateCartesianTreeNode(int key, const string& value, int priority)
+{
+    CartesianTreeNode* node = new CartesianTreeNode;
+    node->Key = key;
+    node->Value = value;
+    node->Priority = priority;
+    node->Left = nullptr;
+    node->Right = nullptr;
+    return node;
+}
+
 void CartesianTreeSplit(CartesianTreeNode* tree, int key, CartesianTreeNode*& left, CartesianTreeNode*& right)
 {
-    if (tree == nullptr)
+    if (!tree)
     {
         left = nullptr;
         right = nullptr;
@@ -29,11 +52,11 @@ void CartesianTreeSplit(CartesianTreeNode* tree, int key, CartesianTreeNode*& le
 
 CartesianTreeNode* CartesianTreeMerge(CartesianTreeNode* left, CartesianTreeNode* right)
 {
-    if (left == nullptr)
+    if (!left)
     {
         return right;
     }
-    if (right == nullptr)
+    if (!right)
     {
         return left;
     }
@@ -51,7 +74,7 @@ CartesianTreeNode* CartesianTreeMerge(CartesianTreeNode* left, CartesianTreeNode
 }
 void DeleteCartesianTreeNodes(CartesianTreeNode* node)
 {
-    if (node == nullptr)
+    if (!node)
     {
         return;
     }
@@ -71,16 +94,16 @@ CartesianTree* CreateCartesianTree()
 
 bool CartesianTreeAddUnoptimized(CartesianTree* tree, int key, const string& value, int priority)
 {
-    if (tree == nullptr)
+    if (!tree)
     {
         return false;
     }
 
-    if (tree->Size >= maxCartesianTreeSize) {
+    if (IsTreeFull(tree)) {
         return false;
     }
 
-    if (!CartesianTreeFind(tree, key).empty())
+    if (KeyExists(tree, key))
     {
         return false;
     }
@@ -89,12 +112,7 @@ bool CartesianTreeAddUnoptimized(CartesianTree* tree, int key, const string& val
     CartesianTreeNode* right = nullptr;
     CartesianTreeSplit(tree->Root, key, left, right);
 
-    CartesianTreeNode* newNode = new CartesianTreeNode;
-    newNode->Key = key;
-    newNode->Value = value;
-    newNode->Priority = priority;
-    newNode->Left = nullptr;
-    newNode->Right = nullptr;
+    CartesianTreeNode* newNode = CreateCartesianTreeNode(key, value, priority);
 
     CartesianTreeNode* mergedLeft = CartesianTreeMerge(left, newNode);
     tree->Root = CartesianTreeMerge(mergedLeft, right);
@@ -105,26 +123,22 @@ bool CartesianTreeAddUnoptimized(CartesianTree* tree, int key, const string& val
 
 bool CartesianTreeAddOptimized(CartesianTree* tree, int key, const string& value, int priority)
 {
-    if (tree == nullptr)
+    if (!tree)
     {
         return false;
     }
 
-    if (tree->Size >= maxCartesianTreeSize) {
-        return false;
-    }
-
-    if (!CartesianTreeFind(tree, key).empty())
+    if (IsTreeFull(tree))
     {
         return false;
     }
 
-    CartesianTreeNode* newNode = new CartesianTreeNode;
-    newNode->Key = key;
-    newNode->Value = value;
-    newNode->Priority = priority;
-    newNode->Left = nullptr;
-    newNode->Right = nullptr;
+    if (KeyExists(tree, key))
+    {
+        return false;
+    }
+
+    CartesianTreeNode* newNode = CreateCartesianTreeNode(key, value, priority);
 
     if (tree->Root == nullptr)
     {
@@ -156,7 +170,7 @@ bool CartesianTreeAddOptimized(CartesianTree* tree, int key, const string& value
     newNode->Left = left;
     newNode->Right = right;
 
-    if (parent == nullptr)
+    if (!parent)
     {
         tree->Root = newNode;
     }
@@ -174,7 +188,7 @@ bool CartesianTreeAddOptimized(CartesianTree* tree, int key, const string& value
 }
 bool CartesianTreeRemoveUnoptimized(CartesianTree* tree, int key)
 {
-    if (tree == nullptr || tree->Root == nullptr)
+    if (IsTreeEmpty(tree))
     {
         return false;
     }
@@ -203,7 +217,7 @@ bool CartesianTreeRemoveUnoptimized(CartesianTree* tree, int key)
 
 bool CartesianTreeRemoveOptimized(CartesianTree* tree, int key)
 {
-    if (tree == nullptr || tree->Root == nullptr)
+    if (IsTreeEmpty(tree))
     {
         return false;
     }
@@ -239,7 +253,7 @@ bool CartesianTreeRemoveOptimized(CartesianTree* tree, int key)
 
 string CartesianTreeFind(const CartesianTree* tree, int key)
 {
-    if (tree == nullptr)
+    if (!tree)
     {
         return "";
     }
@@ -266,7 +280,7 @@ string CartesianTreeFind(const CartesianTree* tree, int key)
 }
 void DeleteCartesianTree(CartesianTree* tree)
 {
-    if (tree == nullptr)
+    if (!tree)
     {
         return;
     }

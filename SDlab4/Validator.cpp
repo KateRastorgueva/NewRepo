@@ -179,5 +179,10 @@ string TrimValue(const string& value)
     if (value.length() <= maxStringLength) {
         return value;
     }
-    return value.substr(0, maxStringLength);
+
+    string result;
+    for (int i = 0; i < maxStringLength; ++i) {
+        result += value[i];
+    }
+    return result;
 }
