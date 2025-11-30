@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 using namespace std;
+
 /// <summary>
 /// Проверяет, является ли строка корректным целым числом
 /// </summary>
@@ -42,7 +43,24 @@ int GetValueForAddition();
 /// <param name="capacity">Проверяемое значение вместимости</param>
 /// <returns>true если вместимость положительна, иначе false</returns>
 bool ValidateCapacity(int capacity);
+
+/// <summary>
+/// Проверяет корректность ключа
+/// </summary>
+/// <param name="key">Ключ для проверки</param>
+/// <returns>true если ключ в допустимом диапазоне, иначе false</returns>
 bool ValidateKey(int key);
+
+/// <summary>
+/// Проверяет корректность значения
+/// </summary>
+/// <param name="value">Значение для проверки</param>
+/// <returns>true если длина значения допустима, иначе false</returns>
 bool ValidateValue(const string& value);
+
+/// <summary>
+/// Проверяет корректность приоритета
+/// </summary>
+/// <param name="priority">Приоритет для проверки</param>
+/// <returns>true если приоритет в допустимом диапазоне, иначе false</returns>
 bool ValidatePriority(int priority);
-string TrimValue(const string& value);

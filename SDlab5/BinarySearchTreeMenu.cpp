@@ -1,11 +1,15 @@
 #include <iostream>
 #include "BinarySearchTree.h"
 #include "TreeConsoleService.h"
+#include "TreeVisualizer.h"
 #include "Validator.h"
 #include "TreeGenerator.h"
 
 using namespace std;
 
+/// <summary>
+/// Отображает меню операций с бинарным деревом поиска
+/// </summary>
 void ShowBinarySearchTreeMenu()
 {
     cout << "\nМЕНЮ БИНАРНОГО ДЕРЕВА ПОИСКА" << endl;
@@ -20,6 +24,9 @@ void ShowBinarySearchTreeMenu()
     cout << "8 - Перезаписать значение ключа" << endl;
 }
 
+/// <summary>
+/// Основная функция меню бинарного дерева поиска
+/// </summary>
 void BinarySearchTreeMenu()
 {
     BinarySearchTree* binarySearchTree = nullptr;
@@ -38,7 +45,7 @@ void BinarySearchTreeMenu()
             {
                 DeleteBinarySearchTree(binarySearchTree);
                 binarySearchTree = nullptr;
-                TreeConsoleService::PrintTreeDeleted("Бинарное дерево поиска");
+                PrintTreeDeleted("Бинарное дерево поиска");
             }
             break;
         }
@@ -47,12 +54,12 @@ void BinarySearchTreeMenu()
         {
             if (binarySearchTree != nullptr)
             {
-                TreeConsoleService::PrintError("Дерево уже создано");
+                PrintError("Дерево уже создано");
                 break;
             }
             binarySearchTree = CreateBinarySearchTree();
-            TreeConsoleService::PrintTreeCreated("Бинарное дерево поиска");
-            TreeConsoleService::PrintBinarySearchTreeState(binarySearchTree);
+            PrintTreeCreated("Бинарное дерево поиска");
+            PrintBinarySearchTreeState(binarySearchTree);
             break;
         }
 
@@ -60,61 +67,60 @@ void BinarySearchTreeMenu()
         {
             if (!binarySearchTree)
             {
-                TreeConsoleService::PrintError("Сначала создайте дерево");
+                PrintError("Сначала создайте дерево");
                 break;
             }
 
-            int key = TreeConsoleService::GetKeyInput("Введите ключ: ");
+            int key = GetKeyInput("Введите ключ: ");
             if (!ValidateKey(key))
             {
-                TreeConsoleService::PrintError("Ключ должен быть от " + to_string(minKeyValue) + " до " + to_string(maxKeyValue));
+                PrintError("Ключ должен быть от " + to_string(minKeyValue) + " до " + to_string(maxKeyValue));
                 break;
             }
 
-            string value = TreeConsoleService::GetValueInput();
+            string value = GetValueInput();
             if (!ValidateValue(value))
             {
-                TreeConsoleService::PrintError("Значение слишком длинное. Максимальная длина: " + to_string(maxStringLength) + " символов");
+                PrintError("Значение слишком длинное. Максимальная длина: " + to_string(maxStringLength) + " символов");
                 break;
             }
 
             if (BinarySearchTreeAdd(binarySearchTree, key, value))
             {
-                TreeConsoleService::PrintElementAdded();
-                TreeConsoleService::PrintBinarySearchTreeState(binarySearchTree);
+                PrintElementAdded();
+                PrintBinarySearchTreeState(binarySearchTree);
             }
             else
             {
                 if (binarySearchTree->Size >= maxBinaryTreeSize)
                 {
-                    TreeConsoleService::PrintMaxSizeReached(maxBinaryTreeSize);
+                    PrintMaxSizeReached(maxBinaryTreeSize);
                 }
                 else
                 {
-                    TreeConsoleService::PrintKeyAlreadyExists();
+                    PrintKeyAlreadyExists();
                 }
             }
             break;
         }
 
-
         case 3:
         {
             if (!binarySearchTree)
             {
-                TreeConsoleService::PrintError("Сначала создайте дерево");
+                PrintError("Сначала создайте дерево");
                 break;
             }
 
             int key = GetValidatedInput("Введите ключ для удаления: ");
             if (BinarySearchTreeRemove(binarySearchTree, key))
             {
-                TreeConsoleService::PrintElementRemoved();
-                TreeConsoleService::PrintBinarySearchTreeState(binarySearchTree);
+                PrintElementRemoved();
+                PrintBinarySearchTreeState(binarySearchTree);
             }
             else
             {
-                TreeConsoleService::PrintElementNotFound();
+                PrintElementNotFound();
             }
             break;
         }
@@ -123,7 +129,7 @@ void BinarySearchTreeMenu()
         {
             if (!binarySearchTree)
             {
-                TreeConsoleService::PrintError("Сначала создайте дерево");
+                PrintError("Сначала создайте дерево");
                 break;
             }
 
@@ -131,11 +137,11 @@ void BinarySearchTreeMenu()
             string result = BinarySearchTreeFind(binarySearchTree, key);
             if (!result.empty())
             {
-                TreeConsoleService::PrintElementFound(result);
+                PrintElementFound(result);
             }
             else
             {
-                TreeConsoleService::PrintElementNotFound();
+                PrintElementNotFound();
             }
             break;
         }
@@ -144,7 +150,7 @@ void BinarySearchTreeMenu()
         {
             if (!binarySearchTree)
             {
-                TreeConsoleService::PrintError("Сначала создайте дерево");
+                PrintError("Сначала создайте дерево");
                 break;
             }
 
@@ -155,7 +161,7 @@ void BinarySearchTreeMenu()
             }
             else
             {
-                TreeConsoleService::PrintTreeIsEmpty();
+                PrintTreeIsEmpty();
             }
             break;
         }
@@ -164,7 +170,7 @@ void BinarySearchTreeMenu()
         {
             if (!binarySearchTree)
             {
-                TreeConsoleService::PrintError("Сначала создайте дерево");
+                PrintError("Сначала создайте дерево");
                 break;
             }
 
@@ -175,7 +181,7 @@ void BinarySearchTreeMenu()
             }
             else
             {
-                TreeConsoleService::PrintTreeIsEmpty();
+                PrintTreeIsEmpty();
             }
             break;
         }
@@ -184,14 +190,14 @@ void BinarySearchTreeMenu()
         {
             if (!binarySearchTree)
             {
-                TreeConsoleService::PrintError("Сначала создайте дерево");
+                PrintError("Сначала создайте дерево");
                 break;
             }
 
             int elementCount = GetValidatedInput("Введите количество элементов для генерации (1-7): ");
             if (elementCount < 1 || elementCount > maxBinaryTreeSize)
             {
-                TreeConsoleService::PrintError("Количество элементов должно быть от 1 до " + to_string(maxBinaryTreeSize));
+                PrintError("Количество элементов должно быть от 1 до " + to_string(maxBinaryTreeSize));
                 break;
             }
 
@@ -200,13 +206,12 @@ void BinarySearchTreeMenu()
 
             if (binarySearchTree->Size == oldSize)
             {
-                TreeConsoleService::PrintError("Не удалось сгенерировать дерево. Возможно, достигнут максимальный размер (" +
-                    to_string(maxBinaryTreeSize) + " элементов) или недостаточно уникальных ключей");
+                PrintError("Не удалось сгенерировать дерево.");
             }
             else
             {
-                TreeConsoleService::PrintTreeGenerated(binarySearchTree->Size - oldSize, "бинарное дерево поиска");
-                TreeConsoleService::PrintBinarySearchTreeState(binarySearchTree);
+                PrintTreeGenerated(binarySearchTree->Size - oldSize, "бинарное дерево поиска");
+                PrintBinarySearchTreeState(binarySearchTree);
             }
             break;
         }
@@ -215,41 +220,39 @@ void BinarySearchTreeMenu()
         {
             if (!binarySearchTree)
             {
-                TreeConsoleService::PrintError("Сначала создайте дерево");
+                PrintError("Сначала создайте дерево");
                 break;
             }
 
-            int key = TreeConsoleService::GetKeyInput("Введите ключ для перезаписи: ");
+            int key = GetKeyInput("Введите ключ для перезаписи: ");
             if (!ValidateKey(key))
             {
-                TreeConsoleService::PrintError("Ключ должен быть от " + to_string(minKeyValue) + " до " + to_string(maxKeyValue));
+                PrintError("Ключ должен быть от " + to_string(minKeyValue) + " до " + to_string(maxKeyValue));
                 break;
             }
 
-            // Проверяем существование ключа
             string existingValue = BinarySearchTreeFind(binarySearchTree, key);
             if (existingValue.empty())
             {
-                TreeConsoleService::PrintError("Ключ не существует");
+                PrintError("Ключ не существует");
                 break;
             }
 
-            string newValue = TreeConsoleService::GetValueInput();
+            string newValue = GetValueInput();
             if (!ValidateValue(newValue))
             {
-                TreeConsoleService::PrintError("Значение слишком длинное. Максимальная длина: " + to_string(maxStringLength) + " символов");
+                PrintError("Значение слишком длинное. Максимальная длина: " + to_string(maxStringLength) + " символов");
                 break;
             }
 
-            // Удаляем старый элемент и добавляем с новым значением
             if (BinarySearchTreeRemove(binarySearchTree, key) && BinarySearchTreeAdd(binarySearchTree, key, newValue))
             {
-                TreeConsoleService::PrintSuccess("Значение ключа перезаписано");
-                TreeConsoleService::PrintBinarySearchTreeState(binarySearchTree);
+                PrintSuccess("Значение ключа перезаписано");
+                PrintBinarySearchTreeState(binarySearchTree);
             }
             else
             {
-                TreeConsoleService::PrintError("Ошибка при перезаписи значения");
+                PrintError("Ошибка при перезаписи значения");
             }
             break;
         }

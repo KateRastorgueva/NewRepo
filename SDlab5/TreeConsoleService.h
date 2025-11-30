@@ -1,63 +1,126 @@
 #pragma once
 #include <string>
-#include <vector>
 #include "BinarySearchTree.h"
 #include "CartesianTree.h"
+#include "TreeVisualizer.h"
 
 using namespace std;
 
-class TreeConsoleService
-{
-public:
-    struct CellDisplay
-    {
-        string valstr;
-        bool present;
+/// <summary>
+/// Выводит заголовок в консоль
+/// </summary>
+/// <param name="title">Текст заголовка</param>
+void PrintTitle(const string& title);
 
-        CellDisplay() : present(false) {}
-        CellDisplay(string valstr) : valstr(valstr), present(true) {}
-    };
+/// <summary>
+/// Выводит состояние бинарного дерева поиска
+/// </summary>
+/// <param name="tree">Указатель на дерево</param>
+void PrintBinarySearchTreeState(const BinarySearchTree* tree);
 
-    using DisplayRow = vector<CellDisplay>;
-    using DisplayRows = vector<DisplayRow>;
+/// <summary>
+/// Выводит состояние декартова дерева
+/// </summary>
+/// <param name="tree">Указатель на дерево</param>
+void PrintCartesianTreeState(const CartesianTree* tree);
 
-    // Основные публичные методы
-    static void PrintTitle(const string& title);
-    static void PrintBinarySearchTreeState(const BinarySearchTree* tree);
-    static void PrintCartesianTreeState(const CartesianTree* tree);
-    static void DisplayBinarySearchTree(const BinarySearchTreeNode* root);
-    static void DisplayCartesianTree(const CartesianTreeNode* root);
-    static int GetPriorityInput();
+/// <summary>
+/// Получает приоритет от пользователя
+/// </summary>
+/// <returns>Введенный приоритет</returns>
+int GetPriorityInput();
 
-    // Методы для вывода сообщений
-    static void PrintError(const string& message);
-    static void PrintSuccess(const string& message);
-    static void PrintInfo(const string& message);
-    static void PrintWarning(const string& message);
-    static string GetValueInput();
-    static int GetKeyInput(const string& value = "Введите ключ: ");
+/// <summary>
+/// Выводит сообщение об ошибке
+/// </summary>
+/// <param name="message">Текст сообщения</param>
+void PrintError(const string& message);
 
-    static void PrintTreeCreated(const string& treeType);
-    static void PrintTreeDeleted(const string& treeType);
-    static void PrintElementAdded(const string& method = "");
-    static void PrintElementRemoved(const string& method = "");
-    static void PrintElementFound(const string& value);
-    static void PrintElementNotFound();
-    static void PrintTreeIsEmpty();
-    static void PrintKeyAlreadyExists();
-    static void PrintMaxSizeReached(int maxSize);
-    static void PrintTreeGenerated(int elementsAdded, const string& treeType);
+/// <summary>
+/// Выводит сообщение об успехе
+/// </summary>
+/// <param name="message">Текст сообщения</param>
+void PrintSuccess(const string& message);
 
-private:
-    // Вспомогательные функции для работы с деревьями
-    template<typename TreeNode>
-    static int GetTreeMaxDepth(const TreeNode* node);
+/// <summary>
+/// Выводит информационное сообщение
+/// </summary>
+/// <param name="message">Текст сообщения</param>
+void PrintInfo(const string& message);
 
-    static DisplayRows GetBinarySearchTreeRowDisplay(const BinarySearchTreeNode* root);
-    static DisplayRows GetCartesianTreeRowDisplay(const CartesianTreeNode* root);
-    static vector<string> BinarySearchTreeRowFormatter(const DisplayRows& rowsDisplay);
-    static vector<string> CartesianTreeRowFormatter(const DisplayRows& rowsDisplay);
-    static void TrimRowsLeft(vector<string>& rows);
-    static void PrintFormattedBinarySearchTree(const BinarySearchTreeNode* root);
-    static void PrintFormattedCartesianTree(const CartesianTreeNode* root);
-};
+/// <summary>
+/// Выводит предупреждение
+/// </summary>
+/// <param name="message">Текст сообщения</param>
+void PrintWarning(const string& message);
+
+/// <summary>
+/// Получает значение от пользователя
+/// </summary>
+/// <returns>Введенное значение</returns>
+string GetValueInput();
+
+/// <summary>
+/// Получает ключ от пользователя
+/// </summary>
+/// <param name="value">Сообщение для ввода</param>
+/// <returns>Введенный ключ</returns>
+int GetKeyInput(const string& value = "Введите ключ: ");
+
+/// <summary>
+/// Выводит сообщение о создании дерева
+/// </summary>
+/// <param name="treeType">Тип дерева</param>
+void PrintTreeCreated(const string& treeType);
+
+/// <summary>
+/// Выводит сообщение об удалении дерева
+/// </summary>
+/// <param name="treeType">Тип дерева</param>
+void PrintTreeDeleted(const string& treeType);
+
+/// <summary>
+/// Выводит сообщение о добавлении элемента
+/// </summary>
+/// <param name="method">Метод добавления</param>
+void PrintElementAdded(const string& method = "");
+
+/// <summary>
+/// Выводит сообщение об удалении элемента
+/// </summary>
+/// <param name="method">Метод удаления</param>
+void PrintElementRemoved(const string& method = "");
+
+/// <summary>
+/// Выводит сообщение о найденном элементе
+/// </summary>
+/// <param name="value">Значение элемента</param>
+void PrintElementFound(const string& value);
+
+/// <summary>
+/// Выводит сообщение о ненайденном элементе
+/// </summary>
+void PrintElementNotFound();
+
+/// <summary>
+/// Выводит сообщение о пустом дереве
+/// </summary>
+void PrintTreeIsEmpty();
+
+/// <summary>
+/// Выводит сообщение о существующем ключе
+/// </summary>
+void PrintKeyAlreadyExists();
+
+/// <summary>
+/// Выводит сообщение о достижении максимального размера
+/// </summary>
+/// <param name="maxSize">Максимальный размер</param>
+void PrintMaxSizeReached(int maxSize);
+
+/// <summary>
+/// Выводит сообщение о сгенерированном дереве
+/// </summary>
+/// <param name="elementsAdded">Количество добавленных элементов</param>
+/// <param name="treeType">Тип дерева</param>
+void PrintTreeGenerated(int elementsAdded, const string& treeType);

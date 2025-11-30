@@ -121,6 +121,7 @@ int GetValueForAddition()
 {
     return GetValidatedInput("Введите значение для добавления: ");
 }
+
 /// <summary>
 /// Проверяет корректность значения вместимости
 /// </summary>
@@ -135,6 +136,7 @@ bool ValidateCapacity(int capacity)
     }
     return true;
 }
+
 /// <summary>
 /// Универсальная проверка длины строки
 /// </summary>
@@ -159,30 +161,33 @@ bool ValidateStringLength(const string& str, const string& fieldName, int maxLen
 
     return true;
 }
+
+/// <summary>
+/// Проверяет корректность ключа
+/// </summary>
+/// <param name="key">Ключ для проверки</param>
+/// <returns>true если ключ в допустимом диапазоне, иначе false</returns>
 bool ValidateKey(int key)
 {
     return key >= minKeyValue && key <= maxKeyValue;
 }
 
+/// <summary>
+/// Проверяет корректность значения
+/// </summary>
+/// <param name="value">Значение для проверки</param>
+/// <returns>true если длина значения допустима, иначе false</returns>
 bool ValidateValue(const string& value)
 {
     return value.length() <= maxStringLength;
 }
 
+/// <summary>
+/// Проверяет корректность приоритета
+/// </summary>
+/// <param name="priority">Приоритет для проверки</param>
+/// <returns>true если приоритет в допустимом диапазоне, иначе false</returns>
 bool ValidatePriority(int priority)
 {
     return priority >= 1 && priority <= maxPriorityValue;
-}
-
-string TrimValue(const string& value)
-{
-    if (value.length() <= maxStringLength) {
-        return value;
-    }
-
-    string result;
-    for (int i = 0; i < maxStringLength; ++i) {
-        result += value[i];
-    }
-    return result;
 }

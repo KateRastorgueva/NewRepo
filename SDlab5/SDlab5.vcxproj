@@ -137,6 +137,7 @@
     <ClCompile Include="CartesianTree.cpp" />
     <ClCompile Include="TreeConsoleService.cpp" />
     <ClCompile Include="TreeGenerator.cpp" />
+    <ClCompile Include="TreeVisualizer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BinarySearchTree.h" />
@@ -146,6 +147,7 @@
     <ClInclude Include="Constants.h" />
     <ClInclude Include="TreeConsoleService.h" />
     <ClInclude Include="TreeGenerator.h" />
+    <ClInclude Include="TreeVisualizer.h" />
     <ClInclude Include="Validator.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

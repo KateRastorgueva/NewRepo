@@ -4,18 +4,45 @@
 #include <iostream>
 
 using namespace std;
+
+/// <summary>
+/// Проверяет, является ли декартово дерево полным
+/// </summary>
+/// <param name="tree">Указатель на декартово дерево</param>
+/// <returns>true если дерево полное, иначе false</returns>
 bool IsTreeFull(const CartesianTree* tree)
 {
     return tree->Size >= maxCartesianTreeSize;
 }
+
+/// <summary>
+/// Проверяет, является ли декартово дерево пустым
+/// </summary>
+/// <param name="tree">Указатель на декартово дерево</param>
+/// <returns>true если дерево пустое, иначе false</returns>
 bool IsTreeEmpty(const CartesianTree* tree)
 {
     return tree == nullptr || tree->Root == nullptr;
 }
+
+/// <summary>
+/// Проверяет существование ключа в декартовом дереве
+/// </summary>
+/// <param name="tree">Указатель на декартово дерево</param>
+/// <param name="key">Ключ для проверки</param>
+/// <returns>true если ключ существует, иначе false</returns>
 bool KeyExists(const CartesianTree* tree, int key)
 {
     return !CartesianTreeFind(tree, key).empty();
 }
+
+/// <summary>
+/// Создает новый узел декартова дерева
+/// </summary>
+/// <param name="key">Ключ узла</param>
+/// <param name="value">Значение узла</param>
+/// <param name="priority">Приоритет узла</param>
+/// <returns>Указатель на созданный узел</returns>
 CartesianTreeNode* CreateCartesianTreeNode(int key, const string& value, int priority)
 {
     CartesianTreeNode* node = new CartesianTreeNode;
@@ -27,6 +54,13 @@ CartesianTreeNode* CreateCartesianTreeNode(int key, const string& value, int pri
     return node;
 }
 
+/// <summary>
+/// Разделяет декартово дерево по ключу
+/// </summary>
+/// <param name="tree">Дерево для разделения</param>
+/// <param name="key">Ключ разделения</param>
+/// <param name="left">Левый результат разделения</param>
+/// <param name="right">Правый результат разделения</param>
 void CartesianTreeSplit(CartesianTreeNode* tree, int key, CartesianTreeNode*& left, CartesianTreeNode*& right)
 {
     if (!tree)
@@ -50,6 +84,12 @@ void CartesianTreeSplit(CartesianTreeNode* tree, int key, CartesianTreeNode*& le
     }
 }
 
+/// <summary>
+/// Сливает два декартовых дерева
+/// </summary>
+/// <param name="left">Левое дерево</param>
+/// <param name="right">Правое дерево</param>
+/// <returns>Указатель на объединенное дерево</returns>
 CartesianTreeNode* CartesianTreeMerge(CartesianTreeNode* left, CartesianTreeNode* right)
 {
     if (!left)
@@ -66,12 +106,30 @@ CartesianTreeNode* CartesianTreeMerge(CartesianTreeNode* left, CartesianTreeNode
         left->Right = CartesianTreeMerge(left->Right, right);
         return left;
     }
-    else
+    else if (left->Priority < right->Priority)
     {
         right->Left = CartesianTreeMerge(left, right->Left);
         return right;
     }
+    else
+    {
+        if (left->Key < right->Key)
+        {
+            left->Right = CartesianTreeMerge(left->Right, right);
+            return left;
+        }
+        else
+        {
+            right->Left = CartesianTreeMerge(left, right->Left);
+            return right;
+        }
+    }
 }
+
+/// <summary>
+/// Рекурсивно удаляет все узлы декартова дерева
+/// </summary>
+/// <param name="node">Корневой узел для удаления</param>
 void DeleteCartesianTreeNodes(CartesianTreeNode* node)
 {
     if (!node)
@@ -84,6 +142,10 @@ void DeleteCartesianTreeNodes(CartesianTreeNode* node)
     delete node;
 }
 
+/// <summary>
+/// Создает пустое декартово дерево
+/// </summary>
+/// <returns>Указатель на созданное дерево</returns>
 CartesianTree* CreateCartesianTree()
 {
     CartesianTree* tree = new CartesianTree;
@@ -92,6 +154,14 @@ CartesianTree* CreateCartesianTree()
     return tree;
 }
 
+/// <summary>
+/// Добавляет элемент в декартово дерево (неоптимизированный метод)
+/// </summary>
+/// <param name="tree">Дерево для добавления</param>
+/// <param name="key">Ключ добавляемого элемента</param>
+/// <param name="value">Значение добавляемого элемента</param>
+/// <param name="priority">Приоритет добавляемого элемента</param>
+/// <returns>true если элемент добавлен, false если ключ уже существует</returns>
 bool CartesianTreeAddUnoptimized(CartesianTree* tree, int key, const string& value, int priority)
 {
     if (!tree)
@@ -99,7 +169,8 @@ bool CartesianTreeAddUnoptimized(CartesianTree* tree, int key, const string& val
         return false;
     }
 
-    if (IsTreeFull(tree)) {
+    if (IsTreeFull(tree))
+    {
         return false;
     }
 
@@ -121,6 +192,14 @@ bool CartesianTreeAddUnoptimized(CartesianTree* tree, int key, const string& val
     return true;
 }
 
+/// <summary>
+/// Добавляет элемент в декартово дерево (оптимизированный метод)
+/// </summary>
+/// <param name="tree">Дерево для добавления</param>
+/// <param name="key">Ключ добавляемого элемента</param>
+/// <param name="value">Значение добавляемого элемента</param>
+/// <param name="priority">Приоритет добавляемого элемента</param>
+/// <returns>true если элемент добавлен, false если ключ уже существует</returns>
 bool CartesianTreeAddOptimized(CartesianTree* tree, int key, const string& value, int priority)
 {
     if (!tree)
@@ -186,6 +265,13 @@ bool CartesianTreeAddOptimized(CartesianTree* tree, int key, const string& value
     tree->Size++;
     return true;
 }
+
+/// <summary>
+/// Удаляет элемент из декартова дерева (неоптимизированный метод)
+/// </summary>
+/// <param name="tree">Дерево для удаления</param>
+/// <param name="key">Ключ удаляемого элемента</param>
+/// <returns>true если элемент удален, false если элемент не найден</returns>
 bool CartesianTreeRemoveUnoptimized(CartesianTree* tree, int key)
 {
     if (IsTreeEmpty(tree))
@@ -215,6 +301,12 @@ bool CartesianTreeRemoveUnoptimized(CartesianTree* tree, int key)
     }
 }
 
+/// <summary>
+/// Удаляет элемент из декартова дерева (оптимизированный метод)
+/// </summary>
+/// <param name="tree">Дерево для удаления</param>
+/// <param name="key">Ключ удаляемого элемента</param>
+/// <returns>true если элемент удален, false если элемент не найден</returns>
 bool CartesianTreeRemoveOptimized(CartesianTree* tree, int key)
 {
     if (IsTreeEmpty(tree))
@@ -251,6 +343,12 @@ bool CartesianTreeRemoveOptimized(CartesianTree* tree, int key)
     return true;
 }
 
+/// <summary>
+/// Находит элемент в декартовом дереве
+/// </summary>
+/// <param name="tree">Дерево для поиска</param>
+/// <param name="key">Ключ для поиска</param>
+/// <returns>Значение элемента или пустая строка если элемент не найден</returns>
 string CartesianTreeFind(const CartesianTree* tree, int key)
 {
     if (!tree)
@@ -278,6 +376,11 @@ string CartesianTreeFind(const CartesianTree* tree, int key)
 
     return "";
 }
+
+/// <summary>
+/// Удаляет декартово дерево и освобождает память
+/// </summary>
+/// <param name="tree">Дерево для удаления</param>
 void DeleteCartesianTree(CartesianTree* tree)
 {
     if (!tree)
@@ -289,6 +392,13 @@ void DeleteCartesianTree(CartesianTree* tree)
     tree->Size = 0;
     delete tree;
 }
+
+/// <summary>
+/// Получает приоритет элемента по ключу
+/// </summary>
+/// <param name="tree">Дерево для поиска</param>
+/// <param name="key">Ключ элемента</param>
+/// <returns>Приоритет элемента или -1 если элемент не найден</returns>
 int CartesianTreeGetPriority(const CartesianTree* tree, int key)
 {
     if (!tree)

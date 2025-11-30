@@ -7,12 +7,18 @@
 
 using namespace std;
 
+/// <summary>
+/// Устанавливает русскую кодировку для консоли
+/// </summary>
 void SetRussianEncoding()
 {
     SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
 }
 
+/// <summary>
+/// Отображает главное меню программы
+/// </summary>
 void ShowMainMenu()
 {
     cout << "\nГЛАВНОЕ МЕНЮ ДЕРЕВЬЕВ ПОИСКА" << endl;
@@ -21,6 +27,10 @@ void ShowMainMenu()
     cout << "2 - Работа с декартовым деревом" << endl;
 }
 
+/// <summary>
+/// Главная функция программы
+/// </summary>
+/// <returns>Код завершения программы</returns>
 int main()
 {
     SetRussianEncoding();
@@ -50,7 +60,7 @@ int main()
         {
             CartesianTreeMenu();
             break;
-        } 
+        }
         }
 
     } while (choice != 0);

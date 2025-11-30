@@ -8,9 +8,24 @@ using namespace std;
 /// </summary>
 struct BinarySearchTreeNode
 {
+    /// <summary>
+    /// Ключ узла для поиска и упорядочивания
+    /// </summary>
     int Key;
+
+    /// <summary>
+    /// Значение данных, хранящееся в узле
+    /// </summary>
     string Value;
+
+    /// <summary>
+    /// Указатель на левого потомка (меньшие ключи)
+    /// </summary>
     BinarySearchTreeNode* Left;
+
+    /// <summary>
+    /// Указатель на правого потомка (большие ключи)
+    /// </summary>
     BinarySearchTreeNode* Right;
 };
 
@@ -19,9 +34,37 @@ struct BinarySearchTreeNode
 /// </summary>
 struct BinarySearchTree
 {
+    /// <summary>
+    /// Указатель на корневой узел дерева
+    /// </summary>
     BinarySearchTreeNode* Root;
+
+    /// <summary>
+    /// Текущее количество элементов в дереве
+    /// </summary>
     int Size;
 };
+
+/// <summary>
+/// Проверяет, является ли дерево пустым
+/// </summary>
+/// <param name="tree">Указатель на дерево</param>
+/// <returns>true если дерево пустое, иначе false</returns>
+bool IsTreeEmpty(const BinarySearchTree* tree);
+
+/// <summary>
+/// Проверяет, является ли дерево полным
+/// </summary>
+/// <param name="tree">Указатель на дерево</param>
+/// <returns>true если дерево полное, иначе false</returns>
+bool IsTreeFull(const BinarySearchTree* tree);
+
+/// <summary>
+/// Рекурсивно удаляет все узлы дерева
+/// </summary>
+/// <param name="node">Корневой узел для удаления</param>
+void DeleteBinarySearchTreeNodes(BinarySearchTreeNode* node);
+
 /// <summary>
 /// Создает пустое бинарное дерево поиска
 /// </summary>
@@ -72,4 +115,3 @@ string BinarySearchTreeFindMax(const BinarySearchTree* tree);
 /// </summary>
 /// <param name="tree">Дерево для удаления</param>
 void DeleteBinarySearchTree(BinarySearchTree* tree);
-void DeleteBinarySearchTreeNodes(BinarySearchTreeNode* node);

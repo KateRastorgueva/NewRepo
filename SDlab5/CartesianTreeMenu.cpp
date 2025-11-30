@@ -3,9 +3,13 @@
 #include "TreeConsoleService.h"
 #include "Validator.h"
 #include "TreeGenerator.h"
+#include "Constants.h"
 
 using namespace std;
 
+/// <summary>
+/// Отображает меню операций с декартовым деревом
+/// </summary>
 void ShowCartesianTreeMenu()
 {
     cout << "\nМЕНЮ ДЕКАРТОВА ДЕРЕВА" << endl;
@@ -21,6 +25,9 @@ void ShowCartesianTreeMenu()
     cout << "9 - Перезаписать приоритет ключа" << endl;
 }
 
+/// <summary>
+/// Основная функция меню декартова дерева
+/// </summary>
 void CartesianTreeMenu()
 {
     CartesianTree* cartesianTree = nullptr;
@@ -39,7 +46,7 @@ void CartesianTreeMenu()
             {
                 DeleteCartesianTree(cartesianTree);
                 cartesianTree = nullptr;
-                TreeConsoleService::PrintTreeDeleted("Декартово дерево");
+                PrintTreeDeleted("Декартово дерево");
             }
             break;
         }
@@ -48,12 +55,12 @@ void CartesianTreeMenu()
         {
             if (cartesianTree != nullptr)
             {
-                TreeConsoleService::PrintError("Дерево уже создано");
+                PrintError("Дерево уже создано");
                 break;
             }
             cartesianTree = CreateCartesianTree();
-            TreeConsoleService::PrintTreeCreated("Декартово дерево");
-            TreeConsoleService::PrintCartesianTreeState(cartesianTree);
+            PrintTreeCreated("Декартово дерево");
+            PrintCartesianTreeState(cartesianTree);
             break;
         }
 
@@ -61,39 +68,52 @@ void CartesianTreeMenu()
         {
             if (!cartesianTree)
             {
-                TreeConsoleService::PrintError("Сначала создайте дерево");
+                PrintError("Сначала создайте дерево");
                 break;
             }
 
-            int key = TreeConsoleService::GetKeyInput("Введите ключ: ");
+            if (cartesianTree->Size >= maxCartesianTreeSize)
+            {
+                PrintMaxSizeReached(maxCartesianTreeSize);
+                break;
+            }
+
+            int key = GetKeyInput("Введите ключ: ");
             if (!ValidateKey(key))
             {
-                TreeConsoleService::PrintError("Ключ должен быть от " + to_string(minKeyValue) + " до " + to_string(maxKeyValue));
+                PrintError("Ключ должен быть от " + to_string(minKeyValue) + " до " + to_string(maxKeyValue));
                 break;
             }
 
-            string value = TreeConsoleService::GetValueInput();
+            string value = GetValueInput();
             if (!ValidateValue(value))
             {
-                TreeConsoleService::PrintError("Значение слишком длинное. Максимальная длина: " + to_string(maxStringLength) + " символов");
+                PrintError("Значение слишком длинное. Максимальная длина: " + to_string(maxStringLength) + " символов");
                 break;
             }
 
-            int priority = TreeConsoleService::GetPriorityInput();
+            int priority = GetPriorityInput();
             if (!ValidatePriority(priority))
             {
-                TreeConsoleService::PrintError("Приоритет должен быть от 1 до " + to_string(maxPriorityValue));
+                PrintError("Приоритет должен быть от 1 до " + to_string(maxPriorityValue));
                 break;
             }
 
             if (CartesianTreeAddUnoptimized(cartesianTree, key, value, priority))
             {
-                TreeConsoleService::PrintElementAdded("неоптимизированный метод");
-                TreeConsoleService::PrintCartesianTreeState(cartesianTree);
+                PrintElementAdded("неоптимизированный метод");
+                PrintCartesianTreeState(cartesianTree);
             }
             else
             {
-                TreeConsoleService::PrintKeyAlreadyExists();
+                if (cartesianTree->Size >= maxCartesianTreeSize)
+                {
+                    PrintMaxSizeReached(maxCartesianTreeSize);
+                }
+                else
+                {
+                    PrintKeyAlreadyExists();
+                }
             }
             break;
         }
@@ -102,39 +122,52 @@ void CartesianTreeMenu()
         {
             if (!cartesianTree)
             {
-                TreeConsoleService::PrintError("Сначала создайте дерево");
+                PrintError("Сначала создайте дерево");
                 break;
             }
 
-            int key = TreeConsoleService::GetKeyInput("Введите ключ: ");
+            if (cartesianTree->Size >= maxCartesianTreeSize)
+            {
+                PrintMaxSizeReached(maxCartesianTreeSize);
+                break;
+            }
+
+            int key = GetKeyInput("Введите ключ: ");
             if (!ValidateKey(key))
             {
-                TreeConsoleService::PrintError("Ключ должен быть от " + to_string(minKeyValue) + " до " + to_string(maxKeyValue));
+                PrintError("Ключ должен быть от " + to_string(minKeyValue) + " до " + to_string(maxKeyValue));
                 break;
             }
 
-            string value = TreeConsoleService::GetValueInput();
+            string value = GetValueInput();
             if (!ValidateValue(value))
             {
-                TreeConsoleService::PrintError("Значение слишком длинное. Максимальная длина: " + to_string(maxStringLength) + " символов");
+                PrintError("Значение слишком длинное. Максимальная длина: " + to_string(maxStringLength) + " символов");
                 break;
             }
 
-            int priority = TreeConsoleService::GetPriorityInput();
+            int priority = GetPriorityInput();
             if (!ValidatePriority(priority))
             {
-                TreeConsoleService::PrintError("Приоритет должен быть от 1 до " + to_string(maxPriorityValue));
+                PrintError("Приоритет должен быть от 1 до " + to_string(maxPriorityValue));
                 break;
             }
 
             if (CartesianTreeAddOptimized(cartesianTree, key, value, priority))
             {
-                TreeConsoleService::PrintElementAdded("оптимизированный метод");
-                TreeConsoleService::PrintCartesianTreeState(cartesianTree);
+                PrintElementAdded("оптимизированный метод");
+                PrintCartesianTreeState(cartesianTree);
             }
             else
             {
-                TreeConsoleService::PrintError("при добавлении");
+                if (cartesianTree->Size >= maxCartesianTreeSize)
+                {
+                    PrintMaxSizeReached(maxCartesianTreeSize);
+                }
+                else
+                {
+                    PrintError("Ключ уже существует");
+                }
             }
             break;
         }
@@ -143,19 +176,19 @@ void CartesianTreeMenu()
         {
             if (!cartesianTree)
             {
-                TreeConsoleService::PrintError("Сначала создайте дерево");
+                PrintError("Сначала создайте дерево");
                 break;
             }
 
-            int key = TreeConsoleService::GetKeyInput("Введите ключ для удаления: ");
+            int key = GetKeyInput("Введите ключ для удаления: ");
             if (CartesianTreeRemoveUnoptimized(cartesianTree, key))
             {
-                TreeConsoleService::PrintElementRemoved("неоптимизированный метод");
-                TreeConsoleService::PrintCartesianTreeState(cartesianTree);
+                PrintElementRemoved("неоптимизированный метод");
+                PrintCartesianTreeState(cartesianTree);
             }
             else
             {
-                TreeConsoleService::PrintElementNotFound();
+                PrintElementNotFound();
             }
             break;
         }
@@ -164,19 +197,19 @@ void CartesianTreeMenu()
         {
             if (!cartesianTree)
             {
-                TreeConsoleService::PrintError("Сначала создайте дерево");
+                PrintError("Сначала создайте дерево");
                 break;
             }
 
-            int key = TreeConsoleService::GetKeyInput("Введите ключ для удаления: ");
+            int key = GetKeyInput("Введите ключ для удаления: ");
             if (CartesianTreeRemoveOptimized(cartesianTree, key))
             {
-                TreeConsoleService::PrintElementRemoved("оптимизированный метод");
-                TreeConsoleService::PrintCartesianTreeState(cartesianTree);
+                PrintElementRemoved("оптимизированный метод");
+                PrintCartesianTreeState(cartesianTree);
             }
             else
             {
-                TreeConsoleService::PrintElementNotFound();
+                PrintElementNotFound();
             }
             break;
         }
@@ -185,19 +218,19 @@ void CartesianTreeMenu()
         {
             if (!cartesianTree)
             {
-                TreeConsoleService::PrintError("Сначала создайте дерево");
+                PrintError("Сначала создайте дерево");
                 break;
             }
 
-            int key = TreeConsoleService::GetKeyInput("Введите ключ для поиска: ");
+            int key = GetKeyInput("Введите ключ для поиска: ");
             string result = CartesianTreeFind(cartesianTree, key);
             if (!result.empty())
             {
-                TreeConsoleService::PrintElementFound(result);
+                PrintElementFound(result);
             }
             else
             {
-                TreeConsoleService::PrintElementNotFound();
+                PrintElementNotFound();
             }
             break;
         }
@@ -206,14 +239,14 @@ void CartesianTreeMenu()
         {
             if (!cartesianTree)
             {
-                TreeConsoleService::PrintError("Сначала создайте дерево");
+                PrintError("Сначала создайте дерево");
                 break;
             }
 
-            int elementCount = GetValidatedInput("Введите количество элементов для генерации (1-6): ");
+            int elementCount = GetValidatedInput("Введите количество элементов для генерации (1-" + to_string(maxCartesianTreeSize) + "): ");
             if (elementCount < 1 || elementCount > maxCartesianTreeSize)
             {
-                TreeConsoleService::PrintError("Количество элементов должно быть от 1 до " + to_string(maxCartesianTreeSize));
+                PrintError("Количество элементов должно быть от 1 до " + to_string(maxCartesianTreeSize));
                 break;
             }
 
@@ -222,13 +255,12 @@ void CartesianTreeMenu()
 
             if (cartesianTree->Size == oldSize)
             {
-                TreeConsoleService::PrintError("Не удалось сгенерировать дерево. Возможно, достигнут максимальный размер (" +
-                    to_string(maxCartesianTreeSize) + " элементов) или недостаточно уникальных ключей");
+                PrintError("Не удалось сгенерировать дерево.");
             }
             else
             {
-                TreeConsoleService::PrintTreeGenerated(cartesianTree->Size - oldSize, "декартово дерево");
-                TreeConsoleService::PrintCartesianTreeState(cartesianTree);
+                PrintTreeGenerated(cartesianTree->Size - oldSize, "декартово дерево");
+                PrintCartesianTreeState(cartesianTree);
             }
             break;
         }
@@ -237,42 +269,40 @@ void CartesianTreeMenu()
         {
             if (!cartesianTree)
             {
-                TreeConsoleService::PrintError("Сначала создайте дерево");
+                PrintError("Сначала создайте дерево");
                 break;
             }
 
-            int key = TreeConsoleService::GetKeyInput("Введите ключ для перезаписи значения: ");
+            int key = GetKeyInput("Введите ключ для перезаписи значения: ");
             if (!ValidateKey(key))
             {
-                TreeConsoleService::PrintError("Ключ должен быть от " + to_string(minKeyValue) + " до " + to_string(maxKeyValue));
+                PrintError("Ключ должен быть от " + to_string(minKeyValue) + " до " + to_string(maxKeyValue));
                 break;
             }
 
-            // Проверяем существование ключа и получаем оригинальный приоритет
             int originalPriority = CartesianTreeGetPriority(cartesianTree, key);
             if (originalPriority == -1)
             {
-                TreeConsoleService::PrintError("Ключ не существует");
+                PrintError("Ключ не существует");
                 break;
             }
 
-            string newValue = TreeConsoleService::GetValueInput();
+            string newValue = GetValueInput();
             if (!ValidateValue(newValue))
             {
-                TreeConsoleService::PrintError("Значение слишком длинное. Максимальная длина: " + to_string(maxStringLength) + " символов");
+                PrintError("Значение слишком длинное. Максимальная длина: " + to_string(maxStringLength) + " символов");
                 break;
             }
 
-            // Удаляем и добавляем с оригинальным приоритетом
             if (CartesianTreeRemoveOptimized(cartesianTree, key) &&
                 CartesianTreeAddOptimized(cartesianTree, key, newValue, originalPriority))
             {
-                TreeConsoleService::PrintSuccess("Значение ключа перезаписано");
-                TreeConsoleService::PrintCartesianTreeState(cartesianTree);
+                PrintSuccess("Значение ключа перезаписано");
+                PrintCartesianTreeState(cartesianTree);
             }
             else
             {
-                TreeConsoleService::PrintError("Ошибка при перезаписи значения");
+                PrintError("Ошибка при перезаписи значения");
             }
             break;
         }
@@ -281,42 +311,40 @@ void CartesianTreeMenu()
         {
             if (!cartesianTree)
             {
-                TreeConsoleService::PrintError("Сначала создайте дерево");
+                PrintError("Сначала создайте дерево");
                 break;
             }
 
-            int key = TreeConsoleService::GetKeyInput("Введите ключ для перезаписи приоритета: ");
+            int key = GetKeyInput("Введите ключ для перезаписи приоритета: ");
             if (!ValidateKey(key))
             {
-                TreeConsoleService::PrintError("Ключ должен быть от " + to_string(minKeyValue) + " до " + to_string(maxKeyValue));
+                PrintError("Ключ должен быть от " + to_string(minKeyValue) + " до " + to_string(maxKeyValue));
                 break;
             }
 
-            // Проверяем существование ключа и получаем оригинальное значение
             string originalValue = CartesianTreeFind(cartesianTree, key);
             if (originalValue.empty())
             {
-                TreeConsoleService::PrintError("Ключ не существует");
+                PrintError("Ключ не существует");
                 break;
             }
 
-            int newPriority = TreeConsoleService::GetPriorityInput();
+            int newPriority = GetPriorityInput();
             if (!ValidatePriority(newPriority))
             {
-                TreeConsoleService::PrintError("Приоритет должен быть от 1 до " + to_string(maxPriorityValue));
+                PrintError("Приоритет должен быть от 1 до " + to_string(maxPriorityValue));
                 break;
             }
 
-            // Удаляем и добавляем с оригинальным значением
             if (CartesianTreeRemoveOptimized(cartesianTree, key) &&
                 CartesianTreeAddOptimized(cartesianTree, key, originalValue, newPriority))
             {
-                TreeConsoleService::PrintSuccess("Приоритет ключа перезаписан");
-                TreeConsoleService::PrintCartesianTreeState(cartesianTree);
+                PrintSuccess("Приоритет ключа перезаписан");
+                PrintCartesianTreeState(cartesianTree);
             }
             else
             {
-                TreeConsoleService::PrintError("Ошибка при перезаписи приоритета");
+                PrintError("Ошибка при перезаписи приоритета");
             }
             break;
         }
