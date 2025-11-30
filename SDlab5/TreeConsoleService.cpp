@@ -1,4 +1,5 @@
 ﻿#include "TreeConsoleService.h"
+#include "Validator.h"
 #include <iostream>
 #include <queue>
 #include <vector>
@@ -11,12 +12,32 @@ using namespace std;
 void TreeConsoleService::PrintTitle(const string& title)
 {
     cout << endl;
-    cout << "=== " << title << " ===" << endl;
+    cout << "    " << title << endl;
+}
+
+int TreeConsoleService::GetKeyInput(const string& value)
+{
+    cout << value;
+    return GetValidatedInput("");
+}
+
+string TreeConsoleService::GetValueInput()
+{
+    string value;
+    cout << "Введите значение: ";
+    getline(cin, value);
+    return value;
+}
+
+int TreeConsoleService::GetPriorityInput()
+{
+    cout << "Введите приоритет: ";
+    return GetValidatedInput("");
 }
 
 void TreeConsoleService::PrintBinarySearchTreeState(const BinarySearchTree* tree)
 {
-    if (tree == nullptr)
+    if (!tree)
     {
         PrintError("Дерево не создано");
         return;
@@ -24,18 +45,18 @@ void TreeConsoleService::PrintBinarySearchTreeState(const BinarySearchTree* tree
 
     PrintTitle("СОСТОЯНИЕ БИНАРНОГО ДЕРЕВА ПОИСКА");
 
-    if (tree->Root == nullptr)
+    if (!tree->Root)
     {
         PrintInfo("Дерево пустое");
         return;
     }
 
-    DisplayBinarySearchTree(tree->Root);
+    PrintFormattedBinarySearchTree(tree->Root);
 }
 
 void TreeConsoleService::PrintCartesianTreeState(const CartesianTree* tree)
 {
-    if (tree == nullptr)
+    if (!tree)
     {
         PrintError("Дерево не создано");
         return;
@@ -43,341 +64,26 @@ void TreeConsoleService::PrintCartesianTreeState(const CartesianTree* tree)
 
     PrintTitle("СОСТОЯНИЕ ДЕКАРТОВА ДЕРЕВА");
 
-    if (tree->Root == nullptr)
+    if (!tree->Root)
     {
         PrintInfo("Дерево пустое");
         return;
     }
-    DisplayCartesianTree(tree->Root);
+
+    PrintFormattedCartesianTree(tree->Root);
 }
+
 template<typename TreeNode>
-int GetTreeMaxDepth(const TreeNode* node)
+int TreeConsoleService::GetTreeMaxDepth(const TreeNode* node)
 {
-    if (node == nullptr) return 0;
-    const int left_depth = GetTreeMaxDepth(node->Left);
-    const int right_depth = GetTreeMaxDepth(node->Right);
-    return (left_depth > right_depth ? left_depth : right_depth) + 1;
-}
-
-TreeConsoleService::DisplayRows TreeConsoleService::GetBinarySearchTreeRowDisplay(const BinarySearchTreeNode* root)
-{
-    vector<const BinarySearchTreeNode*> traversal_stack;
-    vector<vector<const BinarySearchTreeNode*>> rows;
-
-    if (!root) return DisplayRows();
-
-    const BinarySearchTreeNode* p = root;
-    const int max_depth = GetTreeMaxDepth(root);
-    rows.resize(max_depth);
-    int depth = 0;
-
-    for (;;) {
-        if (depth == max_depth - 1) {
-            rows[depth].push_back(p);
-            if (depth == 0) break;
-            --depth;
-            continue;
-        }
-
-        if (traversal_stack.size() == depth) {
-            rows[depth].push_back(p);
-            traversal_stack.push_back(p);
-            if (p) p = p->Left;
-            ++depth;
-            continue;
-        }
-
-        if (rows[depth + 1].size() % 2) {
-            p = traversal_stack.back();
-            if (p) p = p->Right;
-            ++depth;
-            continue;
-        }
-
-        if (depth == 0) break;
-
-        traversal_stack.pop_back();
-        p = traversal_stack.back();
-        --depth;
+    if (!node)
+    {
+        return 0;
     }
 
-    DisplayRows rows_disp;
-    stringstream ss;
-    for (const auto& row : rows) {
-        rows_disp.emplace_back();
-        for (const BinarySearchTreeNode* pn : row) {
-            if (pn) {
-                ss << pn->Key << "[" << pn->Value << "]";
-                rows_disp.back().push_back(CellDisplay(ss.str()));
-                ss = stringstream();
-            }
-            else {
-                rows_disp.back().push_back(CellDisplay());
-            }
-        }
-    }
-    return rows_disp;
-}
-
-TreeConsoleService::DisplayRows TreeConsoleService::GetCartesianTreeRowDisplay(const CartesianTreeNode* root)
-{
-    vector<const CartesianTreeNode*> traversal_stack;
-    vector<vector<const CartesianTreeNode*>> rows;
-
-    if (!root) return DisplayRows();
-
-    const CartesianTreeNode* p = root;
-    const int max_depth = GetTreeMaxDepth(root);
-    rows.resize(max_depth);
-    int depth = 0;
-
-    for (;;) {
-        if (depth == max_depth - 1) {
-            rows[depth].push_back(p);
-            if (depth == 0) break;
-            --depth;
-            continue;
-        }
-
-        if (traversal_stack.size() == depth) {
-            rows[depth].push_back(p);
-            traversal_stack.push_back(p);
-            if (p) p = p->Left;
-            ++depth;
-            continue;
-        }
-
-        if (rows[depth + 1].size() % 2) {
-            p = traversal_stack.back();
-            if (p) p = p->Right;
-            ++depth;
-            continue;
-        }
-
-        if (depth == 0) break;
-
-        traversal_stack.pop_back();
-        p = traversal_stack.back();
-        --depth;
-    }
-
-    DisplayRows rows_disp;
-    stringstream ss;
-    for (const auto& row : rows) {
-        rows_disp.emplace_back();
-        for (const CartesianTreeNode* pn : row) {
-            if (pn) {
-                ss << pn->Key << "[" << pn->Value << "](p:" << pn->Priority << ")";
-                rows_disp.back().push_back(CellDisplay(ss.str()));
-                ss = stringstream();
-            }
-            else {
-                rows_disp.back().push_back(CellDisplay());
-            }
-        }
-    }
-    return rows_disp;
-}
-
-vector<string> TreeConsoleService::BinarySearchTreeRowFormatter(const DisplayRows& rows_disp)
-{
-    using s_t = string::size_type;
-
-    s_t cell_width = 0;
-    for (const auto& row_disp : rows_disp) {
-        for (const auto& cd : row_disp) {
-            if (cd.present && cd.valstr.length() > cell_width) {
-                cell_width = cd.valstr.length();
-            }
-        }
-    }
-
-    if (cell_width % 2 == 0) ++cell_width;
-    if (cell_width < 3) cell_width = 3;
-
-    vector<string> formatted_rows;
-    s_t row_count = rows_disp.size();
-    s_t row_elem_count = 1 << (row_count - 1);
-    s_t left_pad = 0;
-
-    for (s_t r = 0; r < row_count; ++r) {
-        const auto& cd_row = rows_disp[row_count - r - 1];
-        s_t space = (s_t(1) << r) * (cell_width + 1) / 2 - 1;
-        string row;
-
-        for (s_t c = 0; c < row_elem_count; ++c) {
-            row += string(c ? left_pad * 2 + 1 : left_pad, ' ');
-            if (cd_row[c].present) {
-                const string& valstr = cd_row[c].valstr;
-                s_t long_padding = cell_width - valstr.length();
-                s_t short_padding = long_padding / 2;
-                long_padding -= short_padding;
-                row += string(c % 2 ? short_padding : long_padding, ' ');
-                row += valstr;
-                row += string(c % 2 ? long_padding : short_padding, ' ');
-            }
-            else {
-                row += string(cell_width, ' ');
-            }
-        }
-        formatted_rows.push_back(row);
-
-        if (row_elem_count == 1) break;
-
-        s_t left_space = space + 1;
-        s_t right_space = space - 1;
-        for (s_t sr = 0; sr < space; ++sr) {
-            string row;
-            for (s_t c = 0; c < row_elem_count; ++c) {
-                if (c % 2 == 0) {
-                    row += string(c ? left_space * 2 + 1 : left_space, ' ');
-                    row += cd_row[c].present ? '/' : ' ';
-                    row += string(right_space + 1, ' ');
-                }
-                else {
-                    row += string(right_space, ' ');
-                    row += cd_row[c].present ? '\\' : ' ';
-                }
-            }
-            formatted_rows.push_back(row);
-            ++left_space;
-            --right_space;
-        }
-        left_pad += space + 1;
-        row_elem_count /= 2;
-    }
-
-    reverse(formatted_rows.begin(), formatted_rows.end());
-    return formatted_rows;
-}
-
-vector<string> TreeConsoleService::CartesianTreeRowFormatter(const DisplayRows& rows_disp) {
-    using s_t = string::size_type;
-
-    s_t cell_width = 0;
-    for (const auto& row_disp : rows_disp) {
-        for (const auto& cd : row_disp) {
-            if (cd.present && cd.valstr.length() > cell_width) {
-                cell_width = cd.valstr.length();
-            }
-        }
-    }
-
-    if (cell_width % 2 == 0) ++cell_width;
-    if (cell_width < 3) cell_width = 3;
-
-    vector<string> formatted_rows;
-    s_t row_count = rows_disp.size();
-    s_t row_elem_count = 1 << (row_count - 1);
-    s_t left_pad = 0;
-
-    for (s_t r = 0; r < row_count; ++r) {
-        const auto& cd_row = rows_disp[row_count - r - 1];
-        s_t space = (s_t(1) << r) * (cell_width + 1) / 2 - 1;
-        string row;
-
-        for (s_t c = 0; c < row_elem_count; ++c) {
-            row += string(c ? left_pad * 2 + 1 : left_pad, ' ');
-            if (cd_row[c].present) {
-                const string& valstr = cd_row[c].valstr;
-                s_t long_padding = cell_width - valstr.length();
-                s_t short_padding = long_padding / 2;
-                long_padding -= short_padding;
-                row += string(c % 2 ? short_padding : long_padding, ' ');
-                row += valstr;
-                row += string(c % 2 ? long_padding : short_padding, ' ');
-            }
-            else {
-                row += string(cell_width, ' ');
-            }
-        }
-        formatted_rows.push_back(row);
-
-        if (row_elem_count == 1) break;
-
-        s_t left_space = space + 1;
-        s_t right_space = space - 1;
-        for (s_t sr = 0; sr < space; ++sr) {
-            string row;
-            for (s_t c = 0; c < row_elem_count; ++c) {
-                if (c % 2 == 0) {
-                    row += string(c ? left_space * 2 + 1 : left_space, ' ');
-                    row += cd_row[c].present ? '/' : ' ';
-                    row += string(right_space + 1, ' ');
-                }
-                else {
-                    row += string(right_space, ' ');
-                    row += cd_row[c].present ? '\\' : ' ';
-                }
-            }
-            formatted_rows.push_back(row);
-            ++left_space;
-            --right_space;
-        }
-        left_pad += space + 1;
-        row_elem_count /= 2;
-    }
-
-    reverse(formatted_rows.begin(), formatted_rows.end());
-    return formatted_rows;
-}
-
-void TreeConsoleService::TrimRowsLeft(vector<string>& rows) {
-    if (!rows.size()) return;
-    auto min_space = rows.front().length();
-    for (const auto& row : rows) {
-        auto i = row.find_first_not_of(' ');
-        if (i == string::npos) i = row.length();
-        if (i == 0) return;
-        if (i < min_space) min_space = i;
-    }
-    for (auto& row : rows) {
-        row.erase(0, min_space);
-    }
-}
-
-void TreeConsoleService::PrintFormattedBinarySearchTree(const BinarySearchTreeNode* root) {
-    const int d = GetTreeMaxDepth(root);
-
-    if (d == 0) {
-        cout << " <empty tree>\n";
-        return;
-    }
-
-    const auto rows_disp = GetBinarySearchTreeRowDisplay(root);
-    auto formatted_rows = BinarySearchTreeRowFormatter(rows_disp);
-    TrimRowsLeft(formatted_rows);
-
-    for (const auto& row : formatted_rows) {
-        cout << ' ' << row << '\n';
-    }
-}
-
-void TreeConsoleService::PrintFormattedCartesianTree(const CartesianTreeNode* root) {
-    const int d = GetTreeMaxDepth(root);
-
-    if (d == 0) {
-        cout << " <empty tree>\n";
-        return;
-    }
-
-    const auto rows_disp = GetCartesianTreeRowDisplay(root);
-    auto formatted_rows = CartesianTreeRowFormatter(rows_disp);
-    TrimRowsLeft(formatted_rows);
-
-    for (const auto& row : formatted_rows) {
-        cout << ' ' << row << '\n';
-    }
-}
-
-void TreeConsoleService::DisplayBinarySearchTree(const BinarySearchTreeNode* root)
-{
-    PrintFormattedBinarySearchTree(root);
-}
-
-void TreeConsoleService::DisplayCartesianTree(const CartesianTreeNode* root)
-{
-    PrintFormattedCartesianTree(root);
+    const int leftDepth = GetTreeMaxDepth(node->Left);
+    const int rightDepth = GetTreeMaxDepth(node->Right);
+    return (leftDepth > rightDepth ? leftDepth : rightDepth) + 1;
 }
 
 void TreeConsoleService::PrintError(const string& message)
@@ -412,20 +118,24 @@ void TreeConsoleService::PrintTreeDeleted(const string& treeType)
 
 void TreeConsoleService::PrintElementAdded(const string& method)
 {
-    if (method.empty()) {
+    if (method.empty())
+    {
         cout << "Элемент добавлен" << endl;
     }
-    else {
+    else
+    {
         cout << "Элемент добавлен (" << method << ")" << endl;
     }
 }
 
 void TreeConsoleService::PrintElementRemoved(const string& method)
 {
-    if (method.empty()) {
+    if (method.empty())
+    {
         cout << "Элемент удален" << endl;
     }
-    else {
+    else
+    {
         cout << "Элемент удален (" << method << ")" << endl;
     }
 }
@@ -458,4 +168,427 @@ void TreeConsoleService::PrintMaxSizeReached(int maxSize)
 void TreeConsoleService::PrintTreeGenerated(int elementsAdded, const string& treeType)
 {
     cout << "Сгенерировано случайное " << treeType << " с " << elementsAdded << " элементами" << endl;
+}
+
+// Блок функций для визуального отображения дерева (перенесен в конец)
+
+TreeConsoleService::DisplayRows TreeConsoleService::GetBinarySearchTreeRowDisplay(const BinarySearchTreeNode* root)
+{
+    vector<const BinarySearchTreeNode*> traversalStack;
+    vector<vector<const BinarySearchTreeNode*>> rows;
+
+    if (!root)
+    {
+        return DisplayRows();
+    }
+
+    const BinarySearchTreeNode* currentNode = root;
+    const int maxDepth = GetTreeMaxDepth(root);
+    rows.resize(maxDepth);
+    int depth = 0;
+
+    while (true)
+    {
+        if (depth == maxDepth - 1)
+        {
+            rows[depth].push_back(currentNode);
+            if (depth == 0)
+            {
+                break;
+            }
+            --depth;
+            continue;
+        }
+
+        if (traversalStack.size() == depth)
+        {
+            rows[depth].push_back(currentNode);
+            traversalStack.push_back(currentNode);
+            if (currentNode)
+            {
+                currentNode = currentNode->Left;
+            }
+            ++depth;
+            continue;
+        }
+
+        if (rows[depth + 1].size() % 2)
+        {
+            currentNode = traversalStack.back();
+            if (currentNode)
+            {
+                currentNode = currentNode->Right;
+            }
+            ++depth;
+            continue;
+        }
+
+        if (depth == 0)
+        {
+            break;
+        }
+
+        traversalStack.pop_back();
+        currentNode = traversalStack.back();
+        --depth;
+    }
+
+    DisplayRows rowsDisplay;
+    stringstream stringStream;
+    for (const vector<const BinarySearchTreeNode*>& row : rows)
+    {
+        rowsDisplay.emplace_back();
+        for (const BinarySearchTreeNode* node : row)
+        {
+            if (node)
+            {
+                stringStream << node->Key << "[" << node->Value << "]";
+                rowsDisplay.back().push_back(CellDisplay(stringStream.str()));
+                stringStream = stringstream();
+            }
+            else
+            {
+                rowsDisplay.back().push_back(CellDisplay());
+            }
+        }
+    }
+    return rowsDisplay;
+}
+
+TreeConsoleService::DisplayRows TreeConsoleService::GetCartesianTreeRowDisplay(const CartesianTreeNode* root)
+{
+    vector<const CartesianTreeNode*> traversalStack;
+    vector<vector<const CartesianTreeNode*>> rows;
+
+    if (!root)
+    {
+        return DisplayRows();
+    }
+
+    const CartesianTreeNode* currentNode = root;
+    const int maxDepth = GetTreeMaxDepth(root);
+    rows.resize(maxDepth);
+    int depth = 0;
+
+    while (true)
+    {
+        if (depth == maxDepth - 1)
+        {
+            rows[depth].push_back(currentNode);
+            if (depth == 0)
+            {
+                break;
+            }
+            --depth;
+            continue;
+        }
+
+        if (traversalStack.size() == depth)
+        {
+            rows[depth].push_back(currentNode);
+            traversalStack.push_back(currentNode);
+            if (currentNode)
+            {
+                currentNode = currentNode->Left;
+            }
+            ++depth;
+            continue;
+        }
+
+        if (rows[depth + 1].size() % 2)
+        {
+            currentNode = traversalStack.back();
+            if (currentNode)
+            {
+                currentNode = currentNode->Right;
+            }
+            ++depth;
+            continue;
+        }
+
+        if (depth == 0)
+        {
+            break;
+        }
+
+        traversalStack.pop_back();
+        currentNode = traversalStack.back();
+        --depth;
+    }
+
+    DisplayRows rowsDisplay;
+    stringstream stringStream;
+    for (const vector<const CartesianTreeNode*>& row : rows)
+    {
+        rowsDisplay.emplace_back();
+        for (const CartesianTreeNode* node : row)
+        {
+            if (node)
+            {
+                stringStream << node->Key << "[" << node->Value << "](p:" << node->Priority << ")";
+                rowsDisplay.back().push_back(CellDisplay(stringStream.str()));
+                stringStream = stringstream();
+            }
+            else
+            {
+                rowsDisplay.back().push_back(CellDisplay());
+            }
+        }
+    }
+    return rowsDisplay;
+}
+
+vector<string> TreeConsoleService::BinarySearchTreeRowFormatter(const DisplayRows& rowsDisplay)
+{
+    using StringSizeType = string::size_type;
+
+    StringSizeType cellWidth = 0;
+    for (const DisplayRow& rowDisplay : rowsDisplay)
+    {
+        for (const CellDisplay& cell : rowDisplay)
+        {
+            if (cell.present && cell.valstr.length() > cellWidth)
+            {
+                cellWidth = cell.valstr.length();
+            }
+        }
+    }
+
+    if (cellWidth % 2 == 0)
+    {
+        ++cellWidth;
+    }
+    if (cellWidth < 3)
+    {
+        cellWidth = 3;
+    }
+
+    vector<string> formattedRows;
+    StringSizeType rowCount = rowsDisplay.size();
+    StringSizeType rowElementCount = 1 << (rowCount - 1);
+    StringSizeType leftPad = 0;
+
+    for (StringSizeType rowIndex = 0; rowIndex < rowCount; ++rowIndex)
+    {
+        const DisplayRow& currentRow = rowsDisplay[rowCount - rowIndex - 1];
+        StringSizeType space = (StringSizeType(1) << rowIndex) * (cellWidth + 1) / 2 - 1;
+        string rowString;
+
+        for (StringSizeType columnIndex = 0; columnIndex < rowElementCount; ++columnIndex)
+        {
+            rowString += string(columnIndex ? leftPad * 2 + 1 : leftPad, ' ');
+            if (currentRow[columnIndex].present)
+            {
+                const string& valueString = currentRow[columnIndex].valstr;
+                StringSizeType longPadding = cellWidth - valueString.length();
+                StringSizeType shortPadding = longPadding / 2;
+                longPadding -= shortPadding;
+                rowString += string(columnIndex % 2 ? shortPadding : longPadding, ' ');
+                rowString += valueString;
+                rowString += string(columnIndex % 2 ? longPadding : shortPadding, ' ');
+            }
+            else
+            {
+                rowString += string(cellWidth, ' ');
+            }
+        }
+        formattedRows.push_back(rowString);
+
+        if (rowElementCount == 1)
+        {
+            break;
+        }
+
+        StringSizeType leftSpace = space + 1;
+        StringSizeType rightSpace = space - 1;
+        for (StringSizeType spaceRow = 0; spaceRow < space; ++spaceRow)
+        {
+            string connectionRow;
+            for (StringSizeType columnIndex = 0; columnIndex < rowElementCount; ++columnIndex)
+            {
+                if (columnIndex % 2 == 0)
+                {
+                    connectionRow += string(columnIndex ? leftSpace * 2 + 1 : leftSpace, ' ');
+                    connectionRow += currentRow[columnIndex].present ? '/' : ' ';
+                    connectionRow += string(rightSpace + 1, ' ');
+                }
+                else
+                {
+                    connectionRow += string(rightSpace, ' ');
+                    connectionRow += currentRow[columnIndex].present ? '\\' : ' ';
+                }
+            }
+            formattedRows.push_back(connectionRow);
+            ++leftSpace;
+            --rightSpace;
+        }
+        leftPad += space + 1;
+        rowElementCount /= 2;
+    }
+
+    reverse(formattedRows.begin(), formattedRows.end());
+    return formattedRows;
+}
+
+vector<string> TreeConsoleService::CartesianTreeRowFormatter(const DisplayRows& rowsDisplay)
+{
+    using StringSizeType = string::size_type;
+
+    StringSizeType cellWidth = 0;
+    for (const DisplayRow& rowDisplay : rowsDisplay)
+    {
+        for (const CellDisplay& cell : rowDisplay)
+        {
+            if (cell.present && cell.valstr.length() > cellWidth)
+            {
+                cellWidth = cell.valstr.length();
+            }
+        }
+    }
+
+    if (cellWidth % 2 == 0)
+    {
+        ++cellWidth;
+    }
+    if (cellWidth < 3)
+    {
+        cellWidth = 3;
+    }
+
+    vector<string> formattedRows;
+    StringSizeType rowCount = rowsDisplay.size();
+    StringSizeType rowElementCount = 1 << (rowCount - 1);
+    StringSizeType leftPad = 0;
+
+    for (StringSizeType rowIndex = 0; rowIndex < rowCount; ++rowIndex)
+    {
+        const DisplayRow& currentRow = rowsDisplay[rowCount - rowIndex - 1];
+        StringSizeType space = (StringSizeType(1) << rowIndex) * (cellWidth + 1) / 2 - 1;
+        string rowString;
+
+        for (StringSizeType columnIndex = 0; columnIndex < rowElementCount; ++columnIndex)
+        {
+            rowString += string(columnIndex ? leftPad * 2 + 1 : leftPad, ' ');
+            if (currentRow[columnIndex].present)
+            {
+                const string& valueString = currentRow[columnIndex].valstr;
+                StringSizeType longPadding = cellWidth - valueString.length();
+                StringSizeType shortPadding = longPadding / 2;
+                longPadding -= shortPadding;
+                rowString += string(columnIndex % 2 ? shortPadding : longPadding, ' ');
+                rowString += valueString;
+                rowString += string(columnIndex % 2 ? longPadding : shortPadding, ' ');
+            }
+            else
+            {
+                rowString += string(cellWidth, ' ');
+            }
+        }
+        formattedRows.push_back(rowString);
+
+        if (rowElementCount == 1)
+        {
+            break;
+        }
+
+        StringSizeType leftSpace = space + 1;
+        StringSizeType rightSpace = space - 1;
+        for (StringSizeType spaceRow = 0; spaceRow < space; ++spaceRow)
+        {
+            string connectionRow;
+            for (StringSizeType columnIndex = 0; columnIndex < rowElementCount; ++columnIndex)
+            {
+                if (columnIndex % 2 == 0)
+                {
+                    connectionRow += string(columnIndex ? leftSpace * 2 + 1 : leftSpace, ' ');
+                    connectionRow += currentRow[columnIndex].present ? '/' : ' ';
+                    connectionRow += string(rightSpace + 1, ' ');
+                }
+                else
+                {
+                    connectionRow += string(rightSpace, ' ');
+                    connectionRow += currentRow[columnIndex].present ? '\\' : ' ';
+                }
+            }
+            formattedRows.push_back(connectionRow);
+            ++leftSpace;
+            --rightSpace;
+        }
+        leftPad += space + 1;
+        rowElementCount /= 2;
+    }
+
+    reverse(formattedRows.begin(), formattedRows.end());
+    return formattedRows;
+}
+
+void TreeConsoleService::TrimRowsLeft(vector<string>& rows)
+{
+    if (rows.empty())
+    {
+        return;
+    }
+
+    string::size_type minSpace = rows.front().length();
+    for (const string& row : rows)
+    {
+        string::size_type firstNonSpace = row.find_first_not_of(' ');
+        if (firstNonSpace == string::npos)
+        {
+            firstNonSpace = row.length();
+        }
+        if (firstNonSpace == 0)
+        {
+            return;
+        }
+        if (firstNonSpace < minSpace)
+        {
+            minSpace = firstNonSpace;
+        }
+    }
+
+    for (string& row : rows)
+    {
+        row.erase(0, minSpace);
+    }
+}
+
+void TreeConsoleService::PrintFormattedBinarySearchTree(const BinarySearchTreeNode* root)
+{
+    const int depth = GetTreeMaxDepth(root);
+
+    if (depth == 0)
+    {
+        cout << " <empty tree>\n";
+        return;
+    }
+
+    const DisplayRows rowsDisplay = GetBinarySearchTreeRowDisplay(root);
+    vector<string> formattedRows = BinarySearchTreeRowFormatter(rowsDisplay);
+    TrimRowsLeft(formattedRows);
+
+    for (const string& row : formattedRows)
+    {
+        cout << ' ' << row << '\n';
+    }
+}
+
+void TreeConsoleService::PrintFormattedCartesianTree(const CartesianTreeNode* root)
+{
+    const int depth = GetTreeMaxDepth(root);
+
+    if (depth == 0)
+    {
+        cout << " <empty tree>\n";
+        return;
+    }
+
+    const DisplayRows rowsDisplay = GetCartesianTreeRowDisplay(root);
+    vector<string> formattedRows = CartesianTreeRowFormatter(rowsDisplay);
+    TrimRowsLeft(formattedRows);
+
+    for (const string& row : formattedRows)
+    {
+        cout << ' ' << row << '\n';
+    }
 }

@@ -27,3 +27,4 @@ bool CartesianTreeRemoveOptimized(CartesianTree* tree, int key);
 string CartesianTreeFind(const CartesianTree* tree, int key);
 void CartesianTreeSplit(CartesianTreeNode* tree, int key, CartesianTreeNode*& left, CartesianTreeNode*& right);
 CartesianTreeNode* CartesianTreeMerge(CartesianTreeNode* left, CartesianTreeNode* right);
+int CartesianTreeGetPriority(const CartesianTree* tree, int key);

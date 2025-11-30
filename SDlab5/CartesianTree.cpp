@@ -289,3 +289,30 @@ void DeleteCartesianTree(CartesianTree* tree)
     tree->Size = 0;
     delete tree;
 }
+int CartesianTreeGetPriority(const CartesianTree* tree, int key)
+{
+    if (!tree)
+    {
+        return -1;
+    }
+
+    CartesianTreeNode* current = tree->Root;
+
+    while (current != nullptr)
+    {
+        if (key < current->Key)
+        {
+            current = current->Left;
+        }
+        else if (key > current->Key)
+        {
+            current = current->Right;
+        }
+        else
+        {
+            return current->Priority;
+        }
+    }
+
+    return -1;
+}

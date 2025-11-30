@@ -6,32 +6,43 @@
 
 using namespace std;
 
+bool IsGenerationParametersValid(const void* tree, int elementCount)
+{
+    if (!tree || elementCount <= 0)
+    {
+        return false;
+    }
+    return true;
+}
+
 void GenerateUniqueRandomKeys(int* keys, int count, int minKey, int maxKey)
 {
-    if (count <= 0 || keys == nullptr)
+    if (!keys || count <= 0)
     {
         return;
     }
-    srand(static_cast<unsigned int>(time(nullptr)));
+
+    srand((int)(time(nullptr)));
 
     for (int i = 0; i < count; i++)
     {
-        bool unique;
+        bool isUnique;
         int key;
 
         do
         {
-            unique = true;
+            isUnique = true;
             key = minKey + rand() % (maxKey - minKey + 1);
+
             for (int j = 0; j < i; j++)
             {
                 if (keys[j] == key)
                 {
-                    unique = false;
+                    isUnique = false;
                     break;
                 }
             }
-        } while (!unique);
+        } while (!isUnique);
 
         keys[i] = key;
     }
@@ -39,12 +50,12 @@ void GenerateUniqueRandomKeys(int* keys, int count, int minKey, int maxKey)
 
 void GenerateRandomPriorities(int* priorities, int count, int minPriority, int maxPriority)
 {
-    if (count <= 0 || priorities == nullptr)
+    if (!priorities || count <= 0)
     {
         return;
     }
 
-    srand(static_cast<unsigned int>(time(nullptr) + 1));
+    srand((int)(time(nullptr) + 1));
 
     for (int i = 0; i < count; i++)
     {
@@ -59,18 +70,18 @@ string GenerateRandomValue(int index)
 
 void GenerateRandomBinarySearchTree(BinarySearchTree* tree, int elementCount)
 {
-    if (tree == nullptr || elementCount <= 0)
+    if (!IsGenerationParametersValid(tree, elementCount))
     {
         return;
     }
 
-    if (tree->Size + elementCount > maxBinaryTreeSize) {
+    if (tree->Size + elementCount > maxBinaryTreeSize)
+    {
         return;
     }
 
-    int maxKey = maxKeyValue;
     int* keys = new int[elementCount];
-    GenerateUniqueRandomKeys(keys, elementCount, minKeyValue, maxKey);
+    GenerateUniqueRandomKeys(keys, elementCount, minKeyValue, maxKeyValue);
 
     for (int i = 0; i < elementCount; i++)
     {
@@ -83,23 +94,21 @@ void GenerateRandomBinarySearchTree(BinarySearchTree* tree, int elementCount)
 
 void GenerateRandomCartesianTree(CartesianTree* tree, int elementCount)
 {
-    if (tree == nullptr || elementCount <= 0)
+    if (!IsGenerationParametersValid(tree, elementCount))
     {
         return;
     }
 
-    if (tree->Size + elementCount > maxCartesianTreeSize) {
+    if (tree->Size + elementCount > maxCartesianTreeSize)
+    {
         return;
     }
-
-    int maxKey = maxKeyValue;
-    int maxPriority = maxPriorityValue;
 
     int* keys = new int[elementCount];
     int* priorities = new int[elementCount];
 
-    GenerateUniqueRandomKeys(keys, elementCount, minKeyValue, maxKey);
-    GenerateRandomPriorities(priorities, elementCount, 1, maxPriority);
+    GenerateUniqueRandomKeys(keys, elementCount, minKeyValue, maxKeyValue);
+    GenerateRandomPriorities(priorities, elementCount, 1, maxPriorityValue);
 
     for (int i = 0; i < elementCount; i++)
     {

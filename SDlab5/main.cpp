@@ -37,16 +37,20 @@ int main()
         switch (choice)
         {
         case 0:
+        {
             cout << "Выход из программы..." << endl;
             break;
-
+        }
         case 1:
+        {
             BinarySearchTreeMenu();
             break;
-
+        }
         case 2:
+        {
             CartesianTreeMenu();
             break;
+        } 
         }
 
     } while (choice != 0);
