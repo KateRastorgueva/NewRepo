@@ -60,6 +60,28 @@ CartesianTreeNode* FindCartesianTreeNode(const CartesianTree* tree, int key)
 }
 
 /// <summary>
+/// Перемещает указатель на указатель на узел в зависимости от ключа (для изменения структуры)
+/// </summary>
+/// <param name="current">Указатель на указатель на текущий узел</param>
+/// <param name="parent">Ссылка на указатель родителя</param>
+/// <param name="key">Ключ для сравнения</param>
+/// <returns>true если двигались влево, false если вправо</returns>
+bool MoveCartesianTreeNodePointer(CartesianTreeNode**& current, CartesianTreeNode*& parent, int key)
+{
+    parent = *current;
+    if (key < (*current)->Key)
+    {
+        current = &((*current)->Left);
+        return true;
+    }
+    else
+    {
+        current = &((*current)->Right);
+        return false;
+    }
+}
+
+/// <summary>
 /// Проверяет существование ключа в декартовом дереве
 /// </summary>
 /// <param name="tree">Указатель на декартово дерево</param>
@@ -359,28 +381,6 @@ bool CartesianTreeRemoveOptimized(CartesianTree* tree, int key)
 
     tree->Size--;
     return true;
-}
-
-/// <summary>
-/// Перемещает указатель на указатель на узел в зависимости от ключа (для изменения структуры)
-/// </summary>
-/// <param name="current">Указатель на указатель на текущий узел</param>
-/// <param name="parent">Ссылка на указатель родителя</param>
-/// <param name="key">Ключ для сравнения</param>
-/// <returns>true если двигались влево, false если вправо</returns>
-bool MoveCartesianTreeNodePointer(CartesianTreeNode**& current, CartesianTreeNode*& parent, int key)
-{
-    parent = *current;
-    if (key < (*current)->Key)
-    {
-        current = &((*current)->Left);
-        return true;
-    }
-    else
-    {
-        current = &((*current)->Right);
-        return false;
-    }
 }
 
 /// <summary>

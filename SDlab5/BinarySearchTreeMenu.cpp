@@ -194,7 +194,7 @@ void BinarySearchTreeMenu()
                 break;
             }
 
-            int elementCount = GetValidatedInput("Введите количество элементов для генерации: ");
+            int elementCount = GetValidatedInput("Введите количество элементов для генерации (1-" + to_string(maxBinaryTreeSize) + "): ");
             if (elementCount < 1 || elementCount > maxBinaryTreeSize)
             {
                 PrintError("Количество элементов должно быть от 1 до " + to_string(maxBinaryTreeSize));
