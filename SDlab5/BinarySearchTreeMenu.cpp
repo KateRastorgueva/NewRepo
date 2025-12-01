@@ -135,7 +135,7 @@ void BinarySearchTreeMenu()
 
             int key = GetValidatedInput("Введите ключ для поиска: ");
             string result = BinarySearchTreeFind(binarySearchTree, key);
-            if (!result.empty())
+            if (result.size() > 0)
             {
                 PrintElementFound(result);
             }
@@ -155,7 +155,7 @@ void BinarySearchTreeMenu()
             }
 
             string result = BinarySearchTreeFindMin(binarySearchTree);
-            if (!result.empty())
+            if (result.size() > 0)
             {
                 cout << "Минимальный элемент: " << result << endl;
             }
@@ -175,7 +175,7 @@ void BinarySearchTreeMenu()
             }
 
             string result = BinarySearchTreeFindMax(binarySearchTree);
-            if (!result.empty())
+            if( result.size() > 0)
             {
                 cout << "Максимальный элемент: " << result << endl;
             }
@@ -194,7 +194,7 @@ void BinarySearchTreeMenu()
                 break;
             }
 
-            int elementCount = GetValidatedInput("Введите количество элементов для генерации (1-7): ");
+            int elementCount = GetValidatedInput("Введите количество элементов для генерации: ");
             if (elementCount < 1 || elementCount > maxBinaryTreeSize)
             {
                 PrintError("Количество элементов должно быть от 1 до " + to_string(maxBinaryTreeSize));
@@ -232,7 +232,7 @@ void BinarySearchTreeMenu()
             }
 
             string existingValue = BinarySearchTreeFind(binarySearchTree, key);
-            if (existingValue.empty())
+            if (existingValue.size() == 0)
             {
                 PrintError("Ключ не существует");
                 break;

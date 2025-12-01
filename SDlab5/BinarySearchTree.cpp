@@ -11,7 +11,7 @@ using namespace std;
 /// <returns>true если дерево пустое, иначе false</returns>
 bool IsTreeEmpty(const BinarySearchTree* tree)
 {
-    return tree == nullptr || tree->Root == nullptr;
+    return !tree || tree->Root == nullptr;
 }
 
 /// <summary>
@@ -30,7 +30,7 @@ bool IsTreeFull(const BinarySearchTree* tree)
 /// <param name="node">Корневой узел для удаления</param>
 void DeleteBinarySearchTreeNodes(BinarySearchTreeNode* node)
 {
-    if (node == nullptr)
+    if (!node)
     {
         return;
     }
@@ -53,21 +53,16 @@ BinarySearchTree* CreateBinarySearchTree()
 }
 
 /// <summary>
-/// Добавляет элемент в бинарное дерево поиска
+/// Находит место узла в дереве по ключу
 /// </summary>
-/// <param name="tree">Дерево для добавления</param>
-/// <param name="key">Ключ добавляемого элемента</param>
-/// <param name="value">Значение добавляемого элемента</param>
-/// <returns>true если элемент добавлен, false если ключ уже существует</returns>
-bool BinarySearchTreeAdd(BinarySearchTree* tree, int key, const string& value)
+/// <param name="tree">Дерево для поиска</param>
+/// <param name="key">Ключ для поиска</param>
+/// <returns>Указатель на указатель на узел или nullptr если дерево пустое</returns>
+BinarySearchTreeNode** FindNodeOrInsertLocation(BinarySearchTree* tree, int key)
 {
     if (!tree)
     {
-        return false;
-    }
-
-    if (tree->Size >= maxBinaryTreeSize) {
-        return false;
+        return nullptr;
     }
 
     BinarySearchTreeNode** current = &(tree->Root);
@@ -84,8 +79,31 @@ bool BinarySearchTreeAdd(BinarySearchTree* tree, int key, const string& value)
         }
         else
         {
-            return false;
+            return current;
         }
+    }
+    return current;
+}
+
+/// <summary>
+/// Добавляет элемент в бинарное дерево поиска
+/// </summary>
+/// <param name="tree">Дерево для добавления</param>
+/// <param name="key">Ключ добавляемого элемента</param>
+/// <param name="value">Значение добавляемого элемента</param>
+/// <returns>true если элемент добавлен, false если ключ уже существует</returns>
+bool BinarySearchTreeAdd(BinarySearchTree* tree, int key, const string& value)
+{
+    if (!tree || tree->Size >= maxBinaryTreeSize)
+    {
+        return false;
+    }
+
+    BinarySearchTreeNode** current = FindNodeOrInsertLocation(tree, key);
+
+    if (*current != nullptr)
+    {
+        return false;
     }
 
     *current = new BinarySearchTreeNode;
@@ -125,62 +143,51 @@ bool BinarySearchTreeRemove(BinarySearchTree* tree, int key)
         return false;
     }
 
-    BinarySearchTreeNode** current = &(tree->Root);
+    BinarySearchTreeNode** current = FindNodeOrInsertLocation(tree, key);
 
-    while (*current != nullptr)
+    if (*current == nullptr)
     {
-        if (key < (*current)->Key)
+        return false;
+    }
+
+    BinarySearchTreeNode* nodeToDelete = *current;
+
+    if (nodeToDelete->Left == nullptr)
+    {
+        *current = nodeToDelete->Right;
+        delete nodeToDelete;
+    }
+    else if (nodeToDelete->Right == nullptr)
+    {
+        *current = nodeToDelete->Left;
+        delete nodeToDelete;
+    }
+    else
+    {
+        BinarySearchTreeNode* minNodeParent = nodeToDelete;
+        BinarySearchTreeNode* minNode = nodeToDelete->Right;
+
+        while (minNode->Left != nullptr)
         {
-            current = &((*current)->Left);
+            minNodeParent = minNode;
+            minNode = minNode->Left;
         }
-        else if (key > (*current)->Key)
+
+        nodeToDelete->Key = minNode->Key;
+        nodeToDelete->Value = minNode->Value;
+
+        if (minNodeParent == nodeToDelete)
         {
-            current = &((*current)->Right);
+            minNodeParent->Right = minNode->Right;
         }
         else
         {
-            BinarySearchTreeNode* nodeToDelete = *current;
-
-            if (nodeToDelete->Left == nullptr)
-            {
-                *current = nodeToDelete->Right;
-                delete nodeToDelete;
-            }
-            else if (nodeToDelete->Right == nullptr)
-            {
-                *current = nodeToDelete->Left;
-                delete nodeToDelete;
-            }
-            else
-            {
-                BinarySearchTreeNode* minNodeParent = nodeToDelete;
-                BinarySearchTreeNode* minNode = nodeToDelete->Right;
-
-                while (minNode->Left != nullptr)
-                {
-                    minNodeParent = minNode;
-                    minNode = minNode->Left;
-                }
-
-                nodeToDelete->Key = minNode->Key;
-                nodeToDelete->Value = minNode->Value;
-
-                if (minNodeParent == nodeToDelete)
-                {
-                    minNodeParent->Right = minNode->Right;
-                }
-                else
-                {
-                    minNodeParent->Left = minNode->Right;
-                }
-                delete minNode;
-            }
-            tree->Size--;
-            return true;
+            minNodeParent->Left = minNode->Right;
         }
+        delete minNode;
     }
-
-    return false;
+    tree->Size--;
+    return true;
 }
 
 /// <summary>
