@@ -224,7 +224,7 @@ void CartesianTreeMenu()
 
             int key = GetKeyInput("¬ведите ключ дл€ поиска: ");
             string result = CartesianTreeFind(cartesianTree, key);
-            if (!result.empty())
+            if (result.size() > 0)
             {
                 PrintElementFound(result);
             }
@@ -323,7 +323,7 @@ void CartesianTreeMenu()
             }
 
             string originalValue = CartesianTreeFind(cartesianTree, key);
-            if (originalValue.empty())
+            if (originalValue.size() == 0)
             {
                 PrintError(" люч не существует");
                 break;

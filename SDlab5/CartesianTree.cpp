@@ -26,6 +26,40 @@ bool IsTreeEmpty(const CartesianTree* tree)
 }
 
 /// <summary>
+/// Находит узел в декартовом дереве по указанному ключу
+/// </summary>
+/// <param name="tree">Указатель на декартово дерево</param>
+/// <param name="key">Ключ для поиска</param>
+/// <returns>Указатель на найденный узел или nullptr, если узел не найден</returns>
+CartesianTreeNode* FindCartesianTreeNode(const CartesianTree* tree, int key)
+{
+    if (!tree)
+    {
+        return nullptr;
+    }
+
+    CartesianTreeNode* current = tree->Root;
+
+    while (current != nullptr)
+    {
+        if (key < current->Key)
+        {
+            current = current->Left;
+        }
+        else if (key > current->Key)
+        {
+            current = current->Right;
+        }
+        else
+        {
+            return current;
+        }
+    }
+
+    return nullptr;
+}
+
+/// <summary>
 /// Проверяет существование ключа в декартовом дереве
 /// </summary>
 /// <param name="tree">Указатель на декартово дерево</param>
@@ -33,7 +67,7 @@ bool IsTreeEmpty(const CartesianTree* tree)
 /// <returns>true если ключ существует, иначе false</returns>
 bool KeyExists(const CartesianTree* tree, int key)
 {
-    return !CartesianTreeFind(tree, key).empty();
+    return FindCartesianTreeNode(tree, key) != nullptr;
 }
 
 /// <summary>
@@ -231,15 +265,7 @@ bool CartesianTreeAddOptimized(CartesianTree* tree, int key, const string& value
 
     while (*current != nullptr && (*current)->Priority > priority)
     {
-        parent = *current;
-        if (key < (*current)->Key)
-        {
-            current = &((*current)->Left);
-        }
-        else
-        {
-            current = &((*current)->Right);
-        }
+        MoveCartesianTreeNodePointer(current, parent, key);
     }
 
     CartesianTreeNode* left = nullptr;
@@ -319,15 +345,7 @@ bool CartesianTreeRemoveOptimized(CartesianTree* tree, int key)
 
     while (*current != nullptr && (*current)->Key != key)
     {
-        parent = *current;
-        if (key < (*current)->Key)
-        {
-            current = &((*current)->Left);
-        }
-        else
-        {
-            current = &((*current)->Right);
-        }
+        MoveCartesianTreeNodePointer(current, parent, key);
     }
 
     if (*current == nullptr)
@@ -344,6 +362,28 @@ bool CartesianTreeRemoveOptimized(CartesianTree* tree, int key)
 }
 
 /// <summary>
+/// Перемещает указатель на указатель на узел в зависимости от ключа (для изменения структуры)
+/// </summary>
+/// <param name="current">Указатель на указатель на текущий узел</param>
+/// <param name="parent">Ссылка на указатель родителя</param>
+/// <param name="key">Ключ для сравнения</param>
+/// <returns>true если двигались влево, false если вправо</returns>
+bool MoveCartesianTreeNodePointer(CartesianTreeNode**& current, CartesianTreeNode*& parent, int key)
+{
+    parent = *current;
+    if (key < (*current)->Key)
+    {
+        current = &((*current)->Left);
+        return true;
+    }
+    else
+    {
+        current = &((*current)->Right);
+        return false;
+    }
+}
+
+/// <summary>
 /// Находит элемент в декартовом дереве
 /// </summary>
 /// <param name="tree">Дерево для поиска</param>
@@ -351,29 +391,11 @@ bool CartesianTreeRemoveOptimized(CartesianTree* tree, int key)
 /// <returns>Значение элемента или пустая строка если элемент не найден</returns>
 string CartesianTreeFind(const CartesianTree* tree, int key)
 {
-    if (!tree)
+    CartesianTreeNode* node = FindCartesianTreeNode(tree, key);
+    if (node != nullptr)
     {
-        return "";
+        return node->Value;
     }
-
-    CartesianTreeNode* current = tree->Root;
-
-    while (current != nullptr)
-    {
-        if (key < current->Key)
-        {
-            current = current->Left;
-        }
-        else if (key > current->Key)
-        {
-            current = current->Right;
-        }
-        else
-        {
-            return current->Value;
-        }
-    }
-
     return "";
 }
 
@@ -401,28 +423,10 @@ void DeleteCartesianTree(CartesianTree* tree)
 /// <returns>Приоритет элемента или -1 если элемент не найден</returns>
 int CartesianTreeGetPriority(const CartesianTree* tree, int key)
 {
-    if (!tree)
+    CartesianTreeNode* node = FindCartesianTreeNode(tree, key);
+    if (node != nullptr)
     {
-        return -1;
+        return node->Priority;
     }
-
-    CartesianTreeNode* current = tree->Root;
-
-    while (current != nullptr)
-    {
-        if (key < current->Key)
-        {
-            current = current->Left;
-        }
-        else if (key > current->Key)
-        {
-            current = current->Right;
-        }
-        else
-        {
-            return current->Priority;
-        }
-    }
-
     return -1;
 }

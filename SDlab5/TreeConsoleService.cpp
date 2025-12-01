@@ -48,22 +48,40 @@ int GetPriorityInput()
 }
 
 /// <summary>
+/// Выполняет общие проверки состояния дерева перед отображением
+/// </summary>
+/// <typeparam name="TreeType">Тип дерева</typeparam>
+/// <param name="tree">Указатель на дерево</param>
+/// <param name="treeName">Название типа дерева</param>
+/// <returns>true если можно продолжать отображение, false если нет</returns>
+template<typename TreeType>
+bool CheckTreeStateBeforeDisplay(const TreeType* tree, const string& treeName)
+{
+    if (!tree)
+    {
+        PrintError("Дерево не создано");
+        return false;
+    }
+
+    PrintTitle("СОСТОЯНИЕ " + treeName);
+
+    if (!tree->Root)
+    {
+        PrintInfo("Дерево пустое");
+        return false;
+    }
+
+    return true;
+}
+
+/// <summary>
 /// Выводит состояние бинарного дерева поиска
 /// </summary>
 /// <param name="tree">Указатель на дерево</param>
 void PrintBinarySearchTreeState(const BinarySearchTree* tree)
 {
-    if (!tree)
+    if (!CheckTreeStateBeforeDisplay(tree, "БИНАРНОГО ДЕРЕВА ПОИСКА"))
     {
-        PrintError("Дерево не создано");
-        return;
-    }
-
-    PrintTitle("СОСТОЯНИЕ БИНАРНОГО ДЕРЕВА ПОИСКА");
-
-    if (!tree->Root)
-    {
-        PrintInfo("Дерево пустое");
         return;
     }
 
@@ -76,17 +94,8 @@ void PrintBinarySearchTreeState(const BinarySearchTree* tree)
 /// <param name="tree">Указатель на дерево</param>
 void PrintCartesianTreeState(const CartesianTree* tree)
 {
-    if (!tree)
+    if(!CheckTreeStateBeforeDisplay(tree, "ДЕКАРТОВА ДЕРЕВА"))
     {
-        PrintError("Дерево не создано");
-        return;
-    }
-
-    PrintTitle("СОСТОЯНИЕ ДЕКАРТОВА ДЕРЕВА");
-
-    if (!tree->Root)
-    {
-        PrintInfo("Дерево пустое");
         return;
     }
 
