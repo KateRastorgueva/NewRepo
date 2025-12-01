@@ -46,20 +46,6 @@ struct BinarySearchTree
 };
 
 /// <summary>
-/// Проверяет, является ли дерево пустым
-/// </summary>
-/// <param name="tree">Указатель на дерево</param>
-/// <returns>true если дерево пустое, иначе false</returns>
-bool IsTreeEmpty(const BinarySearchTree* tree);
-
-/// <summary>
-/// Проверяет, является ли дерево полным
-/// </summary>
-/// <param name="tree">Указатель на дерево</param>
-/// <returns>true если дерево полное, иначе false</returns>
-bool IsTreeFull(const BinarySearchTree* tree);
-
-/// <summary>
 /// Рекурсивно удаляет все узлы дерева
 /// </summary>
 /// <param name="node">Корневой узел для удаления</param>

@@ -12,11 +12,11 @@ using namespace std;
 /// </summary>
 struct TreeCellDisplay
 {
-    string valstr;
+    string valueString;
     bool present;
 
     TreeCellDisplay() : present(false) {}
-    TreeCellDisplay(string valstr) : valstr(valstr), present(true) {}
+    TreeCellDisplay(string valueString) : valueString(valueString), present(true) {}
 };
 
 /// <summary>

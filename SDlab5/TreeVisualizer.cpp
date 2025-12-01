@@ -216,9 +216,9 @@ vector<string> BinarySearchTreeRowFormatter(const vector<vector<TreeCellDisplay>
     {
         for (const TreeCellDisplay& cell : rowDisplay)
         {
-            if (cell.present && cell.valstr.length() > cellWidth)
+            if (cell.present && cell.valueString.length() > cellWidth)
             {
-                cellWidth = cell.valstr.length();
+                cellWidth = cell.valueString.length();
             }
         }
     }
@@ -248,7 +248,7 @@ vector<string> BinarySearchTreeRowFormatter(const vector<vector<TreeCellDisplay>
             rowString += string(columnIndex ? leftPad * 2 + 1 : leftPad, ' ');
             if (currentRow[columnIndex].present)
             {
-                const string& valueString = currentRow[columnIndex].valstr;
+                const string& valueString = currentRow[columnIndex].valueString;
                 StringSizeType longPadding = cellWidth - valueString.length();
                 StringSizeType shortPadding = longPadding / 2;
                 longPadding -= shortPadding;
@@ -313,9 +313,9 @@ vector<string> CartesianTreeRowFormatter(const vector<vector<TreeCellDisplay>>& 
     {
         for (const TreeCellDisplay& cell : rowDisplay)
         {
-            if (cell.present && cell.valstr.length() > cellWidth)
+            if (cell.present && cell.valueString.length() > cellWidth)
             {
-                cellWidth = cell.valstr.length();
+                cellWidth = cell.valueString.length();
             }
         }
     }
@@ -345,7 +345,7 @@ vector<string> CartesianTreeRowFormatter(const vector<vector<TreeCellDisplay>>& 
             rowString += string(columnIndex ? leftPad * 2 + 1 : leftPad, ' ');
             if (currentRow[columnIndex].present)
             {
-                const string& valueString = currentRow[columnIndex].valstr;
+                const string& valueString = currentRow[columnIndex].valueString;
                 StringSizeType longPadding = cellWidth - valueString.length();
                 StringSizeType shortPadding = longPadding / 2;
                 longPadding -= shortPadding;

@@ -51,28 +51,6 @@ struct CartesianTree
 };
 
 /// <summary>
-/// Проверяет, является ли дерево полным
-/// </summary>
-/// <param name="tree">Указатель на дерево</param>
-/// <returns>true если дерево полное, иначе false</returns>
-bool IsTreeFull(const CartesianTree* tree);
-
-/// <summary>
-/// Проверяет, является ли дерево пустым
-/// </summary>
-/// <param name="tree">Указатель на дерево</param>
-/// <returns>true если дерево пустое, иначе false</returns>
-bool IsTreeEmpty(const CartesianTree* tree);
-
-/// <summary>
-/// Проверяет существование ключа в дереве
-/// </summary>
-/// <param name="tree">Указатель на дерево</param>
-/// <param name="key">Ключ для проверки</param>
-/// <returns>true если ключ существует, иначе false</returns>
-bool KeyExists(const CartesianTree* tree, int key);
-
-/// <summary>
 /// Создает новый узел декартова дерева
 /// </summary>
 /// <param name="key">Ключ узла</param>

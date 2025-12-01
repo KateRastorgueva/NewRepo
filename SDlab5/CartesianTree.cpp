@@ -6,26 +6,6 @@
 using namespace std;
 
 /// <summary>
-/// ѕровер€ет, €вл€етс€ ли декартово дерево полным
-/// </summary>
-/// <param name="tree">”казатель на декартово дерево</param>
-/// <returns>true если дерево полное, иначе false</returns>
-bool IsTreeFull(const CartesianTree* tree)
-{
-    return tree->Size >= maxCartesianTreeSize;
-}
-
-/// <summary>
-/// ѕровер€ет, €вл€етс€ ли декартово дерево пустым
-/// </summary>
-/// <param name="tree">”казатель на декартово дерево</param>
-/// <returns>true если дерево пустое, иначе false</returns>
-bool IsTreeEmpty(const CartesianTree* tree)
-{
-    return tree == nullptr || tree->Root == nullptr;
-}
-
-/// <summary>
 /// Ќаходит узел в декартовом дереве по указанному ключу
 /// </summary>
 /// <param name="tree">”казатель на декартово дерево</param>
@@ -57,6 +37,26 @@ CartesianTreeNode* FindCartesianTreeNode(const CartesianTree* tree, int key)
     }
 
     return nullptr;
+}
+
+/// <summary>
+/// ѕровер€ет, €вл€етс€ ли декартово дерево полным
+/// </summary>
+/// <param name="tree">”казатель на декартово дерево</param>
+/// <returns>true если дерево полное, иначе false</returns>
+bool IsTreeFull(const CartesianTree* tree)
+{
+    return tree->Size >= maxCartesianTreeSize;
+}
+
+/// <summary>
+/// ѕровер€ет, €вл€етс€ ли декартово дерево пустым
+/// </summary>
+/// <param name="tree">”казатель на декартово дерево</param>
+/// <returns>true если дерево пустое, иначе false</returns>
+bool IsTreeEmpty(const CartesianTree* tree)
+{
+    return tree == nullptr || tree->Root == nullptr;
 }
 
 /// <summary>
