@@ -243,10 +243,18 @@ void CartesianTreeMenu()
                 break;
             }
 
-            int elementCount = GetValidatedInput("Введите количество элементов для генерации (1-" + to_string(maxCartesianTreeSize) + "): ");
+            int elementCount = GetValidatedInput("Введите количество элементов для генерации (1-" + 
+                to_string(maxCartesianTreeSize) + "): ");
             if (elementCount < 1 || elementCount > maxCartesianTreeSize)
             {
                 PrintError("Количество элементов должно быть от 1 до " + to_string(maxCartesianTreeSize));
+                break;
+            }
+
+            if (cartesianTree->Size > 0)
+            {
+                PrintError("Генерация возможна только для пустого дерева. Текущий размер: " +
+                    to_string(cartesianTree->Size));
                 break;
             }
 

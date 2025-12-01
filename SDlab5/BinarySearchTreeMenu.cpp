@@ -194,10 +194,18 @@ void BinarySearchTreeMenu()
                 break;
             }
 
-            int elementCount = GetValidatedInput("Введите количество элементов для генерации (1-" + to_string(maxBinaryTreeSize) + "): ");
+            int elementCount = GetValidatedInput("Введите количество элементов для генерации (1-" + 
+                to_string(maxBinaryTreeSize) + "): ");
             if (elementCount < 1 || elementCount > maxBinaryTreeSize)
             {
                 PrintError("Количество элементов должно быть от 1 до " + to_string(maxBinaryTreeSize));
+                break;
+            }
+
+            if (binarySearchTree->Size > 0)
+            {
+                PrintError("Генерация возможна только для пустого дерева. Текущий размер: " +
+                    to_string(binarySearchTree->Size));
                 break;
             }
 
